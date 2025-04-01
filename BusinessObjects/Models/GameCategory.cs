@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BusinessObjects.Models
 {
-    public partial class GameCategory
+    public class GameCategory
     {
-        public string Id { get; set; } = null!;
+        [Key]
+        [StringLength(36)]
+        public string Id { get; set; }
 
-        public string Name { get; set; } = null!;
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
+        [StringLength(500)]
         public string? Description { get; set; }
 
-        public ICollection<GameCategoryRelation> GameCategoryRelations { get; set; } = new List<GameCategoryRelation>();
+        public virtual ICollection<GameCategoryRelation> GameCategoryRelations { get; set; } = new List<GameCategoryRelation>();
     }
 }

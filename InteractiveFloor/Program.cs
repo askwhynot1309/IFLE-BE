@@ -1,5 +1,7 @@
 using DAO;
 using Microsoft.EntityFrameworkCore;
+using Repository;
+using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<InteractiveFloorManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IGameCategoryRepository, GameCategoryRepository>();
+builder.Services.AddScoped<IGameCategoryService, GameCategoryService>();
 
 var app = builder.Build();
 

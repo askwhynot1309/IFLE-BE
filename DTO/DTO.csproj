@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DAO\DAO.csproj" />
-    <ProjectReference Include="..\DTO\DTO.csproj" />
+    <Compile Remove="GameCategory\**" />
+    <EmbeddedResource Remove="GameCategory\**" />
+    <None Remove="GameCategory\**" />
   </ItemGroup>
 
 </Project>
