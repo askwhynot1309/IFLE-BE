@@ -4,6 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
+    public interface IGameCategoryRepository
+    {
+        Task<List<GameCategory>> GetAllAsync();
+        Task<GameCategory> GetByIdAsync(string id);
+        Task<GameCategory> CreateAsync(GameCategory gameCategory);
+        Task<GameCategory> UpdateAsync(GameCategory gameCategory);
+        Task DeleteAsync(string id);
+    }
+
     public class GameCategoryRepository : IGameCategoryRepository
     {
         private readonly InteractiveFloorManagementContext _context;
@@ -18,14 +27,13 @@ namespace Repository
             return await _context.GameCategories.ToListAsync();
         }
 
-        public async Task<GameCategory?> GetByIdAsync(string id)
+        public async Task<GameCategory> GetByIdAsync(string id)
         {
-            return await _context.GameCategories.FindAsync(id.Trim());
+            return await _context.GameCategories.FindAsync(id);
         }
 
         public async Task<GameCategory> CreateAsync(GameCategory gameCategory)
         {
-            gameCategory.Id = Guid.NewGuid().ToString("N"); // Generate a clean GUID without hyphens
             _context.GameCategories.Add(gameCategory);
             await _context.SaveChangesAsync();
             return gameCategory;
@@ -33,7 +41,6 @@ namespace Repository
 
         public async Task<GameCategory> UpdateAsync(GameCategory gameCategory)
         {
-            gameCategory.Id = gameCategory.Id.Trim(); // Ensure ID is trimmed
             _context.Entry(gameCategory).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return gameCategory;
@@ -41,7 +48,7 @@ namespace Repository
 
         public async Task DeleteAsync(string id)
         {
-            var gameCategory = await _context.GameCategories.FindAsync(id.Trim());
+            var gameCategory = await _context.GameCategories.FindAsync(id);
             if (gameCategory != null)
             {
                 _context.GameCategories.Remove(gameCategory);

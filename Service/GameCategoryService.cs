@@ -4,77 +4,90 @@ using Repository;
 
 namespace Service
 {
+    public interface IGameCategoryService
+    {
+        Task<List<GameCategoryResponse>> GetAllAsync();
+        Task<GameCategoryResponse> GetByIdAsync(string id);
+        Task<GameCategoryResponse> CreateAsync(CreateGameCategoryRequest request);
+        Task<GameCategoryResponse> UpdateAsync(string id, UpdateGameCategoryRequest request);
+        Task DeleteAsync(string id);
+    }
+
     public class GameCategoryService : IGameCategoryService
     {
-        private readonly IGameCategoryRepository _gameCategoryRepository;
+        private readonly IGameCategoryRepository _repository;
 
-        public GameCategoryService(IGameCategoryRepository gameCategoryRepository)
+        public GameCategoryService(IGameCategoryRepository repository)
         {
-            _gameCategoryRepository = gameCategoryRepository;
+            _repository = repository;
         }
 
         public async Task<List<GameCategoryResponse>> GetAllAsync()
         {
-            var gameCategories = await _gameCategoryRepository.GetAllAsync();
-            return gameCategories.Select(gc => new GameCategoryResponse
+            var categories = await _repository.GetAllAsync();
+            return categories.Select(c => new GameCategoryResponse
             {
-                Id = gc.Id.Trim(),
-                Name = gc.Name,
-                Description = gc.Description
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description
             }).ToList();
         }
 
-        public async Task<GameCategoryResponse?> GetByIdAsync(string id)
+        public async Task<GameCategoryResponse> GetByIdAsync(string id)
         {
-            var gameCategory = await _gameCategoryRepository.GetByIdAsync(id);
-            if (gameCategory == null) return null;
+            var category = await _repository.GetByIdAsync(id);
+            if (category == null)
+                return null;
 
             return new GameCategoryResponse
             {
-                Id = gameCategory.Id.Trim(),
-                Name = gameCategory.Name,
-                Description = gameCategory.Description
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
             };
         }
 
         public async Task<GameCategoryResponse> CreateAsync(CreateGameCategoryRequest request)
         {
-            var gameCategory = new GameCategory
+            var category = new GameCategory
             {
+                Id = Guid.NewGuid().ToString("N").Substring(0, 8),
                 Name = request.Name,
                 Description = request.Description
             };
 
-            var created = await _gameCategoryRepository.CreateAsync(gameCategory);
+            await _repository.CreateAsync(category);
+
             return new GameCategoryResponse
             {
-                Id = created.Id.Trim(),
-                Name = created.Name,
-                Description = created.Description
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
             };
         }
 
         public async Task<GameCategoryResponse> UpdateAsync(string id, UpdateGameCategoryRequest request)
         {
-            var existing = await _gameCategoryRepository.GetByIdAsync(id);
-            if (existing == null)
-                throw new KeyNotFoundException($"GameCategory with ID {id} not found");
+            var category = new GameCategory
+            {
+                Id = id,
+                Name = request.Name,
+                Description = request.Description
+            };
 
-            existing.Name = request.Name;
-            existing.Description = request.Description;
+            await _repository.UpdateAsync(category);
 
-            var updated = await _gameCategoryRepository.UpdateAsync(existing);
             return new GameCategoryResponse
             {
-                Id = updated.Id.Trim(),
-                Name = updated.Name,
-                Description = updated.Description
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
             };
         }
 
         public async Task DeleteAsync(string id)
         {
-            await _gameCategoryRepository.DeleteAsync(id);
+            await _repository.DeleteAsync(id);
         }
     }
 } 
