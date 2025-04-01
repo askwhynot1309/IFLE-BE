@@ -4,15 +4,6 @@ using Repository;
 
 namespace Service
 {
-    public interface IGameCategoryService
-    {
-        Task<List<GameCategoryResponse>> GetAllAsync();
-        Task<GameCategoryResponse> GetByIdAsync(string id);
-        Task<GameCategoryResponse> CreateAsync(CreateGameCategoryRequest request);
-        Task<GameCategoryResponse> UpdateAsync(string id, UpdateGameCategoryRequest request);
-        Task DeleteAsync(string id);
-    }
-
     public class GameCategoryService : IGameCategoryService
     {
         private readonly IGameCategoryRepository _repository;
@@ -51,7 +42,7 @@ namespace Service
         {
             var category = new GameCategory
             {
-                Id = Guid.NewGuid().ToString("N").Substring(0, 8),
+                Id = Guid.NewGuid().ToString("N").Substring(0, 16),
                 Name = request.Name,
                 Description = request.Description
             };

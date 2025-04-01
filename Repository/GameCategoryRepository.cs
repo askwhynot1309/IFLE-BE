@@ -4,15 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
-    public interface IGameCategoryRepository
-    {
-        Task<List<GameCategory>> GetAllAsync();
-        Task<GameCategory> GetByIdAsync(string id);
-        Task<GameCategory> CreateAsync(GameCategory gameCategory);
-        Task<GameCategory> UpdateAsync(GameCategory gameCategory);
-        Task DeleteAsync(string id);
-    }
-
     public class GameCategoryRepository : IGameCategoryRepository
     {
         private readonly InteractiveFloorManagementContext _context;
@@ -27,7 +18,7 @@ namespace Repository
             return await _context.GameCategories.ToListAsync();
         }
 
-        public async Task<GameCategory> GetByIdAsync(string id)
+        public async Task<GameCategory?> GetByIdAsync(string id)
         {
             return await _context.GameCategories.FindAsync(id);
         }
