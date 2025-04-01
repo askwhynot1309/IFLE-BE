@@ -42,7 +42,7 @@ namespace Service
         {
             var category = new GameCategory
             {
-                Id = Guid.NewGuid().ToString("N").Substring(0, 16),
+                Id = Guid.NewGuid().ToString("N").Substring(0, 32),
                 Name = request.Name,
                 Description = request.Description
             };
