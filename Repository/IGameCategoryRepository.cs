@@ -1,8 +1,9 @@
 using BusinessObjects.Models;
+using Repository.Repositories.GenericRepositories;
 
 namespace Repository
 {
-    public interface IGameCategoryRepository
+    public interface IGameCategoryRepository : IGenericRepository<GameCategory>
     {
         Task<List<GameCategory>> GetAllAsync();
         Task<GameCategory?> GetByIdAsync(string id);

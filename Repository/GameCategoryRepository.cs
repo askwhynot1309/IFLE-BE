@@ -1,14 +1,15 @@
 using BusinessObjects.Models;
 using DAO;
 using Microsoft.EntityFrameworkCore;
+using Repository.Repositories.GenericRepositories;      
 
 namespace Repository
 {
-    public class GameCategoryRepository : IGameCategoryRepository
+    public class GameCategoryRepository : GenericRepository<GameCategory>, IGameCategoryRepository
     {
         private readonly InteractiveFloorManagementContext _context;
 
-        public GameCategoryRepository(InteractiveFloorManagementContext context)
+        public GameCategoryRepository(InteractiveFloorManagementContext context) : base(context)
         {
             _context = context;
         }

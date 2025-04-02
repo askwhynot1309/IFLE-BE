@@ -1,6 +1,7 @@
 using BusinessObjects.Models;
 using DTO;
 using Repository;
+using System.Linq.Expressions;
 
 namespace Service
 {
@@ -15,7 +16,7 @@ namespace Service
 
         public async Task<List<GameCategoryResponse>> GetAllAsync()
         {
-            var categories = await _repository.GetAllAsync();
+            var categories = await _repository.Get();
             return categories.Select(c => new GameCategoryResponse
             {
                 Id = c.Id,
@@ -26,7 +27,8 @@ namespace Service
 
         public async Task<GameCategoryResponse> GetByIdAsync(string id)
         {
-            var category = await _repository.GetByIdAsync(id);
+            Expression<Func<GameCategory, bool>> filter = c => c.Id == id;
+            var category = await _repository.GetSingle(filter);
             if (category == null)
                 return null;
 
@@ -47,7 +49,7 @@ namespace Service
                 Description = request.Description
             };
 
-            await _repository.CreateAsync(category);
+            await _repository.Insert(category);
 
             return new GameCategoryResponse
             {
@@ -66,7 +68,7 @@ namespace Service
                 Description = request.Description
             };
 
-            await _repository.UpdateAsync(category);
+            await _repository.Update(category);
 
             return new GameCategoryResponse
             {
@@ -78,7 +80,8 @@ namespace Service
 
         public async Task DeleteAsync(string id)
         {
-            await _repository.DeleteAsync(id);
+            var category = new GameCategory { Id = id };
+            await _repository.Delete(category);
         }
     }
-} 
+}
