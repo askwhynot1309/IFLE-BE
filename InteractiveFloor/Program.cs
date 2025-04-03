@@ -72,9 +72,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidIssuer = "Healing",
-            ValidAudience = "Healing",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("b5aec850e7e188935e6832264e527945aef42149aa8567b64028f6b42decb66a")),
+            ValidIssuer = builder.Configuration["Jwt:Audience"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
