@@ -32,7 +32,7 @@ namespace InteractiveFloor.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("refresh-token")]
         public async Task<IActionResult> ValidateRefreshToken([FromBody] string refreshToken)
         {

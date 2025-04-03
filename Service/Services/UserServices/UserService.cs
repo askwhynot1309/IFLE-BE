@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using Repository.Repositories.UserRepositories;
 using Service.Ultis;
@@ -29,6 +30,17 @@ namespace Service.Services.UserServices
                 throw new CustomException("Id user không tồn tại");
             }
             return _mapper.Map<UserOwnInfoResponseModel>(user);
+        }
+
+        public async Task UpdateUserOwnInformation(string userId, UserUpdateRequestModel model)
+        {
+            var user = await _userRepository.GetUserById(userId);
+            if (user == null)
+            {
+                throw new CustomException("Id user không tồn tại");
+            }
+            _mapper.Map(model, user);
+            await _userRepository.Update(user);
         }
     }
 }
