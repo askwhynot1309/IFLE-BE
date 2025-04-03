@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.User.Request;
+﻿using BusinessObjects.DTOs.OTP.Request;
+using BusinessObjects.DTOs.User.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,5 +36,13 @@ namespace InteractiveFloor.Controllers
             return Ok("Cập nhật thông tin tài khoản thành công.");
         }
 
+        [HttpPut]
+        [Authorize(Roles = "Customer, Staff, Admin")]
+        [Route("{id}/password")]
+        public async Task<IActionResult> ChangePassword(string id, [FromBody] UserChangePasswordRequestModel model)
+        {
+            await _userService.ChangePassword(model, id);
+            return Ok("Cập nhật mật khẩu mới thành công.");
+        }
     }
 }

@@ -100,5 +100,47 @@ namespace Service.Services.OTPServices
                 await _userRepository.Update(currentUser);
             }
         }
+
+        public async Task VerifyOTPToSendNewPassword(OTPVerifyRequestModel model)
+        {
+            User currentUser = await _userRepository.GetUserByEmail(model.Email);
+
+            if (currentUser == null)
+            {
+                throw new CustomException("Email bạn nhập không kết nối với tài khoản nào.");
+            }
+
+            var latestOTP = await _otpCodeRepository.GetLatestOTP(currentUser.Id);
+
+            if (latestOTP != null)
+            {
+                if ((DateTime.Now - latestOTP.CreatedAt).TotalMinutes > 30 || latestOTP.IsUsed)
+                {
+                    throw new CustomException("Mã OTP đã quá thời gian hoặc đã được sử dụng. Xin vui lòng nhập mã OTP mới nhất.");
+                }
+
+                if (latestOTP.Code.Equals(model.OTP))
+                {
+                    latestOTP.IsUsed = true;
+                    var newPassword = PasswordHasher.GenerateRandomPassword();
+                    var (salt, hash) = PasswordHasher.HashPassword(newPassword);
+                    currentUser.Password = hash;
+                    currentUser.Salt = salt;
+                    var htmlBody = HTMLEmailTemplate.SendingNewPasswordEmail(currentUser.FullName, newPassword);
+                    bool sendEmailSuccess = await _emailService.SendEmail(model.Email, "Thông tin về mật khẩu mới", htmlBody);
+                    if (!sendEmailSuccess)
+                    {
+                        throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
+                    }
+                }
+                else
+                {
+                    throw new CustomException("Mã OTP không hợp lệ.");
+                }
+
+                await _otpCodeRepository.Update(latestOTP);
+                await _userRepository.Update(currentUser);
+            }
+        }
     }
 }

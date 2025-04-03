@@ -31,5 +31,13 @@ namespace InteractiveFloor.Controllers
             await _otpService.CheckOTPInVerifyAccount(model);
             return Ok("Xác thực mã OTP thành công.");
         }
+
+        [HttpPut]
+        [Route("forget-password")]
+        public async Task<IActionResult> GetNewPasswword(OTPVerifyRequestModel model)
+        {
+            await _otpService.VerifyOTPToSendNewPassword(model);
+            return Ok("Xác thực mã OTP thành công. Mật khẩu mới đã được gửi tới mail.");
+        }
     }
 }

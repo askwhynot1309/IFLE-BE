@@ -21,7 +21,7 @@ namespace Service.Ultis
                                     Nếu bạn không yêu cầu xác nhận email, vui lòng bỏ qua email này hoặc <a href='...' style='color: #0066cc;'>liên hệ chúng tôi</a> ngay lập tức.
                                  </p>
                                  <p style='font-size: 14px;'>Đây là email tự động, vui lòng không trả lời email này.</p>
-                                 <p style='font-size: 14px;'>Trân trọng,<br/><strong>Healing Consultant</strong></p>
+                                 <p style='font-size: 14px;'>Trân trọng,<br/><strong>IFLE</strong></p>
                              </div>
                          </div>";
             return html;
@@ -39,7 +39,25 @@ namespace Service.Ultis
                                     Nếu bạn không yêu cầu việc này, vui lòng liên hệ <a href='...' style='color: #0066cc;'>chúng tôi</a> ngay lập tức.
                                 </p>
                                  <p style='font-size: 14px;'>Đây là email tự động, vui lòng không trả lời email này.</p>
-                                 <p style='font-size: 14px;'>Trân trọng,<br/><strong>Healing Consultant</strong></p>
+                                 <p style='font-size: 14px;'>Trân trọng,<br/><strong>IFLE</strong></p>
+                             </div>
+                         </div>";
+            return html;
+        }
+
+        public static string SendingNewPasswordEmail(string fullname, string newPassword)
+        {
+            var html = $@"<div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                             <div style='border: 1px solid #e0e0e0; padding: 20px; max-width: 600px; margin: auto;'>
+                                 <p style='font-size: 16px;'>Kính gửi <strong>{fullname}</strong>,</p>
+                                 <hr style='border: none; border-bottom: 1px solid #ccc; margin: 20px 0;'/>
+                                 <p style='font-size: 14px;'>
+                                    Mật khẩu mới của bạn là: <strong style='font-size: 18px; color: #d9534f;'>{newPassword}</strong><br/>
+                                    Vui lòng đảm bảo cập nhật mật khẩu sau khi đăng nhập để bảo mật tài khoản của bạn.<br/>
+                                    Nếu bạn không yêu cầu việc này, vui lòng liên hệ <a href='...' style='color: #0066cc;'>chúng tôi</a> ngay lập tức.
+                                </p>
+                                 <p style='font-size: 14px;'>Đây là email tự động, vui lòng không trả lời email này.</p>
+                                 <p style='font-size: 14px;'>Trân trọng,<br/><strong>IFLE</strong></p>
                              </div>
                          </div>";
             return html;

@@ -149,15 +149,26 @@ namespace Service.Services.AuthenticationServices
 
                 var (accessToken, refreshToken) = await GenerateJWT(user.Id);
 
-                var newRefreshToken = new RefreshToken()
+                var existRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
+                if (existRefreshToken != null)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    Token = refreshToken,
-                    ExpiredAt = DateTime.Now.AddDays(7),
-                    UserId = user.Id
-                };
+                    existRefreshToken.Token = refreshToken;
+                    existRefreshToken.ExpiredAt = DateTime.Now.AddDays(7);
 
-                await _refreshTokenRepository.Insert(newRefreshToken);
+                    await _refreshTokenRepository.Update(existRefreshToken);
+                }
+                else
+                {
+                    var newRefreshToken = new RefreshToken()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Token = refreshToken,
+                        ExpiredAt = DateTime.Now.AddDays(7),
+                        UserId = user.Id
+                    };
+
+                    await _refreshTokenRepository.Insert(newRefreshToken);
+                }
 
                 return new UserAuthResponseModel()
                 {
