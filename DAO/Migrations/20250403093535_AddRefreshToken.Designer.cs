@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(InteractiveFloorManagementContext))]
-    partial class InteractiveFloorManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250403093535_AddRefreshToken")]
+    partial class AddRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -551,30 +554,24 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObjects.Models.RefreshToken", b =>
                 {
                     b.Property<string>("Id")
-                        .HasMaxLength(36)
-                        .IsUnicode(false)
-                        .HasColumnType("char(36)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(36)
-                        .IsUnicode(false)
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Role", b =>
@@ -604,10 +601,6 @@ namespace DAO.Migrations
                         .HasColumnType("char(36)")
                         .IsFixedLength();
 
-                    b.Property<string>("AvatarUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime");
 
@@ -621,9 +614,6 @@ namespace DAO.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Password")
                         .IsRequired()
