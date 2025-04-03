@@ -35,6 +35,7 @@ namespace Service
         {
             var game = _mapper.Map<Game>(request);
             game.Status = "active";
+            game.PlayCount = 0;
             await _repository.Insert(game);
 
             // Add categories
@@ -76,6 +77,15 @@ namespace Service
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
             game.Status = "inactive";
+            await _repository.Update(game);
+        }
+
+        public async Task UpdatePlayCount(string id)
+        {
+            var game = await _repository.GetByIdWithDetailsAsync(id);
+            if (game == null)
+                throw new KeyNotFoundException($"Game with ID {id} not found.");
+            game.PlayCount += 1;
             await _repository.Update(game);
         }
     }
