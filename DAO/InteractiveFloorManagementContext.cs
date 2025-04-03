@@ -123,6 +123,12 @@ namespace DAO
                     .IsRequired();
             });
 
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = "9a91761a-afb5-49ac-b42e-bf357e944eab", Name = "Admin" },
+                new Role { Id = "eade30a8-5e6e-4103-85b2-7e449de61a8b", Name = "Staff" },
+                new Role { Id = "bc60ffc5-e9bb-4c9d-916a-69c673fbb184", Name = "Customer" }
+                );
+
             modelBuilder.Entity<OrganizationUser>(entity =>
             {
                 entity.ToTable("OrganizationUser");
