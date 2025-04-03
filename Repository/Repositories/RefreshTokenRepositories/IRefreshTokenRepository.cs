@@ -11,5 +11,7 @@ namespace Repository.Repositories.RefreshTokenRepositories
     public interface IRefreshTokenRepository : IGenericRepository<RefreshToken>
     {
         Task<RefreshToken> GetRefreshTokenByToken(string refreshToken);
+
+        Task<RefreshToken> GetRefreshTokenByUserId(string userId);
     }
 }

@@ -11,6 +11,9 @@ namespace Service.Services.UserServices
     public interface IUserService
     {
         Task<UserOwnInfoResponseModel> GetUserOwnInfo(string userId);
+
         Task UpdateUserOwnInformation(string userId, UserUpdateRequestModel model);
+
+        Task ChangePassword(UserChangePasswordRequestModel model, string userId);
     }
 }

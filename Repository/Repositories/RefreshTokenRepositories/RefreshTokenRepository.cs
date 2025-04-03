@@ -19,5 +19,10 @@ namespace Repository.Repositories.RefreshTokenRepositories
         {
             return await GetSingle(r => r.Token.Equals(refreshToken));
         }
+
+        public async Task<RefreshToken> GetRefreshTokenByUserId(string userId)
+        {
+            return await GetSingle(r => r.UserId.Equals(userId));
+        }
     }
 }
