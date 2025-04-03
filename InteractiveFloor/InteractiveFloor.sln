@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractiveFloor", "InteractiveFloor.csproj", "{E933309F-0243-4734-8D35-2699ED90C13E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InteractiveFloor", "InteractiveFloor.csproj", "{E933309F-0243-4734-8D35-2699ED90C13E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObjects", "..\BusinessObjects\BusinessObjects.csproj", "{78F05B99-05B4-4490-BBD8-3A182E7C9A84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessObjects", "..\BusinessObjects\BusinessObjects.csproj", "{78F05B99-05B4-4490-BBD8-3A182E7C9A84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAO", "..\DAO\DAO.csproj", "{84215A69-EF22-4143-A0DB-D673B685AEA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAO", "..\DAO\DAO.csproj", "{84215A69-EF22-4143-A0DB-D673B685AEA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "..\Repository\Repository.csproj", "{F0759213-7EED-4121-BEFA-9DAC3137DC7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "..\Repository\Repository.csproj", "{F0759213-7EED-4121-BEFA-9DAC3137DC7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "..\Service\Service.csproj", "{CBF9997E-946F-4B58-9E0B-12CED287274A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "..\Service\Service.csproj", "{CBF9997E-946F-4B58-9E0B-12CED287274A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "..\DTO\DTO.csproj", "{44899E71-CE66-4292-8713-9EC2494A29A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{CBF9997E-946F-4B58-9E0B-12CED287274A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBF9997E-946F-4B58-9E0B-12CED287274A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBF9997E-946F-4B58-9E0B-12CED287274A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44899E71-CE66-4292-8713-9EC2494A29A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44899E71-CE66-4292-8713-9EC2494A29A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44899E71-CE66-4292-8713-9EC2494A29A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44899E71-CE66-4292-8713-9EC2494A29A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

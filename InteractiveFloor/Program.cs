@@ -13,6 +13,9 @@ using Service.Services.AuthenticationServices;
 using Service.Services.EmailServices;
 using Service.Services.OTPServices;
 using System.Text;
+using Repository;
+using Service;
+using InteractiveFloor.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<InteractiveFloorManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 //========================================== MAPPER ===============================================
 
