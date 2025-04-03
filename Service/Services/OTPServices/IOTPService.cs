@@ -10,6 +10,9 @@ namespace Service.Services.OTPServices
     public interface IOTPService
     {
         Task CreateOTPCodeForEmail(OTPSendEmailRequestModel model);
+
         Task CheckOTPInVerifyAccount(OTPVerifyRequestModel model);
+
+        Task VerifyOTPToSendNewPassword(OTPVerifyRequestModel model);
     }
 }
