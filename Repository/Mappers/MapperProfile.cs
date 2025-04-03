@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserDTOs.Request;
 using BusinessObjects.Models;
@@ -17,6 +18,7 @@ namespace Repository.Mappers
             //User
             CreateMap<UserRegisterWithPwRequestModel, User>();
             CreateMap<User, UserOwnInfoResponseModel>();
+            CreateMap<UserUpdateRequestModel, User>();
         }
     }
 }
