@@ -12,6 +12,7 @@ using Repository.Repositories.UserRepositories;
 using Service.Services.AuthenticationServices;
 using Service.Services.EmailServices;
 using Service.Services.OTPServices;
+using Service.Services.UserServices;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IOTPService, OTPService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 //========================================== AUTHENTICATION =======================================
 
