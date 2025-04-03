@@ -152,7 +152,7 @@ namespace Service.Services.AuthenticationServices
                 var newRefreshToken = new RefreshToken()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Token = accessToken,
+                    Token = refreshToken,
                     ExpiredAt = DateTime.Now.AddDays(7),
                     UserId = user.Id
                 };
