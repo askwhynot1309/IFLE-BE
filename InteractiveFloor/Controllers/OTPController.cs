@@ -24,7 +24,7 @@ namespace InteractiveFloor.Controllers
             return Ok("Mã OTP đã được gửi đến email của bạn.");
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("verify-email")]
         public async Task<IActionResult> VerifyEmailOTP(OTPVerifyRequestModel model)
         {

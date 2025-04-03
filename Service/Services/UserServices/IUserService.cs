@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.User.Response;
+﻿using BusinessObjects.DTOs.User.Request;
+using BusinessObjects.DTOs.User.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Service.Services.UserServices
     public interface IUserService
     {
         Task<UserOwnInfoResponseModel> GetUserOwnInfo(string userId);
+        Task UpdateUserOwnInformation(string userId, UserUpdateRequestModel model);
     }
 }
