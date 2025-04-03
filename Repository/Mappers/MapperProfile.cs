@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserDTOs.Request;
 using BusinessObjects.Models;
 using System;
@@ -13,7 +14,9 @@ namespace Repository.Mappers
     {
         public MapperProfile()
         {
+            //User
             CreateMap<UserRegisterWithPwRequestModel, User>();
+            CreateMap<User, UserOwnInfoResponseModel>();
         }
     }
 }
