@@ -72,6 +72,9 @@ namespace DAO
                     .HasMaxLength(100)
                     .IsRequired();
 
+                entity.Property(e => e.AvatarUrl)
+                    .HasMaxLength(500);
+
                 entity.Property(e => e.Password)
                     .HasMaxLength(256)
                     .IsUnicode(false)
@@ -92,6 +95,10 @@ namespace DAO
                 entity.Property(e => e.Status)
                     .HasMaxLength(50)
                     .IsUnicode(false)
+                    .IsRequired();
+
+                entity.Property(e => e.IsVerified)
+                    .HasColumnType("bit")
                     .IsRequired();
 
                 entity.HasOne(d => d.Role).WithMany(p => p.Users)
@@ -659,6 +666,34 @@ namespace DAO
                 entity.HasOne(d => d.GamePackage)
                     .WithMany(p => p.GamePackageRelations)
                     .HasForeignKey(d => d.GamePackageId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.ToTable("RefreshToken");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Token)
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                entity.Property(e => e.ExpiredAt)
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.RefreshTokens)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

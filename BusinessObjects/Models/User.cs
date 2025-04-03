@@ -16,6 +16,8 @@ namespace BusinessObjects.Models
 
         public string Password { get; set; } = null!;
 
+        public string? AvatarUrl { get; set; }
+
         public string Salt { get; set; } = null!;
 
         public string RoleId { get; set; } = null!;
@@ -24,9 +26,13 @@ namespace BusinessObjects.Models
 
         public string Status { get; set; } = null!;
 
+        public bool IsVerified { get; set; }
+
         public virtual Role Role { get; set; } = null!;
 
         public virtual ICollection<OTP> OTP { get; set; } = new List<OTP>();
+
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
         public virtual ICollection<OrganizationUser> OrganizationUsers { get; set; } = new List<OrganizationUser>();
 
