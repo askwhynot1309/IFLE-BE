@@ -1,0 +1,99 @@
+using DTO;
+using Microsoft.AspNetCore.Mvc;
+using Service;
+
+namespace InteractiveFloor.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class GameController : ControllerBase
+    {
+        private readonly IGameService _gameService;
+
+        public GameController(IGameService gameService)
+        {
+            _gameService = gameService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<GameResponse>>> GetAll()
+        {
+            try
+            {
+                var games = await _gameService.GetAllAsync();
+                return Ok(games);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving games.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GameResponse>> GetById(string id)
+        {
+            try
+            {
+                var game = await _gameService.GetByIdAsync(id);
+                if (game == null)
+                    return NotFound(new { message = $"Game with ID {id} not found." });
+
+                return Ok(game);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving the game.", error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<GameResponse>> Create(CreateGameRequest request)
+        {
+            try
+            {
+                var game = await _gameService.CreateAsync(request);
+                return CreatedAtAction(nameof(GetById), new { id = game.Id }, game);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while creating the game.", error = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<GameResponse>> Update(string id, UpdateGameRequest request)
+        {
+            try
+            {
+                var game = await _gameService.UpdateAsync(id, request);
+                return Ok(game);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the game.", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                await _gameService.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deleting the game.", error = ex.Message });
+            }
+        }
+    }
+} 
