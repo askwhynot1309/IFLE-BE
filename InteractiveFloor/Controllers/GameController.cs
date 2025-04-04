@@ -113,5 +113,27 @@ namespace InteractiveFloor.Controllers
                 return StatusCode(500, new { message = "An error occurred while deleting the game.", error = ex.Message });
             }
         }
+
+        //[HttpGet("download/{id}")]
+        //public async Task<IActionResult> DownloadGame(string id)
+        //{
+        //    var downloadUrl = await _gameService.GetDownloadUrl(id); 
+
+        //    using (var httpClient = new HttpClient())
+        //    {
+        //        var response = await httpClient.GetAsync(downloadUrl);
+        //        if (!response.IsSuccessStatusCode)
+        //        {
+        //            return NotFound("File not found at download URL.");
+        //        }
+
+        //        var fileBytes = await response.Content.ReadAsByteArrayAsync();
+        //        var contentType = "application/zip";
+        //        var fileName = "game.zip";
+
+        //        return File(fileBytes, contentType, fileName);
+        //    }
+        //}
+
     }
 } 
