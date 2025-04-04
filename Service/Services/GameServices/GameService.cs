@@ -1,9 +1,9 @@
 using AutoMapper;
 using BusinessObjects.Models;
 using DTO;
-using Repository;
+using Repository.Repositories.GameRepositories;
 
-namespace Service
+namespace Service.Services.GameServices
 {
     public class GameService : IGameService
     {
@@ -89,4 +89,4 @@ namespace Service
             await _repository.Update(game);
         }
     }
-} 
+}

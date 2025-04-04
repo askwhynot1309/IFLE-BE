@@ -1,7 +1,7 @@
 using BusinessObjects.Models;
 using Repository.Repositories.GenericRepositories;
 
-namespace Repository
+namespace Repository.Repositories.GameCategoryRepositories
 {
     public interface IGameCategoryRepository : IGenericRepository<GameCategory>
     {
@@ -11,4 +11,4 @@ namespace Repository
         Task<GameCategory> UpdateAsync(GameCategory gameCategory);
         Task DeleteAsync(string id);
     }
-} 
+}

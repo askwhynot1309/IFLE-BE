@@ -12,7 +12,9 @@ namespace Service.Services.UserServices
     {
         Task<UserOwnInfoResponseModel> GetUserOwnInfo(string userId);
 
-        Task UpdateUserOwnInformation(string userId, UserUpdateRequestModel model);
+        Task<string> UpdateUserOwnInformation(string userId, InfoUpdateRequestModel model);
+
+        Task<string> UpdateUserAvatar(string userId, string avatarUrl);
 
         Task ChangePassword(UserChangePasswordRequestModel model, string userId);
     }

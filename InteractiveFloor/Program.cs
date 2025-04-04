@@ -17,6 +17,10 @@ using System.Text;
 using Repository;
 using Service;
 using InteractiveFloor.Mappings;
+using Repository.Repositories.GameCategoryRepositories;
+using Repository.Repositories.GameRepositories;
+using Service.Services.GameServices;
+using Service.Services.GameCategoryServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

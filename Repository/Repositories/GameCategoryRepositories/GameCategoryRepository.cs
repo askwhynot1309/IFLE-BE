@@ -1,9 +1,9 @@
 using BusinessObjects.Models;
 using DAO;
 using Microsoft.EntityFrameworkCore;
-using Repository.Repositories.GenericRepositories;      
+using Repository.Repositories.GenericRepositories;
 
-namespace Repository
+namespace Repository.Repositories.GameCategoryRepositories
 {
     public class GameCategoryRepository : GenericRepository<GameCategory>, IGameCategoryRepository
     {
@@ -48,4 +48,4 @@ namespace Repository
             }
         }
     }
-} 
+}

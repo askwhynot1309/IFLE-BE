@@ -1,6 +1,6 @@
 using DTO;
 
-namespace Service
+namespace Service.Services.GameServices
 {
     public interface IGameService
     {
@@ -11,4 +11,4 @@ namespace Service
         Task DeleteAsync(string id);
         Task UpdatePlayCount(string id);
     }
-} 
+}
