@@ -1,6 +1,6 @@
 using DTO;
 
-namespace Service
+namespace Service.Services.GameServices
 {
     public interface IGameService
     {
@@ -10,4 +10,4 @@ namespace Service
         Task<GameResponse> UpdateAsync(string id, UpdateGameRequest request);
         Task DeleteAsync(string id);
     }
-} 
+}

@@ -3,7 +3,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Repository.Repositories.GenericRepositories;
 
-namespace Repository
+namespace Repository.Repositories.GameRepositories
 {
     public class GameRepository : GenericRepository<Game>, IGameRepository
     {
@@ -60,4 +60,4 @@ namespace Repository
             await _context.SaveChangesAsync();
         }
     }
-} 
+}
