@@ -78,13 +78,31 @@ namespace InteractiveFloor.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpPut("disable-game/{id}")]
+        public async Task<IActionResult> DisableGame(string id)
         {
             try
             {
                 await _gameService.DeleteAsync(id);
-                return NoContent();
+                return Ok("Disabled");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deleting the game.", error = ex.Message });
+            }
+        }
+
+        [HttpPut("update-game-count/{id}")]
+        public async Task<IActionResult> UpdateGameCount(string id)
+        {
+            try
+            {
+                await _gameService.UpdatePlayCount(id);
+                return Ok("Game count increased by 1");
             }
             catch (KeyNotFoundException ex)
             {
