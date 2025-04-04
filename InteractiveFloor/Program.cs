@@ -17,6 +17,10 @@ using System.Text;
 using Repository;
 using Service;
 using InteractiveFloor.Mappings;
+using Repository.Repositories.GameCategoryRepositories;
+using Repository.Repositories.GameRepositories;
+using Service.Services.GameServices;
+using Service.Services.GameCategoryServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +63,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOTPRepository, OTPRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IGameCategoryRepository, GameCategoryRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -66,6 +72,8 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IGameCategoryService, GameCategoryService>();
 
 //========================================== AUTHENTICATION =======================================
 

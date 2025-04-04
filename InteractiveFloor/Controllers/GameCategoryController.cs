@@ -1,6 +1,6 @@
 using DTO;
 using Microsoft.AspNetCore.Mvc;
-using Service;
+using Service.Services.GameCategoryServices;
 
 namespace InteractiveFloor.Controllers
 {

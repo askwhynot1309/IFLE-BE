@@ -1,9 +1,9 @@
 using BusinessObjects.Models;
 using DTO;
-using Repository;
+using Repository.Repositories.GameCategoryRepositories;
 using System.Linq.Expressions;
 
-namespace Service
+namespace Service.Services.GameCategoryServices
 {
     public class GameCategoryService : IGameCategoryService
     {

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.DTOs.User.Request
 {
-    public class UserUpdateRequestModel
+    public class InfoUpdateRequestModel
     {
         public string FullName { get; set; } = null!;
 
-        public string? AvatarUrl { get; set; }
     }
 }

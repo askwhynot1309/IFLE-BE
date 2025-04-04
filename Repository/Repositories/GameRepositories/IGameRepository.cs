@@ -1,7 +1,7 @@
 using BusinessObjects.Models;
 using Repository.Repositories.GenericRepositories;
 
-namespace Repository
+namespace Repository.Repositories.GameRepositories
 {
     public interface IGameRepository : IGenericRepository<Game>
     {
@@ -10,4 +10,4 @@ namespace Repository
         Task UpdateGameCategoriesAsync(Game game, List<string> categoryIds);
         Task AddGameVersionAsync(Game game, GameVersion version);
     }
-} 
+}
