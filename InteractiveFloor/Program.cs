@@ -38,6 +38,7 @@ builder.Services.AddDbContext<InteractiveFloorManagementContext>(options =>
 //========================================== MAPPER ===============================================
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 //========================================== MIDDLEWARE ===========================================
 
@@ -72,8 +73,8 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IGameCategoryService, GameCategoryService>();
+builder.Services.AddScoped<IGameService, GameService>();
 
 //========================================== AUTHENTICATION =======================================
 

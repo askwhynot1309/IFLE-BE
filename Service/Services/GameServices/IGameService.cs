@@ -9,5 +9,6 @@ namespace Service.Services.GameServices
         Task<GameResponse> CreateAsync(CreateGameRequest request);
         Task<GameResponse> UpdateAsync(string id, UpdateGameRequest request);
         Task DeleteAsync(string id);
+        Task UpdatePlayCount(string id);
     }
 }
