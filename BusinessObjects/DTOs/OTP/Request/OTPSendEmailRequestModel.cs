@@ -13,4 +13,4 @@ namespace BusinessObjects.DTOs.OTP.Request
         [Required(ErrorMessage = "Please input your email")]
         public string Email { get; set; } = null!;
     }
-}
+}   

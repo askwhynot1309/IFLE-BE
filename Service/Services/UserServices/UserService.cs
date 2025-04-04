@@ -2,6 +2,7 @@
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using Repository.Repositories.UserRepositories;
+using Service.Services.AuthenticationServices;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace Service.Services.UserServices
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthenticationService _authenticationService;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IAuthenticationService authenticationService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _authenticationService = authenticationService;
         }
 
         public async Task<UserOwnInfoResponseModel> GetUserOwnInfo(string userId)
@@ -32,7 +35,7 @@ namespace Service.Services.UserServices
             return _mapper.Map<UserOwnInfoResponseModel>(user);
         }
 
-        public async Task UpdateUserOwnInformation(string userId, UserUpdateRequestModel model)
+        public async Task<string> UpdateUserOwnInformation(string userId, InfoUpdateRequestModel model)
         {
             var user = await _userRepository.GetUserById(userId);
             if (user == null)
@@ -41,6 +44,23 @@ namespace Service.Services.UserServices
             }
             _mapper.Map(model, user);
             await _userRepository.Update(user);
+
+            var (access, refresh) = await _authenticationService.GenerateJWT(userId);
+            return access;
+        }
+
+        public async Task<string> UpdateUserAvatar(string userId, string avatarUrl)
+        {
+            var user = await _userRepository.GetUserById(userId);
+            if (user == null)
+            {
+                throw new CustomException("Id user không tồn tại");
+            }
+            user.AvatarUrl = avatarUrl;
+            await _userRepository.Update(user);
+
+            var (access, refresh) = await _authenticationService.GenerateJWT(userId);
+            return access;
         }
 
         public async Task ChangePassword(UserChangePasswordRequestModel model, string userId)

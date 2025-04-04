@@ -50,7 +50,8 @@ namespace Service.Services.AuthenticationServices
             var user = await _userRepository.GetUserById(userId);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            List<Claim> claims = new()
+
+            List<Claim> accessClaims = new()
             {
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name),
                 new Claim("userId", user.Id),
@@ -60,10 +61,15 @@ namespace Service.Services.AuthenticationServices
                 new Claim("avatarUrl", user.AvatarUrl != null ? user.AvatarUrl : string.Empty),
             };
 
+            List<Claim> refreshClaims = new()
+            {
+                new Claim("userId", user.Id),
+            };
+
             var access = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
-                claims: claims,
+                claims: accessClaims,
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: credential
                 );
@@ -71,7 +77,7 @@ namespace Service.Services.AuthenticationServices
             var refresh = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
-                claims: claims,
+                claims: refreshClaims,
                 expires: DateTime.Now.AddDays(7),
                 signingCredentials: credential
                 );

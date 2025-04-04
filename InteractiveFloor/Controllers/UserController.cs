@@ -29,11 +29,28 @@ namespace InteractiveFloor.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Customer")]
-        [Route("{id}")]
-        public async Task<IActionResult> UpdateUserOwnInfoById(string id, [FromBody] UserUpdateRequestModel model)
+        [Route("{id}/info")]
+        public async Task<IActionResult> UpdateUserNameInfoById(string id, [FromBody] InfoUpdateRequestModel model)
         {
-            await _userService.UpdateUserOwnInformation(id, model);
-            return Ok("Cập nhật thông tin tài khoản thành công.");
+            var newAccessToken = await _userService.UpdateUserOwnInformation(id, model);
+            return Ok(new
+            {
+                message = "Cập nhật thông tin tài khoản thành công.",
+                accessToken = newAccessToken
+            });
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Customer")]
+        [Route("{id}/avatar")]
+        public async Task<IActionResult> UpdateUserAvatar(string id, [FromBody] string avatarUrl)
+        {
+            var newAccessToken = await _userService.UpdateUserAvatar(id, avatarUrl);
+            return Ok(new
+            {
+                message = "Cập nhật ảnh đại diện thành công.",
+                accessToken = newAccessToken
+            });
         }
 
         [HttpPut]
