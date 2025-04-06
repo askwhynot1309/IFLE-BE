@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.DTOs.OTP.Request;
 using BusinessObjects.DTOs.User.Request;
+using BusinessObjects.DTOs.User.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using Service.Services.UserServices;
 
 namespace InteractiveFloor.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -60,6 +61,40 @@ namespace InteractiveFloor.Controllers
         {
             await _userService.ChangePassword(model, id);
             return Ok("Cập nhật mật khẩu mới thành công.");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllCustomers()
+        {
+            var response = await _userService.GetCustomerList();
+            return Ok(response);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("inactive")]
+        public async Task<IActionResult> DeactivateCustomerAccount(List<string> userIdList)
+        {
+            await _userService.DeactivateCustomerAccount(userIdList);
+            return Ok("Vô hiệu hóa tài khoản thành công.");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("staff")]
+        public async Task<IActionResult> CreateStaffAccount(StaffCreateRequestModel model)
+        {
+            await _userService.CreateStaffAccount(model);
+            return Ok("Tạo tài khoản staff mới thành công.");
+        }
+
+        [HttpGet]
+        [Route("staffs")]
+        public async Task<IActionResult> GetAllStaff()
+        {
+            var response = await _userService.GetStaffList();
+            return Ok(response);
         }
     }
 }
