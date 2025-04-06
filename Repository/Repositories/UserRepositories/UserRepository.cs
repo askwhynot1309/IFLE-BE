@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Models;
 using DAO;
+using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,24 @@ namespace Repository.Repositories.UserRepositories
         public async Task<User> GetUserByEmail(string email)
         {
             return await GetSingle(u => u.Email.ToLower().Equals(email.ToLower()), includeProperties: "Role");
+        }
+
+        public async Task<List<User>> GetCustomerList()
+        {
+            var users = await Get(u => u.Role.Name.Equals(RoleEnums.Customer.ToString()));
+            return users.ToList();
+        }
+
+        public async Task<List<User>> GetCustomerListById(List<string> userIdList)
+        {
+            var userList = await Get(u => userIdList.Contains(u.Id));
+            return userList.ToList();
+        }
+
+        public async Task<List<User>> GetStaffList()
+        {
+            var staffs = await Get(u => u.Role.Name.Equals(RoleEnums.Staff.ToString()));
+            return staffs.ToList();
         }
     }
 }

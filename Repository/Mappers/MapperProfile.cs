@@ -19,6 +19,9 @@ namespace Repository.Mappers
             CreateMap<UserRegisterWithPwRequestModel, User>();
             CreateMap<User, UserOwnInfoResponseModel>();
             CreateMap<InfoUpdateRequestModel, User>();
+            CreateMap<User, UserInfoResponeModel>();
+            CreateMap<StaffCreateRequestModel, User>();
+            
         }
     }
 }
