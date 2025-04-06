@@ -88,5 +88,13 @@ namespace Service.Services.GameServices
             game.PlayCount += 1;
             await _repository.Update(game);
         }
+
+        public async Task<string> GetDownloadUrl(string id)
+        {
+            var game = await _repository.GetByIdWithDetailsAsync(id);
+            if (game == null)
+                throw new KeyNotFoundException($"Game with ID {id} not found.");
+            return game.DownloadUrl;
+        }
     }
 }
