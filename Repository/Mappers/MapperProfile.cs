@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.Organization.Request;
+using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserDTOs.Request;
@@ -21,7 +23,12 @@ namespace Repository.Mappers
             CreateMap<InfoUpdateRequestModel, User>();
             CreateMap<User, UserInfoResponeModel>();
             CreateMap<StaffCreateRequestModel, User>();
-            
+            CreateMap<User, OrganizationUserReponseModel>();
+
+            //Organization
+            CreateMap<OrganizationCreateRequestModel, Organization>();
+            CreateMap<Organization, OrganizationInfoResponseModel>();
+
         }
     }
 }

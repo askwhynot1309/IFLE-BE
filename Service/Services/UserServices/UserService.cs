@@ -112,6 +112,18 @@ namespace Service.Services.UserServices
 
             await _userRepository.UpdateRange(customerList);
         }
+        
+        public async Task ActivateCustomerAccount(List<string> userIdList)
+        {
+            var customerList = await _userRepository.GetCustomerListById(userIdList);
+
+            foreach (var customer in customerList)
+            {
+                customer.Status = AccountStatusEnums.Active.ToString();
+            }
+
+            await _userRepository.UpdateRange(customerList);
+        }
 
         public async Task CreateStaffAccount(StaffCreateRequestModel model)
         {
