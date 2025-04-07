@@ -40,7 +40,7 @@ namespace InteractiveFloor.Controllers
             });
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Authorize(Roles = "Customer")]
         [Route("{id}/avatar")]
         public async Task<IActionResult> UpdateUserAvatar(string id, [FromBody] string avatarUrl)
@@ -70,7 +70,7 @@ namespace InteractiveFloor.Controllers
             return Ok(response);
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Authorize(Roles = "Admin")]
         [Route("inactive")]
         public async Task<IActionResult> DeactivateCustomerAccount(List<string> userIdList)
@@ -79,7 +79,7 @@ namespace InteractiveFloor.Controllers
             return Ok("Vô hiệu hóa tài khoản thành công.");
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Authorize(Roles = "Admin")]
         [Route("active")]
         public async Task<IActionResult> ActivateCustomerAccount(List<string> userIdList)

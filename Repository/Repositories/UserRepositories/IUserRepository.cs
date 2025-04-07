@@ -20,6 +20,6 @@ namespace Repository.Repositories.UserRepositories
 
         Task<List<User>> GetStaffList();
 
-        Task<List<User>> GetUsersByIdList(List<string> userIdList);
+        Task<List<string>> GetUserIdListByEmail(List<string> emailList);
     }
 }
