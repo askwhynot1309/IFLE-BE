@@ -19,5 +19,10 @@ namespace Repository.Repositories.OrganizationRepositories
         {
             return (await Get()).ToList();
         }
+
+        public async Task<Organization> GetOrganizationById(string id)
+        {
+            return await GetSingle(o => o.Id.Equals(id));
+        }
     }
 }

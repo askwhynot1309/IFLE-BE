@@ -28,5 +28,17 @@ namespace Repository.Repositories.OrganizationUserRepositories
             var organizationList = organizationUsers.Select(u => u.Organization).ToList();
             return organizationList;
         }
+
+        public async Task<List<OrganizationUser>> GetOrganizationUsersByUserIdList(List<string> userIdList, string organizationId)
+        {
+            var list = await Get(o => userIdList.Contains(o.UserId) && o.OrganizationId.Equals(organizationId));
+            return list.ToList();
+        }
+
+        public async Task<List<OrganizationUser>> GetOrganizationUserByOrganizationId(string organizationId)
+        {
+            var organizationUsers = await Get(o => o.OrganizationId.Equals(organizationId));
+            return organizationUsers.ToList();
+        }
     }
 }

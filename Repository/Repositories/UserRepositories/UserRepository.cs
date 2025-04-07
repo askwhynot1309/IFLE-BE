@@ -34,7 +34,7 @@ namespace Repository.Repositories.UserRepositories
 
         public async Task<List<User>> GetCustomerListById(List<string> userIdList)
         {
-            var userList = await Get(u => userIdList.Contains(u.Id));
+            var userList = await Get(u => userIdList.Contains(u.Id), includeProperties: "OrganizationUsers");
             return userList.ToList();
         }
 
@@ -44,10 +44,14 @@ namespace Repository.Repositories.UserRepositories
             return staffs.ToList();
         }
 
-        public async Task<List<User>> GetUsersByIdList(List<string> userIdList)
+        public async Task<List<string>> GetUserIdListByEmail(List<string> emailList)
         {
-            var users = await Get(u => userIdList.Contains(u.Id), includeProperties: "OrganizationUsers");
-            return users.ToList();
+            var lowerEmailList = emailList.Select(email => email.ToLower());
+
+            var userList = await Get(u => lowerEmailList.Contains(u.Email.ToLower()));
+
+            var userIdList = userList.Select(user => user.Id);
+            return userIdList.ToList();
         }
     }
 }

@@ -11,5 +11,7 @@ namespace Repository.Repositories.OrganizationRepositories
     public interface IOrganizationRepository : IGenericRepository<Organization>
     {
         Task<List<Organization>> GetAllOrganizations();
+
+        Task<Organization> GetOrganizationById(string id);
     }
 }

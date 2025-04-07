@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.DTOs.Organization.Request
 {
-    public class OrganizationCreateRequestModel
+    public class OrganizationCreateUpdateRequestModel
     {
         [Required(ErrorMessage = "Vui lòng nhập tên tổ chức.")]
         public string Name { get; set; } = null!;

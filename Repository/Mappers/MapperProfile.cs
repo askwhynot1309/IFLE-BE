@@ -26,7 +26,7 @@ namespace Repository.Mappers
             CreateMap<User, OrganizationUserReponseModel>();
 
             //Organization
-            CreateMap<OrganizationCreateRequestModel, Organization>();
+            CreateMap<OrganizationCreateUpdateRequestModel, Organization>();
             CreateMap<Organization, OrganizationInfoResponseModel>();
 
         }
