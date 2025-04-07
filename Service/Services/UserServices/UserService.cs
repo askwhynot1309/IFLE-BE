@@ -112,7 +112,7 @@ namespace Service.Services.UserServices
 
             await _userRepository.UpdateRange(customerList);
         }
-        
+
         public async Task ActivateCustomerAccount(List<string> userIdList)
         {
             var customerList = await _userRepository.GetCustomerListById(userIdList);
@@ -150,5 +150,7 @@ namespace Service.Services.UserServices
             var result = _mapper.Map<List<UserInfoResponeModel>>(staffs);
             return result;
         }
+
+        
     }
 }

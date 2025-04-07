@@ -7,6 +7,7 @@ using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
 using Repository.Repositories.UserRepositories;
 using Service.Services.AuthenticationServices;
+using Service.Ultis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Service.Services.OrganizationServices
             _userRepository = userRepository;
         }
 
-        public async Task CreateOrganization(OrganizationCreateRequestModel model, string userId)
+        public async Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId)
         {
             var newOrganization = _mapper.Map<Organization>(model);
 
@@ -63,7 +64,7 @@ namespace Service.Services.OrganizationServices
         {
             var listUserId = await _organizationUserRepository.GetUserOfOrganization(organizationId);
 
-            var users = await _userRepository.GetUsersByIdList(listUserId);
+            var users = await _userRepository.GetCustomerListById(listUserId);
 
             var result = new List<OrganizationUserReponseModel>();
 
@@ -85,9 +86,102 @@ namespace Service.Services.OrganizationServices
         public async Task<List<OrganizationInfoResponseModel>> GetOwnOrganization(string userId)
         {
             var organizationList = await _organizationUserRepository.GetOrganizationOfUser(userId);
-
             var result = _mapper.Map<List<OrganizationInfoResponseModel>>(organizationList);
             return result;
+        }
+
+        public async Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model)
+        {
+            var organization = await _organizationRepository.GetOrganizationById(id);
+            if (organization == null)
+            {
+                throw new CustomException("Không tồn tại tổ chức nào.");
+            }
+            _mapper.Map(model, organization);
+            await _organizationRepository.Update(organization);
+        }
+
+        public async Task AddUserToOrganization(List<string> emailList, string organizationId)
+        {
+            var userIdList = await _userRepository.GetUserIdListByEmail(emailList);
+            if (userIdList.Count() == 0)
+            {
+                throw new CustomException("Không có người dùng nào được chọn.");
+            }
+
+            var organization = await _organizationRepository.GetOrganizationById(organizationId);
+
+            var organizationUsers = await _organizationUserRepository.GetOrganizationUserByOrganizationId(organizationId);
+
+            var currentAmount = organizationUsers.Count();
+            if (userIdList.Count() + currentAmount > organization.UserLimit)
+            {
+                throw new CustomException("Số lượng người vượt quá giới hạn cho phép của tổ chức.");
+            }
+
+            var existedUser = organizationUsers.Select(o => o.UserId).ToList();
+            var list = userIdList.Intersect(existedUser);
+            if (list.Count() > 0)
+            {
+                throw new CustomException("Người dùng đã được thêm vào tổ chức trước đó.");
+            }
+
+            var organizationUserList = new List<OrganizationUser>();
+
+            foreach (var userId in userIdList)
+            {
+                organizationUserList.Add(new OrganizationUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    OrganizationId = organizationId,
+                    UserId = userId,
+                    JoinedAt = DateTime.Now,
+                    Privilege = PrivilegeEnums.Member.ToString(),
+                });
+            }
+
+            await _organizationUserRepository.InsertRange(organizationUserList);
+        }
+
+        public async Task RemoveMemberFromOrganization(List<string> userIdList, string organizationId)
+        {
+            var removeList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
+            if (removeList.Count() > 0)
+            {
+                await _organizationUserRepository.DeleteRange(removeList);
+            }
+            else
+            {
+                throw new CustomException("Không tồn tại người dùng để xóa khỏi tổ chức.");
+            }
+        }
+
+        public async Task GrantPrivilege(List<string> userIdList, string organizationId)
+        {
+            var grantList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
+            if (grantList.Count() < 0)
+            {
+                throw new CustomException("Không có người dùng nào được chọn.");
+            }
+            foreach (var member in grantList)
+            {
+                member.Privilege = PrivilegeEnums.CoOwner.ToString();
+            }
+            await _organizationUserRepository.UpdateRange(grantList);
+        }
+
+        public async Task RemovePrivilege(List<string> userIdList, string organizationId)
+        {
+            var removeList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
+            if (removeList.Count() < 0)
+            {
+                throw new CustomException("Không có người dùng nào được chọn.");
+            }
+            foreach (var member in removeList)
+            {
+                member.Privilege = PrivilegeEnums.Member.ToString();
+            }
+            await _organizationUserRepository.UpdateRange(removeList);
         }
     }
 }
