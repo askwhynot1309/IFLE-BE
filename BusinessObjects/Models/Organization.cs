@@ -12,7 +12,7 @@ namespace BusinessObjects.Models
 
         public string Name { get; set; } = null!;
 
-        public string? Desciption { get; set; }
+        public string? Description { get; set; }
 
         public int UserLimit { get; set; }
 

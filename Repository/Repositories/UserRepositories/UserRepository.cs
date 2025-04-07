@@ -18,7 +18,7 @@ namespace Repository.Repositories.UserRepositories
 
         public async Task<User> GetUserById(string userId)
         {
-            return await GetSingle(u => u.Id.Equals(userId), includeProperties: "Role");
+            return await GetSingle(u => u.Id.Equals(userId), includeProperties: "Role,OrganizationUsers");
         }
 
         public async Task<User> GetUserByEmail(string email)
@@ -42,6 +42,12 @@ namespace Repository.Repositories.UserRepositories
         {
             var staffs = await Get(u => u.Role.Name.Equals(RoleEnums.Staff.ToString()));
             return staffs.ToList();
+        }
+
+        public async Task<List<User>> GetUsersByIdList(List<string> userIdList)
+        {
+            var users = await Get(u => userIdList.Contains(u.Id), includeProperties: "OrganizationUsers");
+            return users.ToList();
         }
     }
 }

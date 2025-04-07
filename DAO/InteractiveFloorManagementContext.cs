@@ -181,7 +181,7 @@ namespace DAO
                     .HasMaxLength(100)
                     .IsRequired();
 
-                entity.Property(e => e.Desciption)
+                entity.Property(e => e.Description)
                     .HasMaxLength(500);
 
                 entity.Property(e => e.UserLimit)

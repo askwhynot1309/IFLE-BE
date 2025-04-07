@@ -19,5 +19,7 @@ namespace Repository.Repositories.UserRepositories
         Task<List<User>> GetCustomerListById(List<string> userIdList);
 
         Task<List<User>> GetStaffList();
+
+        Task<List<User>> GetUsersByIdList(List<string> userIdList);
     }
 }
