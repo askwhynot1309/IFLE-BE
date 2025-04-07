@@ -1,6 +1,5 @@
 ﻿using BusinessObjects.DTOs.OTP.Request;
 using BusinessObjects.DTOs.User.Request;
-using BusinessObjects.DTOs.User.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -78,6 +77,15 @@ namespace InteractiveFloor.Controllers
         {
             await _userService.DeactivateCustomerAccount(userIdList);
             return Ok("Vô hiệu hóa tài khoản thành công.");
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("active")]
+        public async Task<IActionResult> ActivateCustomerAccount(List<string> userIdList)
+        {
+            await _userService.ActivateCustomerAccount(userIdList);
+            return Ok("Kích hoạt tài khoản thành công.");
         }
 
         [HttpPost]

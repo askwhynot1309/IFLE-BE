@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.DTOs.User.Response
+namespace BusinessObjects.DTOs.User.Request
 {
     public class StaffCreateRequestModel
     {

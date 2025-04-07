@@ -26,5 +26,7 @@ namespace Service.Services.UserServices
         Task CreateStaffAccount(StaffCreateRequestModel model);
 
         Task<List<UserInfoResponeModel>> GetStaffList();
+
+        Task ActivateCustomerAccount(List<string> userIdList);
     }
 }
