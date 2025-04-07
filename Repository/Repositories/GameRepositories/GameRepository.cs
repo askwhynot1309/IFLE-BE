@@ -43,7 +43,7 @@ namespace Repository.Repositories.GameRepositories
             // Add new category relations
             var newRelations = categoryIds.Select(categoryId => new GameCategoryRelation
             {
-                Id = Guid.NewGuid().ToString("N").Substring(0, 32),
+                Id = Guid.NewGuid().ToString(),
                 GameId = game.Id,
                 GameCategoryId = categoryId
             });
@@ -54,7 +54,7 @@ namespace Repository.Repositories.GameRepositories
 
         public async Task AddGameVersionAsync(Game game, GameVersion version)
         {
-            version.Id = Guid.NewGuid().ToString("N").Substring(0, 32);
+            version.Id = Guid.NewGuid().ToString();
             version.GameId = game.Id;
             await _context.GameVersions.AddAsync(version);
             await _context.SaveChangesAsync();

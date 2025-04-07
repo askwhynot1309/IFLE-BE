@@ -114,6 +114,20 @@ namespace InteractiveFloor.Controllers
             }
         }
 
+        [HttpPost("{id}/versions")]
+        public async Task<ActionResult<GameResponse>> AddVersion(string id, AddGameVersionRequest request)
+        {
+            try
+            {
+                var result = await _gameService.AddVersionAsync(id, request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         //[HttpGet("download/{id}")]
         //public async Task<IActionResult> DownloadGame(string id)
         //{

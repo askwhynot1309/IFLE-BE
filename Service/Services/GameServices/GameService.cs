@@ -85,6 +85,7 @@ namespace Service.Services.GameServices
             var game = await _repository.GetByIdWithDetailsAsync(id);
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
+            //update game coutn by 1
             game.PlayCount += 1;
             await _repository.Update(game);
         }
@@ -95,6 +96,25 @@ namespace Service.Services.GameServices
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
             return game.DownloadUrl;
+        }
+
+        public async Task<GameResponse> AddVersionAsync(string gameId, AddGameVersionRequest request)
+        {
+            var game = await _repository.GetByIdWithDetailsAsync(gameId);
+            if (game == null)
+                throw new Exception("Game not found");
+
+            // Create new version
+            var version = _mapper.Map<GameVersion>(request);
+            await _repository.AddGameVersionAsync(game, version);
+
+            // Update downloadURL
+            game.DownloadUrl = request.DownloadUrl;
+            await _repository.Update(game);
+
+            // Get updated game with relations
+            var updatedGame = await _repository.GetByIdWithDetailsAsync(gameId);
+            return _mapper.Map<GameResponse>(updatedGame);
         }
     }
 }
