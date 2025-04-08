@@ -9,6 +9,7 @@ namespace InteractiveFloor.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService _gameService;
+        private static readonly HttpClient httpClient = new HttpClient();
 
         public GameController(IGameService gameService)
         {
@@ -148,6 +149,25 @@ namespace InteractiveFloor.Controllers
         //        return File(fileBytes, contentType, fileName);
         //    }
         //}
+
+        [HttpGet("download/game-launcher")]
+        public async Task<IActionResult> DownloadGameLauncher()
+        {
+            var downloadUrl = "https://github.com/askwhynot1309/IFLE-Game-Launcher/releases/download/v1.0/IFLE-Launcher.zip";
+
+            var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound("File not found at download URL.");
+            }
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var contentType = "application/zip";
+            var fileName = "IFLE-launcher.zip";
+
+            return File(stream, contentType, fileName);
+        }
+
 
     }
 } 
