@@ -6,6 +6,8 @@ using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserDTOs.Request;
+using BusinessObjects.DTOs.UserPackage.Request;
+using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
@@ -34,6 +36,11 @@ namespace Repository.Mappers
             //Game Package
             CreateMap<GamePackageCreateRequestModel, GamePackage>();
             CreateMap<GamePackage, GamePackageListResponseModel>();
+            CreateMap<Game, GameInfo>();
+
+            //User Package
+            CreateMap<UserPackageCreateRequestModel, UserPackage>();
+            CreateMap<UserPackage, UserPackageListResponseModel>();
 
         }
     }

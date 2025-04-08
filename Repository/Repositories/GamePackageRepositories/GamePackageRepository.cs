@@ -25,5 +25,10 @@ namespace Repository.Repositories.GamePackageRepositories
         {
             return (await Get(g => g.Status.Equals(GamePackageEnums.Active.ToString()))).ToList();
         }
+
+        public async Task<GamePackage> GetGamePackageById(string id)
+        {
+            return await GetSingle(g => g.Id.Equals(id));
+        }
     }
 }
