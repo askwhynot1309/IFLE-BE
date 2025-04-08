@@ -40,5 +40,10 @@ namespace Repository.Repositories.OrganizationUserRepositories
             var organizationUsers = await Get(o => o.OrganizationId.Equals(organizationId));
             return organizationUsers.ToList();
         }
+
+        public async Task<OrganizationUser> GetOrganizationUserByUserId(string userId, string organizationId)
+        {
+            return await GetSingle(o => o.UserId.Equals(userId) && o.OrganizationId.Equals(organizationId));
+        }
     }
 }

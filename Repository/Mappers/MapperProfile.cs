@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.GamePackage.Request;
+using BusinessObjects.DTOs.GamePackage.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.User.Request;
@@ -28,6 +30,10 @@ namespace Repository.Mappers
             //Organization
             CreateMap<OrganizationCreateUpdateRequestModel, Organization>();
             CreateMap<Organization, OrganizationInfoResponseModel>();
+
+            //Game Package
+            CreateMap<GamePackageCreateRequestModel, GamePackage>();
+            CreateMap<GamePackage, GamePackageListResponseModel>();
 
         }
     }

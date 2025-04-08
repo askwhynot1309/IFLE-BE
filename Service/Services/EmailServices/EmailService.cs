@@ -1,4 +1,5 @@
-﻿using MailKit.Security;
+﻿using BusinessObjects.DTOs.Organization.Request;
+using MailKit.Security;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ namespace Service.Services.EmailServices
             try
             {
                 var toEmail = Email;
-                string from = "healingconsultant6@gmail.com";
-                string pass = "ukso bmir vaii yxis";
+                string from = "interactivefloor.ifle@gmail.com";
+                string pass = "wknx ugfz chjl sjac";
                 MimeMessage message = new();
                 message.From.Add(MailboxAddress.Parse(from));
                 message.Subject = "[IFLE] " + Subject;
@@ -39,5 +40,34 @@ namespace Service.Services.EmailServices
             }
         }
 
+        public async Task<bool> SendEmailList(List<AddMemberEmailModel> models, string Subject)
+        {
+            try
+            {
+                string from = "interactivefloor.ifle@gmail.com";
+                string pass = "wknx ugfz chjl sjac";
+                MimeMessage message = new();
+                using MailKit.Net.Smtp.SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, pass);
+                foreach (var model in models)
+                {
+                    message.From.Add(MailboxAddress.Parse(from));
+                    message.Subject = "[IFLE] " + Subject;
+                    message.To.Add(MailboxAddress.Parse(model.Email));
+                    message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                    {
+                        Text = model.HtmlBody
+                    };
+                    await smtp.SendAsync(message);
+                }
+                await smtp.DisconnectAsync(true);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

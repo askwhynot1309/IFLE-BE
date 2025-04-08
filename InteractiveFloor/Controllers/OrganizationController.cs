@@ -66,20 +66,24 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddMemberToOrganization(string id, List<string> emailList)
         {
-            await _organizationService.AddUserToOrganization(emailList, id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _organizationService.AddUserToOrganization(emailList, id, currentUserId);
             return Ok("Thêm thành viên thành công.");
         }
 
         [HttpDelete]
         [Route("{id}/members")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> RemoveMemberOfOrganization(string id, List<string> userIdList)
         {
-            await _organizationService.RemoveMemberFromOrganization(userIdList, id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _organizationService.RemoveMemberFromOrganization(userIdList, id, currentUserId);
             return Ok("Xóa thành viên thành công.");
         }
 
         [HttpPatch]
         [Route("{id}/members/promote")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GrantPrivilege(List<string> userIdList, string id)
         {
             await _organizationService.GrantPrivilege(userIdList, id);
@@ -88,10 +92,20 @@ namespace InteractiveFloor.Controllers
 
         [HttpPatch]
         [Route("{id}/members/demote")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> RemovePrivilege(List<string> userIdList, string id)
         {
             await _organizationService.RemovePrivilege(userIdList, id);
             return Ok("Xóa quyền thành công.");
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> ViewDetailOfOrganization(string id)
+        {
+            var response = await _organizationService.GetDetailsInfoOfOrganization(id);
+            return Ok(response);
         }
     }
 }
