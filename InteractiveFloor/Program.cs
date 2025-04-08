@@ -22,6 +22,8 @@ using Service.Services.GameCategoryServices;
 using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
 using Service.Services.OrganizationServices;
+using Repository.Repositories.GamePackageRepositories;
+using Service.Services.GamePackageServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +71,7 @@ builder.Services.AddScoped<IGameCategoryRepository, GameCategoryRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
+builder.Services.AddScoped<IGamePackageRepository, GamePackageRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -79,6 +82,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameCategoryService, GameCategoryService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+builder.Services.AddScoped<IGamePackageService, GamePackageService>();
 
 //========================================== AUTHENTICATION =======================================
 
