@@ -1,4 +1,5 @@
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.GameServices;
 
@@ -17,6 +18,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<List<GameResponse>>> GetAll()
         {
             try
@@ -31,6 +33,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<GameResponse>> GetById(string id)
         {
             try
@@ -48,6 +51,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<GameResponse>> Create(CreateGameRequest request)
         {
             try
@@ -62,6 +66,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<GameResponse>> Update(string id, UpdateGameRequest request)
         {
             try
@@ -80,6 +85,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPut("disable-game/{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> DisableGame(string id)
         {
             try
@@ -98,6 +104,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPut("update-game-count/{id}")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateGameCount(string id)
         {
             try
@@ -116,6 +123,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPost("{id}/versions")]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<GameResponse>> AddVersion(string id, AddGameVersionRequest request)
         {
             try
@@ -130,6 +138,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet("user/{userId}/purchased")]
+        [Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<List<GameResponse>>> GetPurchasedGames(string userId)
         {
             try
@@ -165,6 +174,7 @@ namespace InteractiveFloor.Controllers
         //}
 
         [HttpGet("download/game-launcher")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> DownloadGameLauncher()
         {
             var downloadUrl = "https://github.com/askwhynot1309/IFLE-Game-Launcher/releases/download/v1.0/IFLE-Launcher.zip";
