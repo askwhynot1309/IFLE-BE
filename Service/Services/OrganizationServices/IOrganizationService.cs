@@ -20,12 +20,14 @@ namespace Service.Services.OrganizationServices
 
         Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model);
 
-        Task AddUserToOrganization(List<string> emailList, string organizationId);
+        Task AddUserToOrganization(List<string> emailList, string organizationId, string currentId);
 
-        Task RemoveMemberFromOrganization(List<string> userIdList, string organizationId);
+        Task RemoveMemberFromOrganization(List<string> userIdList, string organizationId, string currentId);
 
         Task GrantPrivilege(List<string> userIdList, string organizationId);
 
         Task RemovePrivilege(List<string> userIdList, string organizationId);
+
+        Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId);
     }
 }

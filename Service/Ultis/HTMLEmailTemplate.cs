@@ -62,5 +62,29 @@ namespace Service.Ultis
                          </div>";
             return html;
         }
+
+        public static string SendingOrganizationInvitationEmail(string fullName, string email, string date, string organizationName)
+        {
+            var html = $@"<div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                     <div style='border: 1px solid #e0e0e0; padding: 20px; max-width: 600px; margin: auto;'>
+                         <p style='font-size: 16px;'>Kính gửi <strong>{fullName}</strong>,</p>
+                         <hr style='border: none; border-bottom: 1px solid #ccc; margin: 20px 0;'/>
+                         <p style='font-size: 14px;'>
+                             Tài khoản của bạn có địa chỉ email <strong>{email}</strong> đã được thêm vào tổ chức 
+                             <strong style='color: #5cb85c;'>{organizationName}</strong> vào thời gian <strong>{date}</strong>.
+                         </p>
+                         <p style='font-size: 14px;'>
+                             Nếu bạn nhận ra tổ chức này, vui lòng bỏ qua email này.<br/>
+                             <br/>
+                             <strong style='color: #d9534f;'>Nếu bạn không phải là thành viên của tổ chức này hoặc không yêu cầu việc này, 
+                             vui lòng liên hệ <a href='...' style='color: #0066cc;'>chúng tôi</a> để được hỗ trợ.</strong>
+                         </p>
+                         <p style='font-size: 14px;'>Đây là email tự động, vui lòng không trả lời email này.</p>
+                         <p style='font-size: 14px;'>Trân trọng,<br/><strong>IFLE</strong></p>
+                     </div>
+                 </div>";
+            return html;
+        }
+
     }
 }

@@ -17,5 +17,7 @@ namespace BusinessObjects.DTOs.Organization.Response
         public string? AvatarUrl { get; set; }
 
         public string Privilege { get; set; } = null!;
+
+        public string Status { get; set; } = null!;
     }
 }
