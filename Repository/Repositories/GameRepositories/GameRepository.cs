@@ -1,6 +1,7 @@
 using BusinessObjects.Models;
 using DAO;
 using Microsoft.EntityFrameworkCore;
+using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 
 namespace Repository.Repositories.GameRepositories
@@ -77,7 +78,7 @@ namespace Repository.Repositories.GameRepositories
             // Get all active game package orders for the user's floors
             var activePackageOrderIds = await _context.GamePackageOrders
                 .Where(gpo => userFloors.Contains(gpo.FloorId) && 
-                             gpo.Status == "active" && 
+                             gpo.Status == "Active" && 
                              gpo.EndTime > currentTime)
                 .Select(gpo => gpo.GamePackageId)
                 .Distinct()
@@ -98,7 +99,7 @@ namespace Repository.Repositories.GameRepositories
 
             // Get all games with their details
             return await _context.Games
-                .Where(g => gameIds.Contains(g.Id))
+                .Where(g => gameIds.Contains(g.Id) && g.Status == GameEnums.Active.ToString())
                 .Include(g => g.GameCategoryRelations)
                     .ThenInclude(gcr => gcr.GameCategory)
                 .Include(g => g.GameVersions)
