@@ -17,6 +17,8 @@ namespace InteractiveFloor.Mappings
             // Game Version 
             CreateMap<GameVersion, GameVersionResponse>();
             CreateMap<CreateGameVersionRequest, GameVersion>();
+            CreateMap<AddGameVersionRequest, GameVersion>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid().ToString()));
 
             // Game 
             CreateMap<Game, GameResponse>()
@@ -25,7 +27,7 @@ namespace InteractiveFloor.Mappings
                 .ForMember(dest => dest.Versions, opt => opt.MapFrom(src => src.GameVersions));
 
             CreateMap<CreateGameRequest, Game>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid().ToString("N").Substring(0, 32)))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid().ToString()))
                 .ForMember(dest => dest.PlayCount, opt => opt.MapFrom(src => 0))
                 .ForMember(dest => dest.GameCategoryRelations, opt => opt.Ignore())
                 .ForMember(dest => dest.GameVersions, opt => opt.Ignore());

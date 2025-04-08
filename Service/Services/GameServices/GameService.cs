@@ -1,6 +1,7 @@
 using AutoMapper;
 using BusinessObjects.Models;
 using DTO;
+using Repository.Enums;
 using Repository.Repositories.GameRepositories;
 
 namespace Service.Services.GameServices
@@ -34,7 +35,7 @@ namespace Service.Services.GameServices
         public async Task<GameResponse> CreateAsync(CreateGameRequest request)
         {
             var game = _mapper.Map<Game>(request);
-            game.Status = "active";
+            game.Status = GameEnums.Active.ToString();
             game.PlayCount = 0;
             await _repository.Insert(game);
 
@@ -76,7 +77,7 @@ namespace Service.Services.GameServices
             var game = await _repository.GetByIdWithDetailsAsync(id);
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
-            game.Status = "inactive";
+            game.Status = GameEnums.Inactive.ToString();
             await _repository.Update(game);
         }
 
@@ -85,6 +86,7 @@ namespace Service.Services.GameServices
             var game = await _repository.GetByIdWithDetailsAsync(id);
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
+            //update game coutn by 1
             game.PlayCount += 1;
             await _repository.Update(game);
         }
@@ -95,6 +97,31 @@ namespace Service.Services.GameServices
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
             return game.DownloadUrl;
+        }
+
+        public async Task<GameResponse> AddVersionAsync(string gameId, AddGameVersionRequest request)
+        {
+            var game = await _repository.GetByIdWithDetailsAsync(gameId);
+            if (game == null)
+                throw new Exception("Game not found");
+
+            // Create new version
+            var version = _mapper.Map<GameVersion>(request);
+            await _repository.AddGameVersionAsync(game, version);
+
+            // Update game's download URL
+            game.DownloadUrl = request.DownloadUrl;
+            await _repository.Update(game);
+
+            // Get updated game with relations
+            var updatedGame = await _repository.GetByIdWithDetailsAsync(gameId);
+            return _mapper.Map<GameResponse>(updatedGame);
+        }
+
+        public async Task<List<GameResponse>> GetPurchasedGamesByUserIdAsync(string userId)
+        {
+            var games = await _repository.GetPurchasedGamesByUserIdAsync(userId);
+            return games.Select(g => _mapper.Map<GameResponse>(g)).ToList();
         }
     }
 }
