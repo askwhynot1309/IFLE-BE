@@ -10,5 +10,8 @@ namespace Repository.Repositories.GamePackageRelationRepositories
 {
     public interface IGamePackageRelationRepository : IGenericRepository<GamePackageRelation>
     {
+        Task<List<string>> GetListGameIdByGamePackageId(string gamePackageId);
+
+        Task<List<GamePackageRelation>> GetListByGamePackageId(string gamePackageId);
     }
 }

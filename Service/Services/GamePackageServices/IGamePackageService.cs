@@ -15,5 +15,13 @@ namespace Service.Services.GamePackageServices
         Task<List<GamePackageListResponseModel>> GetAllGamePackages();
 
         Task<List<GamePackageListResponseModel>> GetActiveGamePackages();
+
+        Task AddGameToPackage(string packageId, List<string> gameIdList);
+
+        Task<GamePackageDetailsResponseModel> GetGamePackageDetailInfo(string gamePackageId);
+
+        Task SoftRemoveGamePackage(string id);
+
+        Task ActivateGamePackage(string id);
     }
 }
