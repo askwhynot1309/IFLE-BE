@@ -44,7 +44,7 @@ namespace Service.Services.GameCategoryServices
         {
             var category = new GameCategory
             {
-                Id = Guid.NewGuid().ToString("N").Substring(0, 32),
+                Id = Guid.NewGuid().ToString(),
                 Name = request.Name,
                 Description = request.Description
             };
