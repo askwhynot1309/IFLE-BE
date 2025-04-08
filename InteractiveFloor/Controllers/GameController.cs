@@ -129,6 +129,20 @@ namespace InteractiveFloor.Controllers
             }
         }
 
+        [HttpGet("user/{userId}/purchased")]
+        public async Task<ActionResult<List<GameResponse>>> GetPurchasedGames(string userId)
+        {
+            try
+            {
+                var result = await _gameService.GetPurchasedGamesByUserIdAsync(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         //[HttpGet("download/{id}")]
         //public async Task<IActionResult> DownloadGame(string id)
         //{
