@@ -13,5 +13,7 @@ namespace Repository.Repositories.GamePackageRepositories
         Task<List<GamePackage>> GetAllGamePackages();
 
         Task<List<GamePackage>> GetActiveGamePackages();
+
+        Task<GamePackage> GetGamePackageById(string id);
     }
 }

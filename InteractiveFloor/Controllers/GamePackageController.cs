@@ -36,11 +36,45 @@ namespace InteractiveFloor.Controllers
 
         [HttpGet]
         [Route("active")]
-        [Authorize(Roles = "Staff, Customer")]
         public async Task<IActionResult> ViewActiveGamePackages()
         {
             var respone = await _gamePackageService.GetActiveGamePackages();
             return Ok(respone);
+        }
+
+        [HttpPost]
+        [Route("{id}/games")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> AddGamesToPackage(List<string> gameIdList, string id)
+        {
+            await _gamePackageService.AddGameToPackage(id, gameIdList);
+            return Ok("Thêm game vào gói thành công.");
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> ViewGamePackageDetail(string id)
+        {
+            var response = await _gamePackageService.GetGamePackageDetailInfo(id);
+            return Ok(response);
+        }
+
+        [HttpPatch]
+        [Route("{id}/inactive")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> SoftRemoveGamePackage(string id)
+        {
+            await _gamePackageService.SoftRemoveGamePackage(id);
+            return Ok("Ẩn gói game thành công.");
+        }
+
+        [HttpPatch]
+        [Route("{id}/active")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> ActivateGamePackage(string id)
+        {
+            await _gamePackageService.ActivateGamePackage(id);
+            return Ok("Mở lại gói game thành công.");
         }
     }
 }
