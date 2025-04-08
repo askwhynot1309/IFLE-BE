@@ -108,13 +108,19 @@ namespace Service.Services.GameServices
             var version = _mapper.Map<GameVersion>(request);
             await _repository.AddGameVersionAsync(game, version);
 
-            // Update downloadURL
+            // Update game's download URL
             game.DownloadUrl = request.DownloadUrl;
             await _repository.Update(game);
 
             // Get updated game with relations
             var updatedGame = await _repository.GetByIdWithDetailsAsync(gameId);
             return _mapper.Map<GameResponse>(updatedGame);
+        }
+
+        public async Task<List<GameResponse>> GetPurchasedGamesByUserIdAsync(string userId)
+        {
+            var games = await _repository.GetPurchasedGamesByUserIdAsync(userId);
+            return games.Select(g => _mapper.Map<GameResponse>(g)).ToList();
         }
     }
 }

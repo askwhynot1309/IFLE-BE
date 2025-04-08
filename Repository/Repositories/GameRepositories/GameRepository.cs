@@ -59,5 +59,50 @@ namespace Repository.Repositories.GameRepositories
             await _context.GameVersions.AddAsync(version);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Game>> GetPurchasedGamesByUserIdAsync(string userId)
+        {
+            // Get all floors associated with the user
+            var userFloors = await _context.FloorUsers
+                .Where(fu => fu.UserId == userId && fu.InteractiveFloor.Status == "Active")
+                .Select(fu => fu.FloorId)
+                .ToListAsync();
+
+            if (!userFloors.Any())
+                return Enumerable.Empty<Game>();
+
+            // Get current time for checking active orders
+            var currentTime = DateTime.UtcNow;
+
+            // Get all active game package orders for the user's floors
+            var activePackageOrderIds = await _context.GamePackageOrders
+                .Where(gpo => userFloors.Contains(gpo.FloorId) && 
+                             gpo.Status == "active" && 
+                             gpo.EndTime > currentTime)
+                .Select(gpo => gpo.GamePackageId)
+                .Distinct()
+                .ToListAsync();
+
+            if (!activePackageOrderIds.Any())
+                return Enumerable.Empty<Game>();
+
+            // Get all game IDs from the active packages
+            var gameIds = await _context.GamePackageRelations
+                .Where(gpr => activePackageOrderIds.Contains(gpr.GamePackageId))
+                .Select(gpr => gpr.GameId)
+                .Distinct()
+                .ToListAsync();
+
+            if (!gameIds.Any())
+                return Enumerable.Empty<Game>();
+
+            // Get all games with their details
+            return await _context.Games
+                .Where(g => gameIds.Contains(g.Id))
+                .Include(g => g.GameCategoryRelations)
+                    .ThenInclude(gcr => gcr.GameCategory)
+                .Include(g => g.GameVersions)
+                .ToListAsync();
+        }
     }
 }
