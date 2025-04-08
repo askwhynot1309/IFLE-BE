@@ -64,6 +64,21 @@ namespace DTO
         public List<string> CategoryIds { get; set; } = new();
     }
 
+    public class AddGameVersionRequest
+    {
+        [Required]
+        [MaxLength(50)]
+        public string Version { get; set; }
+
+        public string? Description { get; set; }
+
+        [Required]
+        public DateTime ReleaseDate { get; set; }
+
+        [Required]
+        public string DownloadUrl { get; set; }
+    }
+
     public class GameVersionResponse
     {
         public string Id { get; set; }

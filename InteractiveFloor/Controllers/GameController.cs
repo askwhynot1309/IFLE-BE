@@ -1,4 +1,5 @@
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.GameServices;
 
@@ -9,6 +10,7 @@ namespace InteractiveFloor.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService _gameService;
+        private static readonly HttpClient httpClient = new HttpClient();
 
         public GameController(IGameService gameService)
         {
@@ -16,6 +18,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<List<GameResponse>>> GetAll()
         {
             try
@@ -30,6 +33,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<GameResponse>> GetById(string id)
         {
             try
@@ -47,6 +51,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<GameResponse>> Create(CreateGameRequest request)
         {
             try
@@ -61,6 +66,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<ActionResult<GameResponse>> Update(string id, UpdateGameRequest request)
         {
             try
@@ -79,6 +85,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPut("disable-game/{id}")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> DisableGame(string id)
         {
             try
@@ -97,6 +104,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPut("update-game-count/{id}")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateGameCount(string id)
         {
             try
@@ -111,6 +119,36 @@ namespace InteractiveFloor.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while deleting the game.", error = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/versions")]
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<GameResponse>> AddVersion(string id, AddGameVersionRequest request)
+        {
+            try
+            {
+                var result = await _gameService.AddVersionAsync(id, request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("user/{userId}/purchased")]
+        [Authorize(Roles = "Staff, Customer")]
+        public async Task<ActionResult<List<GameResponse>>> GetPurchasedGames(string userId)
+        {
+            try
+            {
+                var result = await _gameService.GetPurchasedGamesByUserIdAsync(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
@@ -134,6 +172,26 @@ namespace InteractiveFloor.Controllers
         //        return File(fileBytes, contentType, fileName);
         //    }
         //}
+
+        [HttpGet("download/game-launcher")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> DownloadGameLauncher()
+        {
+            var downloadUrl = "https://github.com/askwhynot1309/IFLE-Game-Launcher/releases/download/v1.0/IFLE-Launcher.zip";
+
+            var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound("File not found at download URL.");
+            }
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var contentType = "application/zip";
+            var fileName = "IFLE-launcher.zip";
+
+            return File(stream, contentType, fileName);
+        }
+
 
     }
 } 
