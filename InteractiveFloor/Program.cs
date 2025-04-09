@@ -14,7 +14,6 @@ using Service.Services.EmailServices;
 using Service.Services.OTPServices;
 using Service.Services.UserServices;
 using System.Text;
-using InteractiveFloor.Mappings;
 using Repository.Repositories.GameCategoryRepositories;
 using Repository.Repositories.GameRepositories;
 using Service.Services.GameServices;
@@ -44,7 +43,6 @@ builder.Services.AddDbContext<InteractiveFloorManagementContext>(options =>
 //========================================== MAPPER ===============================================
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 //========================================== MIDDLEWARE ===========================================
 
