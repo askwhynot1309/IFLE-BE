@@ -1,5 +1,4 @@
 using DAO;
-using Healing.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,6 +31,7 @@ using Repository.Repositories.DeviceRepositories;
 using Repository.Repositories.DeviceCategoryRepositories;
 using Service.Services.DeviceCategoryServices;
 using Repository.Repositories.FloorUserRepositories;
+using InteractiveFloor.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

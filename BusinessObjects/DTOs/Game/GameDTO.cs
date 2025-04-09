@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DTO
+namespace BusinessObjects.DTOs.Game
 {
     public class CreateGameRequest
     {
@@ -107,4 +107,4 @@ namespace DTO
         public List<GameCategoryInGameResponse> Categories { get; set; } = new();
         public List<GameVersionResponse> Versions { get; set; } = new();
     }
-} 
+}

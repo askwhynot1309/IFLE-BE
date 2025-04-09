@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BusinessObjects.DTOs.UserDTOs.Request;
-using BusinessObjects.DTOs.UserDTOs.Response;
+using BusinessObjects.DTOs.User.Request;
+using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

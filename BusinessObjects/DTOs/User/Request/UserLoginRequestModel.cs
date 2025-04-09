@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.DTOs.UserDTOs.Request
+namespace BusinessObjects.DTOs.User.Request
 {
     public class UserLoginRequestModel
     {

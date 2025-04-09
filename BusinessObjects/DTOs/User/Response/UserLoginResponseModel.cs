@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.DTOs.UserDTOs.Response
+namespace BusinessObjects.DTOs.User.Response
 {
     public class UserAuthResponseModel
     {
