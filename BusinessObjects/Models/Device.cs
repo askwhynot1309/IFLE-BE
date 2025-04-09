@@ -14,11 +14,11 @@ namespace BusinessObjects.Models
 
         public string Description { get; set; } = null!;
 
-        public string SerialNumber { get; set; } = null!;
+        public string Uri { get; set; } = null!;
 
-        public string DeviceCategoryId { get; set; } = null!;
+        public string? DeviceCategoryId { get; set; }
 
-        public virtual DeviceCategory DeviceCategory { get; set; } = null!;
+        public virtual DeviceCategory? DeviceCategory { get; set; }
 
         public virtual ICollection<InteractiveFloor> InteractiveFloors { get; set; } = new List<InteractiveFloor>();
 

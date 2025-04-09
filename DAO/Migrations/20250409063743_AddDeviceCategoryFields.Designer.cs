@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(InteractiveFloorManagementContext))]
-    partial class InteractiveFloorManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250409063743_AddDeviceCategoryFields")]
+    partial class AddDeviceCategoryFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,6 +39,7 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("DeviceCategoryId")
+                        .IsRequired()
                         .HasMaxLength(36)
                         .IsUnicode(false)
                         .HasColumnType("char(36)");
@@ -45,7 +49,7 @@ namespace DAO.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Uri")
+                    b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
@@ -769,7 +773,8 @@ namespace DAO.Migrations
                     b.HasOne("BusinessObjects.Models.DeviceCategory", "DeviceCategory")
                         .WithMany("Devices")
                         .HasForeignKey("DeviceCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DeviceCategory");
                 });

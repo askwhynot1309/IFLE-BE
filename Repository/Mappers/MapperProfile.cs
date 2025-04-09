@@ -1,6 +1,11 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.Device.Request;
+using BusinessObjects.DTOs.DeviceCategory.Request;
+using BusinessObjects.DTOs.DeviceCategory.Response;
 using BusinessObjects.DTOs.GamePackage.Request;
 using BusinessObjects.DTOs.GamePackage.Response;
+using BusinessObjects.DTOs.InteractiveFloor.Request;
+using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.User.Request;
@@ -55,7 +60,7 @@ namespace Repository.Mappers
             CreateMap<UpdateGameRequest, Game>()
                 .ForMember(dest => dest.GameCategoryRelations, opt => opt.Ignore())
                 .ForMember(dest => dest.GameVersions, opt => opt.Ignore());
-            
+
 
             //Organization
             CreateMap<OrganizationCreateUpdateRequestModel, Organization>();
@@ -70,6 +75,16 @@ namespace Repository.Mappers
             CreateMap<UserPackageCreateRequestModel, UserPackage>();
             CreateMap<UserPackage, UserPackageListResponseModel>();
 
+            //Floor
+            CreateMap<FloorCreateUpdateRequestModel, InteractiveFloor>();
+
+            //DeviceCategory
+            CreateMap<DeviceCategoryCreateUpdateRequestModel, DeviceCategory>();
+            CreateMap<DeviceCategory, DeviceCategoryInfoResponseModel>();
+
+            //Device
+            CreateMap<DeviceCreateUpdateRequestModel, Device>();
+            CreateMap<Device, DeviceInfo>();
         }
     }
 }
