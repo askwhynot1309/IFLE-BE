@@ -394,15 +394,14 @@ namespace DAO
                 entity.Property(e => e.Description)
                     .HasMaxLength(500);
 
-                entity.Property(e => e.SerialNumber)
+                entity.Property(e => e.Uri)
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .IsRequired();
 
                 entity.Property(e => e.DeviceCategoryId)
                     .HasMaxLength(36)
-                    .IsUnicode(false)
-                    .IsRequired();
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.DeviceCategory)
                     .WithMany(p => p.Devices)
@@ -430,6 +429,17 @@ namespace DAO
                 entity.Property(e => e.MaxDetectionRange)
                     .HasColumnType("float")
                     .IsRequired();
+
+                entity.Property(e => e.HFov)
+                    .HasColumnType("float")
+                    .IsRequired();
+
+                entity.Property(e => e.VFov)
+                    .HasColumnType("float")
+                    .IsRequired();
+
+                entity.Property(e => e.DeviceInfoUrl)
+                    .HasMaxLength(500);
             });
 
             modelBuilder.Entity<PlayHistory>(entity =>
