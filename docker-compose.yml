@@ -1,0 +1,6 @@
+services:
+  interactivefloor:
+    image: ${DOCKER_REGISTRY-}interactivefloor
+    build:
+      context: .
+      dockerfile: InteractiveFloor/Dockerfile

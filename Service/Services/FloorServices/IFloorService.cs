@@ -1,0 +1,32 @@
+﻿using BusinessObjects.DTOs.Device.Request;
+using BusinessObjects.DTOs.InteractiveFloor.Request;
+using BusinessObjects.DTOs.InteractiveFloor.Response;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Service.Services.FloorServices
+{
+    public interface IFloorService
+    {
+        Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId);
+
+        Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId);
+
+        Task UpdateFloor(FloorCreateUpdateRequestModel model, string floorId);
+
+        Task SoftRemoveFloor(string floorId);
+
+        Task<string> AddDeviceToFloor(string floorId, DeviceCreateUpdateRequestModel model);
+
+        Task<DeviceInfo> ViewDeviceInfoOfFloor(string floorId);
+
+        Task UpdateDeviceInFloor(string floorId, DeviceCreateUpdateRequestModel model);
+
+        Task RemoveDeviceFromFloor(string floorId);
+
+        Task AddUserToPrivateFloor(List<string> userIdList, string floorId);
+    }
+}
