@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.Models
+namespace BusinessObjects.DTOs.DeviceCategory.Response
 {
-    public partial class DeviceCategory
+    public class DeviceCategoryInfoResponseModel
     {
         public string Id { get; set; } = null!;
 
@@ -21,8 +21,5 @@ namespace BusinessObjects.Models
         public float VFov { get; set; }
 
         public string? DeviceInfoUrl { get; set; }
-
-        public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
-
     }
 }
