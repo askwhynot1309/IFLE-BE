@@ -188,7 +188,7 @@ namespace Service.Services.AuthenticationServices
             }
         }
 
-        private ClaimsPrincipal? ValidateRefreshToken(string refreshToken)
+        public ClaimsPrincipal? ValidateRefreshToken(string refreshToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);

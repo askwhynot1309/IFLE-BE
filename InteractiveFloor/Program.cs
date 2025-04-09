@@ -14,12 +14,21 @@ using Service.Services.EmailServices;
 using Service.Services.OTPServices;
 using Service.Services.UserServices;
 using System.Text;
+using InteractiveFloor.Mappings;
 using Repository;
 using Service;
 using Repository.Repositories.GameCategoryRepositories;
 using Repository.Repositories.GameRepositories;
 using Service.Services.GameServices;
 using Service.Services.GameCategoryServices;
+using Repository.Repositories.OrganizationRepositories;
+using Repository.Repositories.OrganizationUserRepositories;
+using Service.Services.OrganizationServices;
+using Repository.Repositories.GamePackageRepositories;
+using Service.Services.GamePackageServices;
+using Repository.Repositories.GamePackageRelationRepositories;
+using Repository.Repositories.UserPackageRepositories;
+using Service.Services.UserPackageServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +73,11 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IGameCategoryRepository, GameCategoryRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+builder.Services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
+builder.Services.AddScoped<IGamePackageRepository, GamePackageRepository>();
+builder.Services.AddScoped<IGamePackageRelationRepository, GamePackageRelationRepository>();
+builder.Services.AddScoped<IUserPackageRepository, UserPackageRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -73,6 +87,9 @@ builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameCategoryService, GameCategoryService>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+builder.Services.AddScoped<IGamePackageService, GamePackageService>();
+builder.Services.AddScoped<IUserPackageService, UserPackageService>();
 
 //========================================== AUTHENTICATION =======================================
 

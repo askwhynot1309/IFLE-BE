@@ -1,7 +1,13 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.GamePackage.Request;
+using BusinessObjects.DTOs.GamePackage.Response;
+using BusinessObjects.DTOs.Organization.Request;
+using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserDTOs.Request;
+using BusinessObjects.DTOs.UserPackage.Request;
+using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.Models;
 using DTO;
 using System;
@@ -21,6 +27,8 @@ namespace Repository.Mappers
             CreateMap<User, UserOwnInfoResponseModel>();
             CreateMap<InfoUpdateRequestModel, User>();
             CreateMap<StaffCreateRequestModel, User>();
+            CreateMap<User, UserInfoResponeModel>();
+            CreateMap<User, OrganizationUserReponseModel>();
 
             //Game Category 
             CreateMap<GameCategory, GameCategoryResponse>();
@@ -47,6 +55,21 @@ namespace Repository.Mappers
             CreateMap<UpdateGameRequest, Game>()
                 .ForMember(dest => dest.GameCategoryRelations, opt => opt.Ignore())
                 .ForMember(dest => dest.GameVersions, opt => opt.Ignore());
+            
+
+            //Organization
+            CreateMap<OrganizationCreateUpdateRequestModel, Organization>();
+            CreateMap<Organization, OrganizationInfoResponseModel>();
+
+            //Game Package
+            CreateMap<GamePackageCreateRequestModel, GamePackage>();
+            CreateMap<GamePackage, GamePackageListResponseModel>();
+            CreateMap<Game, GameInfo>();
+
+            //User Package
+            CreateMap<UserPackageCreateRequestModel, UserPackage>();
+            CreateMap<UserPackage, UserPackageListResponseModel>();
+
         }
     }
 }

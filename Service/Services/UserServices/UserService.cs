@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
+using BusinessObjects.Models;
+using Repository.Enums;
+using Repository.Repositories.RoleRepositories;
 using Repository.Repositories.UserRepositories;
 using Service.Services.AuthenticationServices;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,14 +19,16 @@ namespace Service.Services.UserServices
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
         private readonly IAuthenticationService _authenticationService;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IAuthenticationService authenticationService)
+        public UserService(IUserRepository userRepository, IMapper mapper, IAuthenticationService authenticationService, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _authenticationService = authenticationService;
+            _roleRepository = roleRepository;
         }
 
         public async Task<UserOwnInfoResponseModel> GetUserOwnInfo(string userId)
@@ -87,5 +93,64 @@ namespace Service.Services.UserServices
 
             await _userRepository.Update(user);
         }
+
+        public async Task<List<UserInfoResponeModel>> GetCustomerList()
+        {
+            var users = await _userRepository.GetCustomerList();
+            var result = _mapper.Map<List<UserInfoResponeModel>>(users);
+            return result;
+        }
+
+        public async Task DeactivateCustomerAccount(List<string> userIdList)
+        {
+            var customerList = await _userRepository.GetCustomerListById(userIdList);
+
+            foreach (var customer in customerList)
+            {
+                customer.Status = AccountStatusEnums.Inactive.ToString();
+            }
+
+            await _userRepository.UpdateRange(customerList);
+        }
+
+        public async Task ActivateCustomerAccount(List<string> userIdList)
+        {
+            var customerList = await _userRepository.GetCustomerListById(userIdList);
+
+            foreach (var customer in customerList)
+            {
+                customer.Status = AccountStatusEnums.Active.ToString();
+            }
+
+            await _userRepository.UpdateRange(customerList);
+        }
+
+        public async Task CreateStaffAccount(StaffCreateRequestModel model)
+        {
+            var newStaff = _mapper.Map<User>(model);
+
+            var roleId = await _roleRepository.GetRoleIdByName(RoleEnums.Staff.ToString());
+            newStaff.RoleId = roleId;
+
+            newStaff.Id = Guid.NewGuid().ToString();
+            newStaff.Status = AccountStatusEnums.Active.ToString();
+            newStaff.IsVerified = true;
+            newStaff.CreatedAt = DateTime.Now;
+
+            var (salt, hash) = PasswordHasher.HashPassword(model.Password);
+            newStaff.Salt = salt;
+            newStaff.Password = hash;
+
+            await _userRepository.Insert(newStaff);
+        }
+
+        public async Task<List<UserInfoResponeModel>> GetStaffList()
+        {
+            var staffs = await _userRepository.GetStaffList();
+            var result = _mapper.Map<List<UserInfoResponeModel>>(staffs);
+            return result;
+        }
+
+        
     }
 }

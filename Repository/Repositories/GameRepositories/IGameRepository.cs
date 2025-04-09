@@ -9,5 +9,6 @@ namespace Repository.Repositories.GameRepositories
         Task<IEnumerable<Game>> GetAllWithDetailsAsync();
         Task UpdateGameCategoriesAsync(Game game, List<string> categoryIds);
         Task AddGameVersionAsync(Game game, GameVersion version);
+        Task<IEnumerable<Game>> GetPurchasedGamesByUserIdAsync(string userId);
     }
 }
