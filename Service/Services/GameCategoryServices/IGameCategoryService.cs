@@ -1,4 +1,4 @@
-using DTO;
+using BusinessObjects.DTOs.GameCategory;
 
 namespace Service.Services.GameCategoryServices
 {

@@ -16,6 +16,12 @@ namespace BusinessObjects.Models
 
         public float MaxDetectionRange { get; set; }
 
+        public float HFov { get; set; }
+
+        public float VFov { get; set; }
+
+        public string? DeviceInfoUrl { get; set; }
+
         public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
 
     }

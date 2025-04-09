@@ -1,6 +1,6 @@
 ﻿using Service.Ultis;
 
-namespace Healing.Middlewares
+namespace InteractiveFloor.Middlewares
 {
     public class GlobalExceptionMiddleware : IMiddleware
     {
@@ -29,7 +29,7 @@ namespace Healing.Middlewares
                 var response = new
                 {
                     StatusCode = statusCode,
-                    Message = ex.Message,
+                    ex.Message,
                     Detailed = ex.ToString()
                 };
 

@@ -36,7 +36,6 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("DeviceCategoryId")
-                        .IsRequired()
                         .HasMaxLength(36)
                         .IsUnicode(false)
                         .HasColumnType("char(36)");
@@ -46,7 +45,7 @@ namespace DAO.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("SerialNumber")
+                    b.Property<string>("Uri")
                         .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
@@ -67,6 +66,13 @@ namespace DAO.Migrations
                         .HasColumnType("char(36)")
                         .IsFixedLength();
 
+                    b.Property<string>("DeviceInfoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<double>("HFov")
+                        .HasColumnType("float");
+
                     b.Property<double>("MaxDetectionRange")
                         .HasColumnType("float");
 
@@ -77,6 +83,9 @@ namespace DAO.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<double>("VFov")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -760,8 +769,7 @@ namespace DAO.Migrations
                     b.HasOne("BusinessObjects.Models.DeviceCategory", "DeviceCategory")
                         .WithMany("Devices")
                         .HasForeignKey("DeviceCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("DeviceCategory");
                 });

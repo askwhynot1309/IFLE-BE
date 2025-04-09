@@ -1,6 +1,6 @@
 using AutoMapper;
+using BusinessObjects.DTOs.Game;
 using BusinessObjects.Models;
-using DTO;
 using Repository.Enums;
 using Repository.Repositories.GameRepositories;
 

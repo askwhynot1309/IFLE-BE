@@ -1,5 +1,4 @@
 using DAO;
-using Healing.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +13,6 @@ using Service.Services.EmailServices;
 using Service.Services.OTPServices;
 using Service.Services.UserServices;
 using System.Text;
-using InteractiveFloor.Mappings;
 using Repository.Repositories.GameCategoryRepositories;
 using Repository.Repositories.GameRepositories;
 using Service.Services.GameServices;
@@ -27,6 +25,13 @@ using Service.Services.GamePackageServices;
 using Repository.Repositories.GamePackageRelationRepositories;
 using Repository.Repositories.UserPackageRepositories;
 using Service.Services.UserPackageServices;
+using Repository.Repositories.FloorRepositories;
+using Service.Services.FloorServices;
+using Repository.Repositories.DeviceRepositories;
+using Repository.Repositories.DeviceCategoryRepositories;
+using Service.Services.DeviceCategoryServices;
+using Repository.Repositories.FloorUserRepositories;
+using InteractiveFloor.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +49,6 @@ builder.Services.AddDbContext<InteractiveFloorManagementContext>(options =>
 //========================================== MAPPER ===============================================
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 //========================================== MIDDLEWARE ===========================================
 
@@ -77,6 +81,10 @@ builder.Services.AddScoped<IOrganizationUserRepository, OrganizationUserReposito
 builder.Services.AddScoped<IGamePackageRepository, GamePackageRepository>();
 builder.Services.AddScoped<IGamePackageRelationRepository, GamePackageRelationRepository>();
 builder.Services.AddScoped<IUserPackageRepository, UserPackageRepository>();
+builder.Services.AddScoped<IFloorRepository, FloorRepository>();
+builder.Services.AddScoped<IFloorUserRepository, FloorUserRepository>();
+builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+builder.Services.AddScoped<IDeviceCategoryRepository, DeviceCategoryRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -89,6 +97,8 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IGamePackageService, GamePackageService>();
 builder.Services.AddScoped<IUserPackageService, UserPackageService>();
+builder.Services.AddScoped<IFloorService, FloorService>();
+builder.Services.AddScoped<IDeviceCategoryService, DeviceCategoryService>();
 
 //========================================== AUTHENTICATION =======================================
 
