@@ -5,7 +5,7 @@ using Service.Services.GameCategoryServices;
 namespace InteractiveFloor.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/game-category")]
     public class GameCategoryController : ControllerBase
     {
         private readonly IGameCategoryService _gameCategoryService;
