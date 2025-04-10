@@ -29,9 +29,10 @@ jobs:
 
       - name: Migration DB
         run: |
+            cd InteractiveFloor
             dotnet tool install --global dotnet-ef
             dotnet tool restore
-            dotnet-ef database update -p InteractiveFloor
+            dotnet-ef database update
 
   docker-compose:
     runs-on: self-hosted
