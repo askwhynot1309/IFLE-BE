@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.DTOs.UserDTOs.Request
+namespace BusinessObjects.DTOs.User.Request
 {
     public class UserRegisterWithPwRequestModel
     {

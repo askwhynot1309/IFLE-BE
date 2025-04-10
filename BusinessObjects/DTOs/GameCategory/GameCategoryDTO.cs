@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DTO
+namespace BusinessObjects.DTOs.GameCategory
 {
     public class CreateGameCategoryRequest
     {
@@ -28,4 +28,4 @@ namespace DTO
         public string Name { get; set; }
         public string? Description { get; set; }
     }
-} 
+}
