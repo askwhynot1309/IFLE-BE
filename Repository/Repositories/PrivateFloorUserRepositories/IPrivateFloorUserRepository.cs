@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositories.FloorUserRepositories
 {
-    public interface IFloorUserRepository : IGenericRepository<FloorUser>
+    public interface IPrivateFloorUserRepository : IGenericRepository<PrivateFloorUser>
     {
         Task<List<string>> GetListUserIdByFloorId(string floorId);
+
+        Task<List<PrivateFloorUser>> GetListByUserIdAndPrivateFloorIdList(string userId, List<string> privateFloorIdList);
     }
 }

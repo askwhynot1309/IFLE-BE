@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="MimeKit" Version="4.11.0" />
     <PackageReference Include="OpenNISharp2" Version="2.2.0.1" />
+    <PackageReference Include="payOS" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>

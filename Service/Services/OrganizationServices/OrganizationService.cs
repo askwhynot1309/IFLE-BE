@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
 using Repository.Enums;
+using Repository.Repositories.FloorRepositories;
+using Repository.Repositories.FloorUserRepositories;
 using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
 using Repository.Repositories.UserRepositories;
@@ -26,14 +29,18 @@ namespace Service.Services.OrganizationServices
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
+        private readonly IFloorRepository _floorRepository;
+        private readonly IPrivateFloorUserRepository _privateFloorUserRepository;
 
-        public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IEmailService emailService)
+        public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IEmailService emailService, IFloorRepository floorRepository, IPrivateFloorUserRepository privateFloorUserRepository)
         {
             _organizationRepository = organizationRepository;
             _organizationUserRepository = organizationUserRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _emailService = emailService;
+            _floorRepository = floorRepository;
+            _privateFloorUserRepository = privateFloorUserRepository;
         }
 
         public async Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId)
@@ -241,5 +248,31 @@ namespace Service.Services.OrganizationServices
             var organization = await _organizationRepository.GetOrganizationById(organizationId);
             return _mapper.Map<OrganizationInfoResponseModel>(organization);
         }
+
+        public async Task<List<FloorDetailsInfoResponseModel>> GetFloorListOfOrganization(string organizationId, string currentUserId)
+        {
+            var publicFloors = await _floorRepository.GetAllPublicFloorsOfOrganization(organizationId);
+            var result = new List<FloorDetailsInfoResponseModel>();
+            result = _mapper.Map<List<FloorDetailsInfoResponseModel>>(publicFloors);
+
+            var privateFloors = await _floorRepository.GetAllPrivateFloorsOfOrganization(organizationId);
+            if (privateFloors.Count() > 0)
+            {
+                var listId = privateFloors.Select(x => x.Id).ToList();
+                var privateList = await _privateFloorUserRepository.GetListByUserIdAndPrivateFloorIdList(currentUserId, listId);
+                if (privateList.Count() > 0)
+                {
+                    var privateResult = _mapper.Map<List<FloorDetailsInfoResponseModel>>(privateList.Select(p => p.InteractiveFloor));
+                    result = result.Concat(privateResult).ToList();
+                }
+            }
+            return result;
+        }
+        //input: organizationId, currentUserId
+        //output: list tổ chức public + private(nếu có)
+        //public: đã hiểu
+        //private: 
+        //lấy list id của private floor
+        //
     }
 }
