@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+
+jobs:
+  apply-migration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Remove appsettings.Development.json
+        run: |
+          if [ -f InteractiveFloor/appsettings.Development.json ]; then
+            rm InteractiveFloor/appsettings.Development.json
+            echo "Removed InteractiveFloor/appsettings.Development.json"
+          else
+            echo "File InteractiveFloor/appsettings.Development.json not found"
+          fi
+
+      - name: Migration DB
+        run: |
+            cd InteractiveFloor
+            dotnet tool install --global dotnet-ef
+            dotnet tool restore
+            dotnet-ef database update
+
+  docker-compose:
+    runs-on: self-hosted
+    environment: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Run docker compose
+        run: docker compose up --build -d
