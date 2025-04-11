@@ -3,6 +3,7 @@ using BusinessObjects.DTOs.InteractiveFloor.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.FloorServices;
+using System.Security.Claims;
 
 namespace InteractiveFloor.Controllers
 {
@@ -22,7 +23,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateFloor(FloorCreateUpdateRequestModel model, string organizationId)
         {
-            await _floorService.CreateFloor(model, organizationId);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _floorService.CreateFloor(model, organizationId, currentUserId);
             return Ok("Tạo sàn thành công.");
         }
 

@@ -3,6 +3,7 @@ using BusinessObjects.DTOs.GamePackage.Request;
 using BusinessObjects.DTOs.GamePackage.Response;
 using BusinessObjects.Models;
 using Repository.Enums;
+using Repository.Repositories.GamePackageOrderRepositories;
 using Repository.Repositories.GamePackageRelationRepositories;
 using Repository.Repositories.GamePackageRepositories;
 using Service.Ultis;
@@ -19,15 +20,17 @@ namespace Service.Services.GamePackageServices
         private readonly IGamePackageRepository _gamePackageRepository;
         private readonly IGamePackageRelationRepository _gamePackageRelationRepository;
         private readonly IMapper _mapper;
+        private readonly IGamePackageOrderRepository _gamePackageOrderRepository;
 
-        public GamePackageService(IGamePackageRepository gamePackageRepository, IMapper mapper, IGamePackageRelationRepository gamePackageRelationRepository)
+        public GamePackageService(IGamePackageRepository gamePackageRepository, IMapper mapper, IGamePackageRelationRepository gamePackageRelationRepository, IGamePackageOrderRepository gamePackageOrderRepository)
         {
             _gamePackageRepository = gamePackageRepository;
             _mapper = mapper;
             _gamePackageRelationRepository = gamePackageRelationRepository;
+            _gamePackageOrderRepository = gamePackageOrderRepository;
         }
 
-        public async Task CreateGamePackage(GamePackageCreateRequestModel model)
+        public async Task CreateGamePackage(GamePackageCreateUpdateRequestModel model)
         {
             var newGamePackage = _mapper.Map<GamePackage>(model);
 
@@ -35,6 +38,19 @@ namespace Service.Services.GamePackageServices
             newGamePackage.Status = GamePackageEnums.Active.ToString();
 
             await _gamePackageRepository.Insert(newGamePackage);
+        }
+
+        public async Task UpdateGamePackage(GamePackageCreateUpdateRequestModel model, string gamePackageId)
+        {
+            var listAvailableOrder = await _gamePackageOrderRepository.GetAvailableOrderListByPackageId(gamePackageId);
+            if (listAvailableOrder.Count() > 0)
+            {
+                throw new CustomException("Gói trò chơi này đang được sử dụng hoặc trong quá trình giao dịch với người dùng. Không thể cập nhật gói trò chơi này.");
+            }
+            var gamePackage = await _gamePackageRepository.GetGamePackageById(gamePackageId);
+            _mapper.Map(model, gamePackage);
+
+            await _gamePackageRepository.Update(gamePackage);
         }
 
         public async Task<List<GamePackageListResponseModel>> GetAllGamePackages()

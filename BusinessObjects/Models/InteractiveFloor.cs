@@ -34,7 +34,7 @@ namespace BusinessObjects.Models
 
         public virtual ICollection<PlayHistory> PlayHistories { get; set; } = new List<PlayHistory>();
 
-        public virtual ICollection<FloorUser> FloorUsers { get; set; } = new List<FloorUser>();
+        public virtual ICollection<PrivateFloorUser> PrivateFloorUsers { get; set; } = new List<PrivateFloorUser>();
 
         public virtual ICollection<GamePackageOrder> GamePackageOrders { get; set; } = new List<GamePackageOrder>();
 

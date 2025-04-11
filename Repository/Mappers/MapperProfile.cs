@@ -67,7 +67,7 @@ namespace Repository.Mappers
             CreateMap<Organization, OrganizationInfoResponseModel>();
 
             //Game Package
-            CreateMap<GamePackageCreateRequestModel, GamePackage>();
+            CreateMap<GamePackageCreateUpdateRequestModel, GamePackage>();
             CreateMap<GamePackage, GamePackageListResponseModel>();
             CreateMap<Game, GameInfo>();
 
@@ -77,6 +77,7 @@ namespace Repository.Mappers
 
             //Floor
             CreateMap<FloorCreateUpdateRequestModel, InteractiveFloor>();
+            CreateMap<InteractiveFloor, FloorDetailsInfoResponseModel>();
 
             //DeviceCategory
             CreateMap<DeviceCategoryCreateUpdateRequestModel, DeviceCategory>();

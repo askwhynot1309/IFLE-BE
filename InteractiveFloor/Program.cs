@@ -32,6 +32,7 @@ using Repository.Repositories.DeviceCategoryRepositories;
 using Service.Services.DeviceCategoryServices;
 using Repository.Repositories.FloorUserRepositories;
 using InteractiveFloor.Middlewares;
+using Repository.Repositories.GamePackageOrderRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,9 +83,10 @@ builder.Services.AddScoped<IGamePackageRepository, GamePackageRepository>();
 builder.Services.AddScoped<IGamePackageRelationRepository, GamePackageRelationRepository>();
 builder.Services.AddScoped<IUserPackageRepository, UserPackageRepository>();
 builder.Services.AddScoped<IFloorRepository, FloorRepository>();
-builder.Services.AddScoped<IFloorUserRepository, FloorUserRepository>();
+builder.Services.AddScoped<IPrivateFloorUserRepository, PrivateFloorUserRepository>();
 builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<IDeviceCategoryRepository, DeviceCategoryRepository>();
+builder.Services.AddScoped<IGamePackageOrderRepository, GamePackageOrderRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -151,11 +153,11 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-// }
+}
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthorization();
