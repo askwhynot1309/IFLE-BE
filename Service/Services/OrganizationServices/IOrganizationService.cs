@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.Organization.Request;
+﻿using BusinessObjects.DTOs.InteractiveFloor.Response;
+using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
 using System;
 using System.Collections.Generic;
@@ -29,5 +30,7 @@ namespace Service.Services.OrganizationServices
         Task RemovePrivilege(List<string> userIdList, string organizationId);
 
         Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId);
+
+        Task<List<FloorDetailsInfoResponseModel>> GetFloorListOfOrganization(string organizationId, string currentUserId);
     }
 }

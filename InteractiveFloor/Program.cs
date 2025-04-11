@@ -1,5 +1,4 @@
 using DAO;
-using Healing.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +30,9 @@ using Service.Services.FloorServices;
 using Repository.Repositories.DeviceRepositories;
 using Repository.Repositories.DeviceCategoryRepositories;
 using Service.Services.DeviceCategoryServices;
+using Repository.Repositories.FloorUserRepositories;
+using InteractiveFloor.Middlewares;
+using Repository.Repositories.GamePackageOrderRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,8 +83,10 @@ builder.Services.AddScoped<IGamePackageRepository, GamePackageRepository>();
 builder.Services.AddScoped<IGamePackageRelationRepository, GamePackageRelationRepository>();
 builder.Services.AddScoped<IUserPackageRepository, UserPackageRepository>();
 builder.Services.AddScoped<IFloorRepository, FloorRepository>();
+builder.Services.AddScoped<IPrivateFloorUserRepository, PrivateFloorUserRepository>();
 builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<IDeviceCategoryRepository, DeviceCategoryRepository>();
+builder.Services.AddScoped<IGamePackageOrderRepository, GamePackageOrderRepository>();
 
 //=========================================== SERVICE =============================================
 

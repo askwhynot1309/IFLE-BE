@@ -1,4 +1,4 @@
-using DTO;
+using BusinessObjects.DTOs.GameCategory;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.GameCategoryServices;
 

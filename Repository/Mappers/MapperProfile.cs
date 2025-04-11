@@ -2,6 +2,8 @@
 using BusinessObjects.DTOs.Device.Request;
 using BusinessObjects.DTOs.DeviceCategory.Request;
 using BusinessObjects.DTOs.DeviceCategory.Response;
+using BusinessObjects.DTOs.Game;
+using BusinessObjects.DTOs.GameCategory;
 using BusinessObjects.DTOs.GamePackage.Request;
 using BusinessObjects.DTOs.GamePackage.Response;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
@@ -10,11 +12,9 @@ using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
-using BusinessObjects.DTOs.UserDTOs.Request;
 using BusinessObjects.DTOs.UserPackage.Request;
 using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.Models;
-using DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +67,7 @@ namespace Repository.Mappers
             CreateMap<Organization, OrganizationInfoResponseModel>();
 
             //Game Package
-            CreateMap<GamePackageCreateRequestModel, GamePackage>();
+            CreateMap<GamePackageCreateUpdateRequestModel, GamePackage>();
             CreateMap<GamePackage, GamePackageListResponseModel>();
             CreateMap<Game, GameInfo>();
 
@@ -77,6 +77,7 @@ namespace Repository.Mappers
 
             //Floor
             CreateMap<FloorCreateUpdateRequestModel, InteractiveFloor>();
+            CreateMap<InteractiveFloor, FloorDetailsInfoResponseModel>();
 
             //DeviceCategory
             CreateMap<DeviceCategoryCreateUpdateRequestModel, DeviceCategory>();

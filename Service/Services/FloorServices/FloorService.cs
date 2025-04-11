@@ -27,10 +27,10 @@ namespace Service.Services.FloorServices
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IDeviceRepository _deviceRepository;
         private readonly IDeviceCategoryRepository _deviceCategoryRepository;
-        private readonly IFloorUserRepository _floorUserRepository;
+        private readonly IPrivateFloorUserRepository _floorUserRepository;
         private readonly IOrganizationUserRepository _organizationUserRepository;
 
-        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository)
+        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository)
         {
             _floorRepository = floorRepository;
             _mapper = mapper;
@@ -41,7 +41,7 @@ namespace Service.Services.FloorServices
             _organizationUserRepository = organizationUserRepository;
         }
 
-        public async Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId)
+        public async Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId)
         {
             var newFloor = _mapper.Map<InteractiveFloor>(model);
             newFloor.Id = Guid.NewGuid().ToString();
@@ -55,6 +55,16 @@ namespace Service.Services.FloorServices
             newFloor.OrganizationId = organizationId;
 
             await _floorRepository.Insert(newFloor);
+
+            if (model.IsPublic == false)
+            {
+                await _floorUserRepository.Insert(new PrivateFloorUser
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FloorId = newFloor.Id,
+                    UserId = userId
+                });
+            }
         }
 
         public async Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId)
@@ -223,10 +233,10 @@ namespace Service.Services.FloorServices
                 throw new CustomException("Người dùng đã được thêm vào sàn tương tác trước đó.");
             }
 
-            var floorUserList = new List<FloorUser>();
+            var floorUserList = new List<PrivateFloorUser>();
             foreach (var userId in userIdList)
             {
-                floorUserList.Add(new FloorUser
+                floorUserList.Add(new PrivateFloorUser
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserId = userId,
@@ -235,5 +245,6 @@ namespace Service.Services.FloorServices
 
             await _floorUserRepository.InsertRange(floorUserList);
         }
+
     }
 }

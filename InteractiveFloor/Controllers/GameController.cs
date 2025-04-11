@@ -1,4 +1,4 @@
-using DTO;
+using BusinessObjects.DTOs.Game;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.GameServices;

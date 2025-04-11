@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public partial class FloorUser
+    public partial class PrivateFloorUser
     {
         public string Id { get; set; } = null!;
 

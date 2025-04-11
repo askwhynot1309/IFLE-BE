@@ -38,7 +38,7 @@ namespace DAO
 
         public virtual DbSet<GameVersion> GameVersions { get; set; }
 
-        public virtual DbSet<FloorUser> FloorUsers { get; set; }
+        public virtual DbSet<PrivateFloorUser> PrivateFloorUsers { get; set; }
 
         public virtual DbSet<GameCategoryRelation> GameCategoryRelations { get; set; }
 
@@ -270,9 +270,9 @@ namespace DAO
                     .IsRequired();
             });
 
-            modelBuilder.Entity<FloorUser>(entity =>
+            modelBuilder.Entity<PrivateFloorUser>(entity =>
             {
-                entity.ToTable("FloorUser");
+                entity.ToTable("PrivateFloorUser");
 
                 entity.Property(e => e.Id)
                     .HasMaxLength(36)
@@ -290,12 +290,12 @@ namespace DAO
                     .IsRequired();
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.FloorUsers)
+                    .WithMany(p => p.PrivateFloorUsers)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.InteractiveFloor)
-                    .WithMany(p => p.FloorUsers)
+                    .WithMany(p => p.PrivateFloorUsers)
                     .HasForeignKey(d => d.FloorId)
                     .OnDelete(DeleteBehavior.Cascade);
             });

@@ -36,6 +36,6 @@ namespace BusinessObjects.Models
 
         public virtual ICollection<OrganizationUser> OrganizationUsers { get; set; } = new List<OrganizationUser>();
 
-        public virtual ICollection<FloorUser> FloorUsers { get; set; } = new List<FloorUser>();
+        public virtual ICollection<PrivateFloorUser> PrivateFloorUsers { get; set; } = new List<PrivateFloorUser>();
     }
 }

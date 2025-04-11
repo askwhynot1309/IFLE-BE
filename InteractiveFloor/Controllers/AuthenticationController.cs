@@ -1,4 +1,4 @@
-﻿using BusinessObjects.DTOs.UserDTOs.Request;
+﻿using BusinessObjects.DTOs.User.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.AuthenticationServices;

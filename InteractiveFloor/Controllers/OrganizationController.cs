@@ -107,5 +107,14 @@ namespace InteractiveFloor.Controllers
             var response = await _organizationService.GetDetailsInfoOfOrganization(id);
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("{id}/floors")]
+        public async Task<IActionResult> GetFloorsOfOrganization(string id)
+        {
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _organizationService.GetFloorListOfOrganization(id, currentUserId);
+            return Ok(response);
+        }
     }
 }

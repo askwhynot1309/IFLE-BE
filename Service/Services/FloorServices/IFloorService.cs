@@ -11,7 +11,7 @@ namespace Service.Services.FloorServices
 {
     public interface IFloorService
     {
-        Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId);
+        Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId);
 
         Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId);
 
