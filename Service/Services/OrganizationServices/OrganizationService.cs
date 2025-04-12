@@ -268,11 +268,5 @@ namespace Service.Services.OrganizationServices
             }
             return result;
         }
-        //input: organizationId, currentUserId
-        //output: list tổ chức public + private(nếu có)
-        //public: đã hiểu
-        //private: 
-        //lấy list id của private floor
-        //
     }
 }

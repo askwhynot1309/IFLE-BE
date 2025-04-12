@@ -13,5 +13,7 @@ namespace Repository.Repositories.FloorUserRepositories
         Task<List<string>> GetListUserIdByFloorId(string floorId);
 
         Task<List<PrivateFloorUser>> GetListByUserIdAndPrivateFloorIdList(string userId, List<string> privateFloorIdList);
+
+        Task<List<PrivateFloorUser>> GetListByUserIdList(List<string> userIdList, string floorId);
     }
 }
