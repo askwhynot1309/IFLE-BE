@@ -96,8 +96,27 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddMemberToPrivateFloor(string id, List<string> userIdList)
         {
-            await _floorService.AddUserToPrivateFloor(userIdList, id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _floorService.AddUserToPrivateFloor(userIdList, id, currentUserId);
             return Ok("Thêm người dùng vào sàn tương tác thành công.");
+        }
+
+        [HttpGet]
+        [Route("{id}/private/member")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetMemberOfPrivateFloor(string id)
+        {
+            var response = await _floorService.GetUserInPrivateFloor(id);
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("{id}/private/member")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> RemoveMemberFromPrivateFloor(string id, List<string> userIdList)
+        {
+            await _floorService.RemoveUserFromPrivateFloor(id, userIdList);
+            return Ok("Xóa người dùng khỏi sàn tương tác riêng tư thành công.");
         }
     }
 }

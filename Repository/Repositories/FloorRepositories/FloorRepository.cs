@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Models;
 using DAO;
+using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 using System;
 using System.Collections.Generic;
