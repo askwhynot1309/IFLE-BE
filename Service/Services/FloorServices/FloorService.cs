@@ -3,7 +3,9 @@ using BusinessObjects.DTOs.Device.Request;
 using BusinessObjects.DTOs.DeviceCategory.Response;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
+using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Http;
 using Repository.Enums;
 using Repository.Repositories.DeviceCategoryRepositories;
 using Repository.Repositories.DeviceRepositories;
@@ -11,6 +13,7 @@ using Repository.Repositories.FloorRepositories;
 using Repository.Repositories.FloorUserRepositories;
 using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
+using Repository.Repositories.UserRepositories;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
@@ -29,8 +32,9 @@ namespace Service.Services.FloorServices
         private readonly IDeviceCategoryRepository _deviceCategoryRepository;
         private readonly IPrivateFloorUserRepository _floorUserRepository;
         private readonly IOrganizationUserRepository _organizationUserRepository;
+        private readonly IUserRepository _userRepository;
 
-        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository)
+        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
         {
             _floorRepository = floorRepository;
             _mapper = mapper;
@@ -39,6 +43,7 @@ namespace Service.Services.FloorServices
             _deviceCategoryRepository = deviceCategoryRepository;
             _floorUserRepository = floorUserRepository;
             _organizationUserRepository = organizationUserRepository;
+            _userRepository = userRepository;
         }
 
         public async Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId)
@@ -210,10 +215,10 @@ namespace Service.Services.FloorServices
             await _deviceRepository.Delete(device);
         }
 
-        public async Task AddUserToPrivateFloor(List<string> userIdList, string floorId)
+        public async Task AddUserToPrivateFloor(List<string> userIdList, string floorId, string currentUserId)
         {
             var floor = await _floorRepository.GetFloorById(floorId);
-            if (floor.IsPublic == false)
+            if (floor.IsPublic == true)
             {
                 throw new CustomException("Sàn tương tác này không phải riêng tư.");
             }
@@ -230,7 +235,13 @@ namespace Service.Services.FloorServices
             var duplicateUser = existedList.Intersect(userIdList);
             if (duplicateUser.Count() > 0)
             {
-                throw new CustomException("Người dùng đã được thêm vào sàn tương tác trước đó.");
+                throw new CustomException("Người dùng đã được thêm vào sàn tương tác riêng tư trước đó.");
+            }
+
+            var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(floor.OrganizationId);
+            if (!ownerId.Equals(currentUserId))
+            {
+                throw new CustomException("Chỉ có chủ sở hữu sàn tương tác mới được thêm thành viên.", StatusCodes.Status403Forbidden);
             }
 
             var floorUserList = new List<PrivateFloorUser>();
@@ -246,5 +257,47 @@ namespace Service.Services.FloorServices
             await _floorUserRepository.InsertRange(floorUserList);
         }
 
+        public async Task<List<UserInfoResponeModel>> GetUserInPrivateFloor(string floorId)
+        {
+            var floor = await _floorRepository.GetFloorById(floorId);
+            if (floor.IsPublic == true)
+            {
+                throw new CustomException("Sàn tương tác này không phải riêng tư.");
+            }
+            var userIdList = await _floorUserRepository.GetListUserIdByFloorId(floorId);
+            if (userIdList.Count() == 0)
+            {
+                return null;
+            }
+            var userList = await _userRepository.GetCustomerListById(userIdList);
+            return _mapper.Map<List<UserInfoResponeModel>>(userList);
+        }
+
+        public async Task RemoveUserFromPrivateFloor(string floorId, List<string> userIdList)
+        {
+            var floor = await _floorRepository.GetFloorById(floorId);
+            if (floor.IsPublic == true)
+            {
+                throw new CustomException("Sàn tương tác này không phải riêng tư.");
+            }
+
+            var userInOrganization = await _organizationUserRepository.GetUserOfOrganization(floor.OrganizationId);
+
+            bool check = userIdList.All(u => userInOrganization.Contains(u));
+            if (!check)
+            {
+                throw new CustomException("Người dùng không thuộc tổ chức chứa sàn tương tác này.");
+            }
+
+            var removeList = await _floorUserRepository.GetListByUserIdList(userIdList, floorId);
+            var listUserId = removeList.Select(u => u.UserId).ToList();
+            var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(floor.OrganizationId);
+            if (listUserId.Contains(ownerId))
+            {
+                throw new CustomException("Không được xóa chủ sở hữu ra khỏi sàn tương tác riêng tư.");
+            }
+
+            await _floorUserRepository.DeleteRange(removeList);
+        }
     }
 }

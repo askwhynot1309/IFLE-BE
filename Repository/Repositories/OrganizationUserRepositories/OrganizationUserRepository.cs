@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Models;
 using DAO;
+using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,11 @@ namespace Repository.Repositories.OrganizationUserRepositories
         public async Task<OrganizationUser> GetOrganizationUserByUserId(string userId, string organizationId)
         {
             return await GetSingle(o => o.UserId.Equals(userId) && o.OrganizationId.Equals(organizationId));
+        }
+
+        public async Task<string> GetOwnerIdOfOrganization(string organizationId)
+        {
+            return (await GetSingle(o => o.OrganizationId.Equals(organizationId) && o.Privilege.Equals(PrivilegeEnums.Owner.ToString()))).UserId;
         }
     }
 }

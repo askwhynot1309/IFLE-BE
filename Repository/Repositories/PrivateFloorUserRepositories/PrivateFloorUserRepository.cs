@@ -23,7 +23,13 @@ namespace Repository.Repositories.FloorUserRepositories
         public async Task<List<PrivateFloorUser>> GetListByUserIdAndPrivateFloorIdList(string userId, List<string> privateFloorIdList)
         {
             var list = await Get(p => p.UserId.Equals(userId) && privateFloorIdList.Contains(p.FloorId), includeProperties: "InteractiveFloor,InteractiveFloor.Device,InteractiveFloor.Device.DeviceCategory");
-            return list.ToList();   
+            return list.ToList();
+        }
+
+        public async Task<List<PrivateFloorUser>> GetListByUserIdList(List<string> userIdList, string floorId)
+        {
+            var list = await Get(l => l.FloorId.Equals(floorId) && userIdList.Contains(l.UserId));
+            return list.ToList();
         }
     }
 }
