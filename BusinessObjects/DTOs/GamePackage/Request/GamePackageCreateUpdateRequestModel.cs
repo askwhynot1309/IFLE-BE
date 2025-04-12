@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.DTOs.GamePackage.Request
 {
-    public class GamePackageCreateRequestModel
+    public class GamePackageCreateUpdateRequestModel
     {
         [Required(ErrorMessage = "Vui lòng nhập tên gói game.")]
         public string Name { get; set; } = null!;

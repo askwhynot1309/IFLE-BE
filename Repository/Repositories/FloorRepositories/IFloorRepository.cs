@@ -11,5 +11,9 @@ namespace Repository.Repositories.FloorRepositories
     public interface IFloorRepository : IGenericRepository<InteractiveFloor>
     {
         Task<InteractiveFloor> GetFloorById(string floorId);
+
+        Task<List<InteractiveFloor>> GetAllPublicFloorsOfOrganization(string organizationId);
+
+        Task<List<InteractiveFloor>> GetAllPrivateFloorsOfOrganization(string organizationId);
     }
 }

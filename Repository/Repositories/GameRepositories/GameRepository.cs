@@ -64,7 +64,7 @@ namespace Repository.Repositories.GameRepositories
         public async Task<IEnumerable<Game>> GetPurchasedGamesByUserIdAsync(string userId)
         {
             // Get all floors associated with the user
-            var userFloors = await _context.FloorUsers
+            var userFloors = await _context.PrivateFloorUsers
                 .Where(fu => fu.UserId == userId && fu.InteractiveFloor.Status == "Active")
                 .Select(fu => fu.FloorId)
                 .ToListAsync();
