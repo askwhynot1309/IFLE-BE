@@ -89,9 +89,13 @@ namespace Service.Services.FloorServices
                 Width = floor.Width,
                 IsPublic = floor.IsPublic,
                 Status = floor.Status,
-                DeviceInfo = _mapper.Map<DeviceInfo>(floor.Device),
+                DeviceInfo = floor.Device != null ? _mapper.Map<DeviceInfo>(floor.Device) : null,
             };
-            result.DeviceInfo.DeviceCategory = _mapper.Map<DeviceCategoryInfoResponseModel>(floor.Device.DeviceCategory);
+
+            if (floor.Device != null)
+            {
+                result.DeviceInfo.DeviceCategory = floor.Device.DeviceCategory != null ? _mapper.Map<DeviceCategoryInfoResponseModel>(floor.Device.DeviceCategory) : null;
+            }
             return result;
         }
 
