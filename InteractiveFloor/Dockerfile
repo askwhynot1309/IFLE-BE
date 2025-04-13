@@ -17,6 +17,7 @@ RUN apk add --no-cache tzdata
 # Thiết lập múi giờ
 ENV TZ=Asia/Ho_Chi_Minh
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+COPY . /src
 
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -44,6 +45,7 @@ RUN apk add --no-cache tzdata icu-libs
 # Thiết lập múi giờ
 ENV TZ=Asia/Ho_Chi_Minh
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+COPY . /src
 
 WORKDIR /app
 COPY --from=publish /app/publish .
