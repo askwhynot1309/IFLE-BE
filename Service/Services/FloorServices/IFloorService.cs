@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.DTOs.Device.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
+using BusinessObjects.DTOs.User.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,10 @@ namespace Service.Services.FloorServices
 
         Task RemoveDeviceFromFloor(string floorId);
 
-        Task AddUserToPrivateFloor(List<string> userIdList, string floorId);
+        Task AddUserToPrivateFloor(List<string> userIdList, string floorId, string currentUserId);
+
+        Task<List<UserInfoResponeModel>> GetUserInPrivateFloor(string floorId);
+
+        Task RemoveUserFromPrivateFloor(string floorId, List<string> userIdList);
     }
 }
