@@ -10,6 +10,14 @@ EXPOSE 8081
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+# Cài đặt tzdata để quản lí múi giờ
+RUN apk add --no-cache tzdata
+
+# Thiết lập múi giờ
+ENV TZ=Asia/Ho_Chi_Minh
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["InteractiveFloor/InteractiveFloor.csproj", "InteractiveFloor/"]
@@ -29,6 +37,14 @@ RUN dotnet publish "./InteractiveFloor.csproj" -c $BUILD_CONFIGURATION -o /app/p
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+
+# Cài đặt tzdata và icu-libs
+RUN apk add --no-cache tzdata icu-libs
+
+# Thiết lập múi giờ
+ENV TZ=Asia/Ho_Chi_Minh
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "InteractiveFloor.dll"]
