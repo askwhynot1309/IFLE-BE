@@ -38,7 +38,7 @@ namespace Service.Services.PayosServices
                 var paymentLinkRequest = new PaymentData(
                     orderCode: int.Parse(DateTimeOffset.Now.ToString("ffffff")),
                     amount: priceInt,
-                    description: "Thanh toán tiền mua gói dịch vụ",
+                    description: "Mua gói dịch vụ.",
                     items: [new("Mua gói dịch vụ", 1, priceInt)],
                     returnUrl: returnUrl,
                     cancelUrl: cancelUrl,

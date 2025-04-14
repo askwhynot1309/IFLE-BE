@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BusinessObjects.DTOs.Device.Request;
 using BusinessObjects.DTOs.DeviceCategory.Response;
+using BusinessObjects.DTOs.GamePackage.Response;
+using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.User.Response;
@@ -11,15 +13,14 @@ using Repository.Repositories.DeviceCategoryRepositories;
 using Repository.Repositories.DeviceRepositories;
 using Repository.Repositories.FloorRepositories;
 using Repository.Repositories.FloorUserRepositories;
+using Repository.Repositories.GamePackageOrderRepositories;
+using Repository.Repositories.GamePackageRepositories;
 using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
 using Repository.Repositories.UserRepositories;
+using Service.Services.EmailServices;
+using Service.Services.PayosServices;
 using Service.Ultis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Services.FloorServices
 {
@@ -33,8 +34,12 @@ namespace Service.Services.FloorServices
         private readonly IPrivateFloorUserRepository _floorUserRepository;
         private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IGamePackageRepository _gamePackageRepository;
+        private readonly IGamePackageOrderRepository _gamePackageOrderRepository;
+        private readonly IPayosService _payosService;
+        private readonly IEmailService _emailService;
 
-        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
+        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IGamePackageRepository gamePackageRepository, IPayosService payosService, IGamePackageOrderRepository gamePackageOrderRepository, IEmailService emailService)
         {
             _floorRepository = floorRepository;
             _mapper = mapper;
@@ -44,6 +49,10 @@ namespace Service.Services.FloorServices
             _floorUserRepository = floorUserRepository;
             _organizationUserRepository = organizationUserRepository;
             _userRepository = userRepository;
+            _gamePackageRepository = gamePackageRepository;
+            _payosService = payosService;
+            _gamePackageOrderRepository = gamePackageOrderRepository;
+            _emailService = emailService;
         }
 
         public async Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId)
@@ -302,6 +311,75 @@ namespace Service.Services.FloorServices
             }
 
             await _floorUserRepository.DeleteRange(removeList);
+        }
+
+        public async Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model)
+        {
+            var newOrder = _mapper.Map<GamePackageOrder>(model);
+            newOrder.Id = Guid.NewGuid().ToString();
+            newOrder.FloorId = floorId;
+            var gamePackage = await _gamePackageRepository.GetGamePackageById(model.GamePackageId);
+            if (gamePackage == null)
+            {
+                throw new CustomException("Không tìm thấy gói game này.");
+            }
+            newOrder.Price = gamePackage.Price;
+            newOrder.OrderDate = DateTime.Now;
+            newOrder.Status = PackageOrderStatusEnums.PENDING.ToString();
+            var payment = await _payosService.Create(newOrder.Price, model.ReturnUrl, model.CancelUrl);
+            if (payment == null)
+            {
+                throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
+            }
+            newOrder.OrderCode = payment.orderCode.ToString();
+            await _gamePackageOrderRepository.Insert(newOrder);
+            return payment.checkoutUrl;
+        }
+
+        public async Task<List<GamePackageDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId)
+        {
+            var floor = await _floorRepository.GetFloorById(floorId);
+            if (floor == null)
+            {
+                throw new CustomException("Sàn tương tác này không tồn tại.");
+            }
+            var now = DateTime.Now;
+            var availableGamePackage = (await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now)).Select(a => a.GamePackage);
+            var result = new List<GamePackageDetailsResponseModel>();
+            foreach (var gamePackage in availableGamePackage)
+            {
+                result.Add(new GamePackageDetailsResponseModel
+                {
+                    Id = gamePackage.Id,
+                    Name = gamePackage.Name,
+                    Description = gamePackage.Description,
+                    Duration = gamePackage.Duration,
+                    Price = gamePackage.Price,
+                    Status = gamePackage.Status,
+                    GameList = _mapper.Map<List<GameInfo>>(gamePackage.GamePackageRelations.Select(g => g.Game))
+                });
+            }
+            return result;
+        }
+
+        public async Task UpdateGamePackageOrderStatus(string orderCode, string status, string currentUserId)
+        {
+            var order = await _gamePackageOrderRepository.GetGamePackageOrderByOrderCode(orderCode);
+            var gamePackage = await _gamePackageRepository.GetGamePackageById(order.GamePackageId);
+            order.Status = status;
+            var curUser = await _userRepository.GetUserById(currentUserId);
+            if (status.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            {
+                var htmlBody = HTMLEmailTemplate.PaymentSuccessNotification(curUser.FullName, gamePackage.Name, order.OrderDate);
+                bool sendEmailSuccess = await _emailService.SendEmail(curUser.Email, "Thông báo mua gói trò chơi thành công", htmlBody);
+                if (!sendEmailSuccess)
+                {
+                    throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
+                }
+                var activationKey = ActivationKeyGenerator.GenerateKey();
+                order.ActivationKey = activationKey;
+            }
+            await _gamePackageOrderRepository.Update(order);
         }
     }
 }
