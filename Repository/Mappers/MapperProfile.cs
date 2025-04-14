@@ -6,6 +6,7 @@ using BusinessObjects.DTOs.Game;
 using BusinessObjects.DTOs.GameCategory;
 using BusinessObjects.DTOs.GamePackage.Request;
 using BusinessObjects.DTOs.GamePackage.Response;
+using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
@@ -86,6 +87,9 @@ namespace Repository.Mappers
             //Device
             CreateMap<DeviceCreateUpdateRequestModel, Device>();
             CreateMap<Device, DeviceInfo>();
+
+            //Game Package Order
+            CreateMap<GamePackageOrderCreateRequestModel, GamePackageOrder>();
         }
     }
 }

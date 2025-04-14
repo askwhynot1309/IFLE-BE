@@ -209,6 +209,10 @@ namespace DAO
                     .HasColumnType("datetime")
                     .IsRequired();
 
+                entity.Property(e => e.OrderCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.PaymentMethod)
                     .HasMaxLength(50)
                     .IsUnicode(false)
@@ -600,8 +604,7 @@ namespace DAO
                     .IsFixedLength();
 
                 entity.Property(e => e.ActivationKey)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(18,2)")
@@ -610,6 +613,10 @@ namespace DAO
                 entity.Property(e => e.OrderDate)
                     .HasColumnType("datetime")
                     .IsRequired();
+
+                entity.Property(e => e.OrderCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.PaymentMethod)
                     .HasMaxLength(50)

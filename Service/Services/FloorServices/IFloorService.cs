@@ -1,4 +1,6 @@
 ﻿using BusinessObjects.DTOs.Device.Request;
+using BusinessObjects.DTOs.GamePackage.Response;
+using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.User.Response;
@@ -33,5 +35,11 @@ namespace Service.Services.FloorServices
         Task<List<UserInfoResponeModel>> GetUserInPrivateFloor(string floorId);
 
         Task RemoveUserFromPrivateFloor(string floorId, List<string> userIdList);
+
+        Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model);
+
+        Task UpdateGamePackageOrderStatus(string orderCode, string status, string currentUserId);
+
+        Task<List<GamePackageDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId);
     }
 }
