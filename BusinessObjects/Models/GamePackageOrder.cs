@@ -10,7 +10,7 @@ namespace BusinessObjects.Models
     {
         public string Id { get; set; } = null!;
 
-        public string ActivationKey { get; set; } = null!;
+        public string? ActivationKey { get; set; } 
 
         public decimal Price { get; set; }
 
@@ -19,6 +19,8 @@ namespace BusinessObjects.Models
         public DateTime? StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
+
+        public string? OrderCode { get; set; }
 
         public string PaymentMethod { get; set; } = null!;
 

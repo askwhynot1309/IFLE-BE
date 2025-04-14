@@ -1,8 +1,10 @@
 ﻿using BusinessObjects.DTOs.Device.Request;
+using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.FloorServices;
+using Service.Services.PayosServices;
 using System.Security.Claims;
 
 namespace InteractiveFloor.Controllers
@@ -12,10 +14,12 @@ namespace InteractiveFloor.Controllers
     public class FloorController : ControllerBase
     {
         private readonly IFloorService _floorService;
+        private readonly IPayosService _payosService;
 
-        public FloorController(IFloorService floorService)
+        public FloorController(IFloorService floorService, IPayosService payosService)
         {
             _floorService = floorService;
+            _payosService = payosService;
         }
 
         [HttpPost]
@@ -117,6 +121,37 @@ namespace InteractiveFloor.Controllers
         {
             await _floorService.RemoveUserFromPrivateFloor(id, userIdList);
             return Ok("Xóa người dùng khỏi sàn tương tác riêng tư thành công.");
+        }
+
+        [HttpPost]
+        [Route("{id}/game-package")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> BuyGamePackageForFloor(string id, GamePackageOrderCreateRequestModel model)
+        {
+            var response = await _floorService.BuyGamePackageForFloor(id, model);
+            return Ok(response);
+        }
+
+        [HttpPatch]
+        [Route("game-package/status")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> UpdateGamePackageStatus(string orderCode)
+        {
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+
+            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
+            await _floorService.UpdateGamePackageOrderStatus(orderCode, paymentInfo.status, currentUserId);
+
+            return Ok("Cập nhật trạng thái thanh toán thành công.");
+        }
+
+        [HttpGet]
+        [Route("{id}/game-package")]
+        //[Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetAvailableGameForFloor(string id)
+        {
+            var response = await _floorService.GetAllAvailableGamePackageOfFloor(id);
+            return Ok(response);
         }
     }
 }
