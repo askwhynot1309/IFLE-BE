@@ -16,6 +16,8 @@ namespace BusinessObjects.Models
 
         public DateTime OrderDate { get; set; }
 
+        public string? OrderCode { get; set; }
+
         public string PaymentMethod { get; set; } = null!;
 
         public string Status { get; set; } = null!;

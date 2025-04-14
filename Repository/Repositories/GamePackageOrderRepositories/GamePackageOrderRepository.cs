@@ -23,5 +23,24 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             var list = await Get(g => g.GamePackageId.Equals(packageId) && statusList.Contains(g.Status));
             return list.ToList();
         }
+
+        public async Task<GamePackageOrder> GetGamePackageOrderByOrderCode(string orderCode)
+        {
+            return await GetSingle(p => p.OrderCode.Equals(orderCode));
+        }
+
+        public async Task<List<GamePackageOrder>> GetAvailableGamePackage(string floorId, DateTime date)
+        {
+            var list = await Get(
+                g => g.FloorId == floorId &&
+                     g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
+                     g.EndTime.HasValue &&
+                     DateOnly.FromDateTime(g.EndTime.Value) >= DateOnly.FromDateTime(date),
+                includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game"
+            );
+
+            return list.ToList();
+        }
+
     }
 }
