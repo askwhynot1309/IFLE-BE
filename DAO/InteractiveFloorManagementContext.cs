@@ -603,9 +603,6 @@ namespace DAO
                     .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.ActivationKey)
-                    .HasMaxLength(100);
-
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(18,2)")
                     .IsRequired();
@@ -621,6 +618,9 @@ namespace DAO
                 entity.Property(e => e.PaymentMethod)
                     .HasMaxLength(50)
                     .IsRequired();
+
+                entity.Property(e => e.IsActivated)
+                    .HasColumnType("bit");
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(50)

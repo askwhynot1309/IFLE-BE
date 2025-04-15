@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.DTOs.UserPackage.Request
 {
-    public class UserPackageCreateRequestModel
+    public class UserPackageCreateUpdateRequestModel
     {
         [Required(ErrorMessage = "Vui lòng nhập tên.")]
         public string Name { get; set; } = null!;

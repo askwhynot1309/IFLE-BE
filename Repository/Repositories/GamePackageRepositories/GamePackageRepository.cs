@@ -28,7 +28,7 @@ namespace Repository.Repositories.GamePackageRepositories
 
         public async Task<GamePackage> GetGamePackageById(string id)
         {
-            return await GetSingle(g => g.Id.Equals(id));
+            return await GetSingle(g => g.Id.Equals(id), includeProperties: "GamePackageRelations");
         }
     }
 }

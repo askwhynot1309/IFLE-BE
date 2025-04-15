@@ -1,17 +1,25 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
+using BusinessObjects.DTOs.UserPackage.Response;
+using BusinessObjects.DTOs.UserPackageOrder.Request;
+using BusinessObjects.DTOs.UserPackageOrder.Response;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Repository.Enums;
 using Repository.Repositories.FloorRepositories;
 using Repository.Repositories.FloorUserRepositories;
 using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
+using Repository.Repositories.UserPackageOrderRepositories;
+using Repository.Repositories.UserPackageRepositories;
 using Repository.Repositories.UserRepositories;
 using Service.Services.AuthenticationServices;
 using Service.Services.EmailServices;
+using Service.Services.PayosServices;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
@@ -31,8 +39,11 @@ namespace Service.Services.OrganizationServices
         private readonly IEmailService _emailService;
         private readonly IFloorRepository _floorRepository;
         private readonly IPrivateFloorUserRepository _privateFloorUserRepository;
+        private readonly IUserPackageRepository _userPackageRepository;
+        private readonly IPayosService _payosService;
+        private readonly IUserPackageOrderRepository _userPackageOrderRepository;
 
-        public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IEmailService emailService, IFloorRepository floorRepository, IPrivateFloorUserRepository privateFloorUserRepository)
+        public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IEmailService emailService, IFloorRepository floorRepository, IPrivateFloorUserRepository privateFloorUserRepository, IUserPackageRepository userPackageRepository, IUserPackageOrderRepository userPackageOrderRepository, IPayosService payosService)
         {
             _organizationRepository = organizationRepository;
             _organizationUserRepository = organizationUserRepository;
@@ -41,6 +52,9 @@ namespace Service.Services.OrganizationServices
             _emailService = emailService;
             _floorRepository = floorRepository;
             _privateFloorUserRepository = privateFloorUserRepository;
+            _userPackageRepository = userPackageRepository;
+            _userPackageOrderRepository = userPackageOrderRepository;
+            _payosService = payosService;
         }
 
         public async Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId)
@@ -266,6 +280,56 @@ namespace Service.Services.OrganizationServices
                     result = result.Concat(privateResult).ToList();
                 }
             }
+            return result;
+        }
+
+        public async Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model)
+        {
+            var newOrder = _mapper.Map<UserPackageOrder>(model);
+            newOrder.Id = Guid.NewGuid().ToString();
+            newOrder.OrganizationId = organizationId;
+            var userPackage = await _userPackageRepository.GetUserPackageById(model.UserPackageId);
+            if (userPackage == null)
+            {
+                throw new CustomException("Không tìm thấy gói này.");
+            }
+            newOrder.Price = userPackage.Price;
+            newOrder.OrderDate = DateTime.Now;
+            newOrder.Status = PackageOrderStatusEnums.PENDING.ToString();
+            var payment = await _payosService.Create(newOrder.Price, model.ReturnUrl, model.CancelUrl);
+            if (payment == null)
+            {
+                throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
+            }
+            newOrder.OrderCode = payment.orderCode.ToString();
+            await _userPackageOrderRepository.Insert(newOrder);
+            return payment.checkoutUrl;
+        }
+
+        public async Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId)
+        {
+            var order = await _userPackageOrderRepository.GetUserPackageOrderByOrderCode(orderCode);
+            var userPackage = await _userPackageRepository.GetUserPackageById(order.UserPackageId);
+            order.Status = status;
+            var curUser = await _userRepository.GetUserById(currentUserId);
+            if (status.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            {
+                var htmlBody = HTMLEmailTemplate.PaymentSuccessNotification(curUser.FullName, userPackage.Name, order.OrderDate);
+                bool sendEmailSuccess = await _emailService.SendEmail(curUser.Email, "Thông báo mua gói người dùng thành công", htmlBody);
+                if (!sendEmailSuccess)
+                {
+                    throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
+                }
+                var organization = await _organizationRepository.GetOrganizationById(order.OrganizationId);
+                organization.UserLimit += userPackage.UserLimit;
+            }
+            await _userPackageOrderRepository.Update(order);
+        }
+
+        public async Task<List<UserPackageOrderListResponseModel>> GetAllUserPackageOrders(string id)
+        {
+            var list = await _userPackageOrderRepository.GetAllUserPackageOrderOfOrganization(id);
+            var result = _mapper.Map<List<UserPackageOrderListResponseModel>>(list);
             return result;
         }
     }
