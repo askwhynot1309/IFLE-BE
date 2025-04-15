@@ -34,6 +34,7 @@ using Repository.Repositories.FloorUserRepositories;
 using InteractiveFloor.Middlewares;
 using Repository.Repositories.GamePackageOrderRepositories;
 using Service.Services.PayosServices;
+using Repository.Repositories.UserPackageOrderRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +89,7 @@ builder.Services.AddScoped<IPrivateFloorUserRepository, PrivateFloorUserReposito
 builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<IDeviceCategoryRepository, DeviceCategoryRepository>();
 builder.Services.AddScoped<IGamePackageOrderRepository, GamePackageOrderRepository>();
+builder.Services.AddScoped<IUserPackageOrderRepository, UserPackageOrderRepository>();
 
 //=========================================== SERVICE =============================================
 

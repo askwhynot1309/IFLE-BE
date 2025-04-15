@@ -1,6 +1,8 @@
 ﻿using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
+using BusinessObjects.DTOs.UserPackageOrder.Request;
+using BusinessObjects.DTOs.UserPackageOrder.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,5 +34,11 @@ namespace Service.Services.OrganizationServices
         Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId);
 
         Task<List<FloorDetailsInfoResponseModel>> GetFloorListOfOrganization(string organizationId, string currentUserId);
+
+        Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model);
+
+        Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId);
+
+        Task<List<UserPackageOrderListResponseModel>> GetAllUserPackageOrders(string id);
     }
 }
