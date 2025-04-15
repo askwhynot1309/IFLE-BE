@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Device\Response\" />
-    <Folder Include="DTOs\GamePackageOrder\Response\" />
   </ItemGroup>
 
 </Project>

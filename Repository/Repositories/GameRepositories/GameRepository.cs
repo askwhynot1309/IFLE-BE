@@ -77,8 +77,8 @@ namespace Repository.Repositories.GameRepositories
 
             // Get all active game package orders for the user's floors
             var activePackageOrderIds = await _context.GamePackageOrders
-                .Where(gpo => userFloors.Contains(gpo.FloorId) && 
-                             gpo.Status == "Active" && 
+                .Where(gpo => userFloors.Contains(gpo.FloorId) &&
+                             gpo.Status == "Active" &&
                              gpo.EndTime > currentTime)
                 .Select(gpo => gpo.GamePackageId)
                 .Distinct()
@@ -104,6 +104,11 @@ namespace Repository.Repositories.GameRepositories
                     .ThenInclude(gcr => gcr.GameCategory)
                 .Include(g => g.GameVersions)
                 .ToListAsync();
+        }
+
+        public async Task<List<Game>> GetListGameByListId(List<string> gameIdList)
+        {
+            return (await Get(g => gameIdList.Contains(g.Id))).ToList();
         }
     }
 }
