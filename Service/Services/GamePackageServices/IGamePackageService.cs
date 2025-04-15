@@ -10,9 +10,9 @@ namespace Service.Services.GamePackageServices
 {
     public interface IGamePackageService
     {
-        Task CreateGamePackage(GamePackageCreateUpdateRequestModel model);
+        Task CreateGamePackage(GamePackageCreateRequestModel model);
 
-        Task UpdateGamePackage(GamePackageCreateUpdateRequestModel model, string gamePackageId);
+        Task UpdateGamePackage(GamePackageUpdateRequestModel model, string gamePackageId);
 
         Task<List<GamePackageListResponseModel>> GetAllGamePackages();
 

@@ -11,11 +11,17 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 {
     public interface IGamePackageOrderRepository : IGenericRepository<GamePackageOrder>
     {
+        Task<List<GamePackageOrder>> GetAllGamePackageOrderOfFloor(string floorId);
+
         Task<List<GamePackageOrder>> GetAvailableOrderListByPackageId(string packageId);
 
         Task<GamePackageOrder> GetGamePackageOrderByOrderCode(string orderCode);
 
         Task<List<GamePackageOrder>> GetAvailableGamePackage(string floorId, DateTime date);
+
+        Task<List<GamePackageOrder>> GetPlayableGamePackage(string floorId, DateTime date);
+
+        Task<GamePackageOrder> GetGamePackageOrderById(string id);
 
     }
 }

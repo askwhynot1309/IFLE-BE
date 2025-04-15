@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.Models
+namespace BusinessObjects.DTOs.GamePackageOrder.Response
 {
-    public class GamePackageOrder
+    public class GamePackageOrderListResponseModel
     {
         public string Id { get; set; } = null!;
 
@@ -25,13 +25,5 @@ namespace BusinessObjects.Models
         public bool? IsActivated { get; set; }
 
         public string Status { get; set; } = null!;
-
-        public string FloorId { get; set; } = null!;
-
-        public string GamePackageId { get; set; } = null!;
-
-        public virtual InteractiveFloor InteractiveFloor { get; set; } = null!;
-
-        public virtual GamePackage GamePackage { get; set; } = null!;
     }
 }

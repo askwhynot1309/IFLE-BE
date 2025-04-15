@@ -30,7 +30,7 @@ namespace Service.Services.GamePackageServices
             _gamePackageOrderRepository = gamePackageOrderRepository;
         }
 
-        public async Task CreateGamePackage(GamePackageCreateUpdateRequestModel model)
+        public async Task CreateGamePackage(GamePackageCreateRequestModel model)
         {
             var newGamePackage = _mapper.Map<GamePackage>(model);
 
@@ -40,15 +40,30 @@ namespace Service.Services.GamePackageServices
             await _gamePackageRepository.Insert(newGamePackage);
         }
 
-        public async Task UpdateGamePackage(GamePackageCreateUpdateRequestModel model, string gamePackageId)
+        public async Task UpdateGamePackage(GamePackageUpdateRequestModel model, string gamePackageId)
         {
             var listAvailableOrder = await _gamePackageOrderRepository.GetAvailableOrderListByPackageId(gamePackageId);
-            if (listAvailableOrder.Count() > 0)
+            if (listAvailableOrder.Count > 0)
             {
                 throw new CustomException("Gói trò chơi này đang được sử dụng hoặc trong quá trình giao dịch với người dùng. Không thể cập nhật gói trò chơi này.");
             }
+
             var gamePackage = await _gamePackageRepository.GetGamePackageById(gamePackageId);
             _mapper.Map(model, gamePackage);
+
+            if (model.GameIdList.Count > 0)
+            {
+                gamePackage.GamePackageRelations.Clear();
+                foreach (var gameId in model.GameIdList)
+                {
+                    gamePackage.GamePackageRelations.Add(new GamePackageRelation
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        GameId = gameId,
+                        GamePackageId = gamePackageId
+                    });
+                }
+            }
 
             await _gamePackageRepository.Update(gamePackage);
         }
@@ -139,5 +154,6 @@ namespace Service.Services.GamePackageServices
 
             await _gamePackageRepository.Update(gamePackage);
         }
+
     }
 }

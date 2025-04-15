@@ -10,7 +10,9 @@ namespace Service.Services.UserPackageServices
 {
     public interface IUserPackageService
     {
-        Task AddUserPackage(UserPackageCreateRequestModel model);
+        Task AddUserPackage(UserPackageCreateUpdateRequestModel model);
+
+        Task UpdateUserPackage(UserPackageCreateUpdateRequestModel model, string id);
 
         Task<List<UserPackageListResponseModel>> GetAllUserPackages();
 
