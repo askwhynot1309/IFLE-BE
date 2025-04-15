@@ -20,7 +20,7 @@ namespace InteractiveFloor.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> CreateGamePackage(GamePackageCreateUpdateRequestModel model)
+        public async Task<IActionResult> CreateGamePackage(GamePackageCreateRequestModel model)
         {
             await _gamePackageService.CreateGamePackage(model);
             return Ok("Tạo gói game thành công.");
@@ -80,7 +80,7 @@ namespace InteractiveFloor.Controllers
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> UpdateGamePackage(string id, GamePackageCreateUpdateRequestModel model)
+        public async Task<IActionResult> UpdateGamePackage(string id, GamePackageUpdateRequestModel model)
         {
             await _gamePackageService.UpdateGamePackage(model, id);
             return Ok("Cập nhật gói game thành công.");

@@ -3,11 +3,13 @@ using BusinessObjects.DTOs.UserPackage.Request;
 using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.Models;
 using Repository.Enums;
+using Repository.Repositories.UserPackageOrderRepositories;
 using Repository.Repositories.UserPackageRepositories;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,15 +18,17 @@ namespace Service.Services.UserPackageServices
     public class UserPackageService : IUserPackageService
     {
         private readonly IUserPackageRepository _userPackageRepository;
+        private readonly IUserPackageOrderRepository _userPackageOrderRepository;
         private readonly IMapper _mapper;
 
-        public UserPackageService(IUserPackageRepository userPackageRepository, IMapper mapper)
+        public UserPackageService(IUserPackageRepository userPackageRepository, IMapper mapper, IUserPackageOrderRepository userPackageOrderRepository)
         {
             _userPackageRepository = userPackageRepository;
             _mapper = mapper;
+            _userPackageOrderRepository = userPackageOrderRepository;
         }
 
-        public async Task AddUserPackage(UserPackageCreateRequestModel model)
+        public async Task AddUserPackage(UserPackageCreateUpdateRequestModel model)
         {
             var newUserPackage = _mapper.Map<UserPackage>(model);
 
@@ -32,6 +36,22 @@ namespace Service.Services.UserPackageServices
             newUserPackage.Id = Guid.NewGuid().ToString();
 
             await _userPackageRepository.Insert(newUserPackage);
+        }
+
+        public async Task UpdateUserPackage(UserPackageCreateUpdateRequestModel model, string id)
+        {
+            var userPackage = await _userPackageRepository.GetUserPackageById(id);
+            if (userPackage == null)
+            {
+                throw new CustomException("Không tìm thấy gói người dùng này.");
+            }
+            var availableOrder = await _userPackageOrderRepository.GetAvailableOrderListByPackageId(id);
+            if (availableOrder.Count > 0)
+            {
+                throw new CustomException("Gói này đang được sử dụng hoặc trong quá trình giao dịch với người dùng. Không thể cập nhật.");
+            }
+            _mapper.Map(model, userPackage);
+            await _userPackageRepository.Update(userPackage);
         }
 
         public async Task<List<UserPackageListResponseModel>> GetAllUserPackages()

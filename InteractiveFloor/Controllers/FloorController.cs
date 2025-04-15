@@ -135,7 +135,7 @@ namespace InteractiveFloor.Controllers
         [HttpPatch]
         [Route("game-package/status")]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> UpdateGamePackageStatus(string orderCode)
+        public async Task<IActionResult> UpdateGamePackageOrderStatus(string orderCode)
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
 
@@ -146,11 +146,38 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet]
-        [Route("{id}/game-package")]
-        //[Authorize(Roles = "Customer")]
+        [Route("{id}/game-package/available")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetAvailableGameForFloor(string id)
         {
             var response = await _floorService.GetAllAvailableGamePackageOfFloor(id);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{id}/game-package/playable")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetPlayableGameForFloor(string id)
+        {
+            var response = await _floorService.GetPlayableGamePackageOfFloor(id);
+            return Ok(response);
+        }
+
+        [HttpPatch]
+        [Route("game-package/order/activate")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> ActivateGamePackageAfterBuying([FromBody] string gamePackageOrderId)
+        {
+            await _floorService.ActivateGamePackageOrder(gamePackageOrderId);
+            return Ok("Kích hoạt gói game thành công.");
+        }
+
+        [HttpGet]
+        [Route("{id}/transactions")]
+        [Authorize(Roles = "Customer,Admin")]
+        public async Task<IActionResult> GetAllGamePackageOrderOfFloor(string id)
+        {
+            var response = await _floorService.GetGamePackageOrderOfFloor(id);
             return Ok(response);
         }
     }

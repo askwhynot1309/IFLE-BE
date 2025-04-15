@@ -1,7 +1,10 @@
-﻿using BusinessObjects.DTOs.Organization.Request;
+﻿using BusinessObjects.DTOs.GamePackageOrder.Request;
+using BusinessObjects.DTOs.Organization.Request;
+using BusinessObjects.DTOs.UserPackageOrder.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.OrganizationServices;
+using Service.Services.PayosServices;
 using System.Security.Claims;
 
 namespace InteractiveFloor.Controllers
@@ -11,10 +14,12 @@ namespace InteractiveFloor.Controllers
     public class OrganizationController : Controller
     {
         private readonly IOrganizationService _organizationService;
+        private readonly IPayosService _payosService;
 
-        public OrganizationController(IOrganizationService organizationService)
+        public OrganizationController(IOrganizationService organizationService, IPayosService payosService)
         {
             _organizationService = organizationService;
+            _payosService = payosService;
         }
 
         [HttpPost]
@@ -114,6 +119,37 @@ namespace InteractiveFloor.Controllers
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
             var response = await _organizationService.GetFloorListOfOrganization(id, currentUserId);
+            return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("{id}/user-package")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> BuyUserPackageForFloor(string id, UserPackageOrderCreateRequestModel model)
+        {
+            var response = await _organizationService.BuyUserPackageForOrganization(id, model);
+            return Ok(response);
+        }
+
+        [HttpPatch]
+        [Route("user-package/status")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> UpdateUserPackageOrderStatus(string orderCode)
+        {
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+
+            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
+            await _organizationService.UpdateUserPackageOrderStatus(orderCode, paymentInfo.status, currentUserId);
+
+            return Ok("Cập nhật trạng thái thanh toán thành công.");
+        }
+
+        [HttpGet]
+        [Route("{id}/transactions")]
+        [Authorize(Roles = "Customer,Admin")]
+        public async Task<IActionResult> GetAllUserPackageOrderOfOrganization(string id)
+        {
+            var response = await _organizationService.GetAllUserPackageOrders(id);
             return Ok(response);
         }
     }

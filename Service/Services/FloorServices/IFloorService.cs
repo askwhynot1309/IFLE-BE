@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.DTOs.Device.Request;
 using BusinessObjects.DTOs.GamePackage.Response;
 using BusinessObjects.DTOs.GamePackageOrder.Request;
+using BusinessObjects.DTOs.GamePackageOrder.Response;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.User.Response;
@@ -40,6 +41,12 @@ namespace Service.Services.FloorServices
 
         Task UpdateGamePackageOrderStatus(string orderCode, string status, string currentUserId);
 
-        Task<List<GamePackageDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId);
+        Task<List<GamePackageOrderDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId);
+
+        Task<List<GamePackageOrderDetailsResponseModel>> GetPlayableGamePackageOfFloor(string floorId);
+
+        Task ActivateGamePackageOrder(string gamePackageOrderId);
+
+        Task<List<GamePackageOrderListResponseModel>> GetGamePackageOrderOfFloor(string id);
     }
 }

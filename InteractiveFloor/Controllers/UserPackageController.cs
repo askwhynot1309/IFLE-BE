@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Service.Services.PayosServices;
 using Service.Services.UserPackageServices;
 
 namespace InteractiveFloor.Controllers
@@ -19,7 +20,7 @@ namespace InteractiveFloor.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> AddUserPackage(UserPackageCreateRequestModel model)
+        public async Task<IActionResult> AddUserPackage(UserPackageCreateUpdateRequestModel model)
         {
             await _userPackageService.AddUserPackage(model);
             return Ok("Tạo gói người dùng thành công.");
@@ -57,6 +58,15 @@ namespace InteractiveFloor.Controllers
         {
             await _userPackageService.ActivateUserPackage(id);
             return Ok("Mở lại gói người dùng thành công.");
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> UpdateUserPackage(string id, UserPackageCreateUpdateRequestModel model)
+        {
+            await _userPackageService.UpdateUserPackage(model, id);
+            return Ok("Cập nhật thông tin gói thành công.");
         }
     }
 }
