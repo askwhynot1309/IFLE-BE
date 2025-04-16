@@ -42,7 +42,7 @@ namespace Repository.Repositories.OrganizationUserRepositories
             return organizationUsers.ToList();
         }
 
-        public async Task<OrganizationUser> GetOrganizationUserByUserId(string userId, string organizationId)
+        public async Task<OrganizationUser> GetOrganizationUserByUserIdAndOrganizationId(string userId, string organizationId)
         {
             return await GetSingle(o => o.UserId.Equals(userId) && o.OrganizationId.Equals(organizationId));
         }
@@ -50,6 +50,11 @@ namespace Repository.Repositories.OrganizationUserRepositories
         public async Task<string> GetOwnerIdOfOrganization(string organizationId)
         {
             return (await GetSingle(o => o.OrganizationId.Equals(organizationId) && o.Privilege.Equals(PrivilegeEnums.Owner.ToString()))).UserId;
+        }
+
+        public async Task<List<OrganizationUser>> GetOrganizationUserListByUserId(string userId)
+        {
+            return (await Get(o => o.UserId.Equals(userId))).ToList();
         }
     }
 }

@@ -469,13 +469,23 @@ namespace DAO
                     .HasColumnType("datetime")
                     .IsRequired();
 
-                entity.Property(e => e.StopAt)
-                    .HasColumnType("datetime")
+                entity.Property(e => e.Score)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
                     .IsRequired();
 
                 entity.HasOne(d => d.Game)
                     .WithMany(p => p.PlayHistories)
                     .HasForeignKey(d => d.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PlayHistories)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.InteractiveFloor)
