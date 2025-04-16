@@ -18,8 +18,10 @@ namespace Repository.Repositories.OrganizationUserRepositories
 
         Task<List<OrganizationUser>> GetOrganizationUserByOrganizationId(string organizationId);
 
-        Task<OrganizationUser> GetOrganizationUserByUserId(string userId, string organizationId);
+        Task<OrganizationUser> GetOrganizationUserByUserIdAndOrganizationId(string userId, string organizationId);
 
         Task<string> GetOwnerIdOfOrganization(string organizationId);
+
+        Task<List<OrganizationUser>> GetOrganizationUserListByUserId(string userId);
     }
 }
