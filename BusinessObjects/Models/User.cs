@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,5 +38,7 @@ namespace BusinessObjects.Models
         public virtual ICollection<OrganizationUser> OrganizationUsers { get; set; } = new List<OrganizationUser>();
 
         public virtual ICollection<PrivateFloorUser> PrivateFloorUsers { get; set; } = new List<PrivateFloorUser>();
+
+        public virtual ICollection<PlayHistory> PlayHistories { get; set; } = new List<PlayHistory>();
     }
 }

@@ -16,7 +16,11 @@ namespace BusinessObjects.Models
 
         public DateTime StartAt { get; set; }
 
-        public DateTime StopAt { get; set; }
+        public string UserId { get; set; } = null!;
+
+        public int Score { get; set; }
+
+        public virtual User User { get; set; } = null!;
 
         public virtual InteractiveFloor InteractiveFloor { get; set; } = null!;
 

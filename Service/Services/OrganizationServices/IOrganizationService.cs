@@ -17,25 +17,25 @@ namespace Service.Services.OrganizationServices
 
         Task<List<OrganizationInfoResponseModel>> ViewAllOrganizations();
 
-        Task<List<OrganizationUserReponseModel>> GetMembersOfOrganization(string organizationId);
+        Task<List<OrganizationUserReponseModel>> GetMembersOfOrganization(string organizationId, string currentId);
 
         Task<List<OrganizationInfoResponseModel>> GetOwnOrganization(string userId);
 
-        Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model);
+        Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model, string currentUserId);
 
         Task AddUserToOrganization(List<string> emailList, string organizationId, string currentId);
 
         Task RemoveMemberFromOrganization(List<string> userIdList, string organizationId, string currentId);
 
-        Task GrantPrivilege(List<string> userIdList, string organizationId);
+        Task GrantPrivilege(List<string> userIdList, string organizationId, string currentUserId);
 
-        Task RemovePrivilege(List<string> userIdList, string organizationId);
+        Task RemovePrivilege(List<string> userIdList, string organizationId, string currentUserId);
 
-        Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId);
+        Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId, string currentUserId);
 
         Task<List<FloorDetailsInfoResponseModel>> GetFloorListOfOrganization(string organizationId, string currentUserId);
 
-        Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model);
+        Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model, string currentUserId);
 
         Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId);
 

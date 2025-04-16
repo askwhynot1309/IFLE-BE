@@ -86,9 +86,15 @@ namespace Service.Services.OrganizationServices
             return result;
         }
 
-        public async Task<List<OrganizationUserReponseModel>> GetMembersOfOrganization(string organizationId)
+        public async Task<List<OrganizationUserReponseModel>> GetMembersOfOrganization(string organizationId, string currentId)
         {
             var listUserId = await _organizationUserRepository.GetUserOfOrganization(organizationId);
+            var organizationIdList = (await _organizationUserRepository.GetOrganizationUserListByUserId(currentId)).Select(o => o.OrganizationId).ToList();
+
+            if (!organizationIdList.Contains(organizationId))
+            {
+                throw new CustomException("Người dùng không thuộc tổ chức này.");
+            }
 
             var users = await _userRepository.GetCustomerListById(listUserId);
 
@@ -113,24 +119,43 @@ namespace Service.Services.OrganizationServices
         public async Task<List<OrganizationInfoResponseModel>> GetOwnOrganization(string userId)
         {
             var organizationList = await _organizationUserRepository.GetOrganizationOfUser(userId);
-            var result = _mapper.Map<List<OrganizationInfoResponseModel>>(organizationList);
+            var result = new List<OrganizationInfoResponseModel>();
+            foreach (var organization in organizationList)
+            {
+                result.Add(new OrganizationInfoResponseModel
+                {
+                    Id = organization.Id,
+                    Name = organization.Name,
+                    Description = organization.Description,
+                    UserLimit = organization.UserLimit,
+                    CreatedAt = organization.CreatedAt,
+                    Privilege = organization.OrganizationUsers.FirstOrDefault(o => o.OrganizationId.Equals(organization.Id)).Privilege
+                });
+            }
             return result;
         }
 
-        public async Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model)
+        public async Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model, string currentUserId)
         {
             var organization = await _organizationRepository.GetOrganizationById(id);
             if (organization == null)
             {
                 throw new CustomException("Không tồn tại tổ chức nào.");
             }
+
+            var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(organization.Id);
+            if (!ownerId.Equals(currentUserId))
+            {
+                throw new CustomException("Không phải là chủ sở hữu tổ chức này", StatusCodes.Status403Forbidden);
+            }
+
             _mapper.Map(model, organization);
             await _organizationRepository.Update(organization);
         }
 
         public async Task AddUserToOrganization(List<string> emailList, string organizationId, string currentId)
         {
-            var currentUser = await _organizationUserRepository.GetOrganizationUserByUserId(currentId, organizationId);
+            var currentUser = await _organizationUserRepository.GetOrganizationUserByUserIdAndOrganizationId(currentId, organizationId);
 
             if (currentUser == null)
             {
@@ -201,7 +226,7 @@ namespace Service.Services.OrganizationServices
 
         public async Task RemoveMemberFromOrganization(List<string> userIdList, string organizationId, string currentId)
         {
-            var currentUser = await _organizationUserRepository.GetOrganizationUserByUserId(currentId, organizationId);
+            var currentUser = await _organizationUserRepository.GetOrganizationUserByUserIdAndOrganizationId(currentId, organizationId);
 
             if (currentUser == null)
             {
@@ -219,7 +244,7 @@ namespace Service.Services.OrganizationServices
             }
 
             var removeList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
-            if (removeList.Count() > 0)
+            if (removeList.Count > 0)
             {
                 await _organizationUserRepository.DeleteRange(removeList);
             }
@@ -229,8 +254,14 @@ namespace Service.Services.OrganizationServices
             }
         }
 
-        public async Task GrantPrivilege(List<string> userIdList, string organizationId)
+        public async Task GrantPrivilege(List<string> userIdList, string organizationId, string currentUserId)
         {
+            var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(organizationId);
+            if (!ownerId.Equals(currentUserId))
+            {
+                throw new CustomException("Không có quyền thực hiện hành động này.", StatusCodes.Status403Forbidden);
+            }
+
             var grantList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
             if (grantList.Count() < 0)
             {
@@ -243,8 +274,14 @@ namespace Service.Services.OrganizationServices
             await _organizationUserRepository.UpdateRange(grantList);
         }
 
-        public async Task RemovePrivilege(List<string> userIdList, string organizationId)
+        public async Task RemovePrivilege(List<string> userIdList, string organizationId, string currentUserId)
         {
+            var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(organizationId);
+            if (!ownerId.Equals(currentUserId))
+            {
+                throw new CustomException("Không có quyền thực hiện hành động này.", StatusCodes.Status403Forbidden);
+            }
+
             var removeList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
             if (removeList.Count() < 0)
             {
@@ -257,9 +294,18 @@ namespace Service.Services.OrganizationServices
             await _organizationUserRepository.UpdateRange(removeList);
         }
 
-        public async Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId)
+        public async Task<OrganizationInfoResponseModel> GetDetailsInfoOfOrganization(string organizationId, string currentUserId)
         {
+            var check = await _organizationUserRepository.GetOrganizationUserByUserIdAndOrganizationId(currentUserId, organizationId);
+            if (check == null)
+            {
+                throw new CustomException("Người dùng không thuộc tổ chức này.");
+            }
             var organization = await _organizationRepository.GetOrganizationById(organizationId);
+            if (organization == null)
+            {
+                throw new CustomException("Không tồn tại tổ chức này.");
+            }
             return _mapper.Map<OrganizationInfoResponseModel>(organization);
         }
 
@@ -283,7 +329,7 @@ namespace Service.Services.OrganizationServices
             return result;
         }
 
-        public async Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model)
+        public async Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model, string currentUserId)
         {
             var newOrder = _mapper.Map<UserPackageOrder>(model);
             newOrder.Id = Guid.NewGuid().ToString();
