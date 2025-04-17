@@ -12,6 +12,7 @@ using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
+using BusinessObjects.DTOs.PlayHistory;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserPackage.Request;
@@ -102,6 +103,9 @@ namespace Repository.Mappers
             //UserPackageOrder
             CreateMap<UserPackageOrderCreateRequestModel, UserPackageOrder>();
             CreateMap<UserPackageOrder, UserPackageOrderListResponseModel>();
+
+            //PlayHistory
+            CreateMap<PlayHistory, PlayHistoryResponse>();
         }
     }
 }

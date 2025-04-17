@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessObjects.DTOs.PlayHistory;
 using BusinessObjects.Models;
 using Repository.Repositories.PlayHistoryRepositories;
@@ -12,10 +13,12 @@ namespace Service.Services.PlayHistoryServices
     public class PlayHistoryService : IPlayHistoryService
     {
         private readonly IPlayHistoryRepository _repository;
+        private readonly IMapper _mapper;
 
-        public PlayHistoryService(IPlayHistoryRepository repository)
+        public PlayHistoryService(IPlayHistoryRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<PlayHistory> CreateAsync(PlayHistoryRequest request)
@@ -34,9 +37,12 @@ namespace Service.Services.PlayHistoryServices
             return playHistory;
         }
 
-        public async Task<PlayHistory> GetHighScore(string userId, string gameId)
+        public async Task<PlayHistoryResponse> GetHighScore(string userId, string gameId)
         {
-            return await _repository.GetHighScore(userId, gameId);
+            var highscore = await _repository.GetHighScore(userId, gameId);
+            if (highscore == null)
+                return null;
+            return _mapper.Map<PlayHistoryResponse>(highscore);
         }
     }
 }

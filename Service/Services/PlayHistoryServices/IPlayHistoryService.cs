@@ -12,6 +12,6 @@ namespace Service.Services.PlayHistoryServices
     public interface IPlayHistoryService
     {
         Task<PlayHistory> CreateAsync(PlayHistoryRequest request);
-        Task<PlayHistory> GetHighScore(string userId, string gameId);
+        Task<PlayHistoryResponse> GetHighScore(string userId, string gameId);
     }
 }

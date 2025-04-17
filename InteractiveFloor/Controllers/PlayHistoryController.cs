@@ -17,7 +17,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet("history/get-high-score")]
-        public async Task<ActionResult<PlayHistory>> GetHighScore(string userId, string gameId)
+        public async Task<ActionResult<PlayHistoryResponse>> GetHighScore(string userId, string gameId)
         {
             try
             {
