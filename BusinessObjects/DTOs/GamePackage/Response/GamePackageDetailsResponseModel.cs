@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessObjects.DTOs.Game;
 
 namespace BusinessObjects.DTOs.GamePackage.Response
 {
@@ -40,5 +41,9 @@ namespace BusinessObjects.DTOs.GamePackage.Response
         public string? ImageUrl { get; set; }
 
         public string Status { get; set; } = null!;
+
+        public List<GameCategoryInGameResponse> Categories { get; set; } = new();
+
+        public List<GameVersionResponse> Versions { get; set; } = new();
     }
 }

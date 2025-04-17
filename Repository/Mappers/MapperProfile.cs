@@ -74,7 +74,10 @@ namespace Repository.Mappers
             CreateMap<GamePackageCreateRequestModel, GamePackage>();
             CreateMap<GamePackageUpdateRequestModel, GamePackage>();
             CreateMap<GamePackage, GamePackageListResponseModel>();
-            CreateMap<Game, GameInfo>();
+            CreateMap<Game, GameInfo>()
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src =>
+                    src.GameCategoryRelations.Select(gcr => gcr.GameCategory)))
+                .ForMember(dest => dest.Versions, opt => opt.MapFrom(src => src.GameVersions));
 
             //User Package
             CreateMap<UserPackageCreateUpdateRequestModel, UserPackage>();
