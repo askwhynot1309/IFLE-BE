@@ -35,6 +35,8 @@ using InteractiveFloor.Middlewares;
 using Repository.Repositories.GamePackageOrderRepositories;
 using Service.Services.PayosServices;
 using Repository.Repositories.UserPackageOrderRepositories;
+using Repository.Repositories.PlayHistoryRepositories;
+using Service.Services.PlayHistoryServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +92,7 @@ builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<IDeviceCategoryRepository, DeviceCategoryRepository>();
 builder.Services.AddScoped<IGamePackageOrderRepository, GamePackageOrderRepository>();
 builder.Services.AddScoped<IUserPackageOrderRepository, UserPackageOrderRepository>();
+builder.Services.AddScoped<IPlayHistoryRepository, PlayHistoryRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -105,6 +108,7 @@ builder.Services.AddScoped<IUserPackageService, UserPackageService>();
 builder.Services.AddScoped<IFloorService, FloorService>();
 builder.Services.AddScoped<IDeviceCategoryService, DeviceCategoryService>();
 builder.Services.AddScoped<IPayosService, PayosService>();
+builder.Services.AddScoped<IPlayHistoryService, PlayHistoryService>();
 
 //========================================== AUTHENTICATION =======================================
 
