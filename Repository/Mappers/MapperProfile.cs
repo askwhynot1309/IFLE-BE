@@ -12,6 +12,7 @@ using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
+using BusinessObjects.DTOs.PlayHistory;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserPackage.Request;
@@ -74,7 +75,10 @@ namespace Repository.Mappers
             CreateMap<GamePackageCreateRequestModel, GamePackage>();
             CreateMap<GamePackageUpdateRequestModel, GamePackage>();
             CreateMap<GamePackage, GamePackageListResponseModel>();
-            CreateMap<Game, GameInfo>();
+            CreateMap<Game, GameInfo>()
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src =>
+                    src.GameCategoryRelations.Select(gcr => gcr.GameCategory)))
+                .ForMember(dest => dest.Versions, opt => opt.MapFrom(src => src.GameVersions));
 
             //User Package
             CreateMap<UserPackageCreateUpdateRequestModel, UserPackage>();
@@ -99,6 +103,9 @@ namespace Repository.Mappers
             //UserPackageOrder
             CreateMap<UserPackageOrderCreateRequestModel, UserPackageOrder>();
             CreateMap<UserPackageOrder, UserPackageOrderListResponseModel>();
+
+            //PlayHistory
+            CreateMap<PlayHistory, PlayHistoryResponse>();
         }
     }
 }
