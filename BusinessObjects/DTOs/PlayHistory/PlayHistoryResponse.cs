@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.Models
+namespace BusinessObjects.DTOs.PlayHistory
 {
-    public partial class PlayHistory
+    public class PlayHistoryResponse
     {
         public string Id { get; set; } = null!;
 
@@ -19,11 +19,5 @@ namespace BusinessObjects.Models
         public string UserId { get; set; } = null!;
 
         public int Score { get; set; }
-
-        public virtual User User { get; set; } = null!;
-
-        public virtual InteractiveFloor InteractiveFloor { get; set; } = null!;
-
-        public virtual Game Game { get; set; } = null!;
     }
 }

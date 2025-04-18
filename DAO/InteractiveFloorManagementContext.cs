@@ -233,6 +233,16 @@ namespace DAO
                     .IsUnicode(false)
                     .IsRequired();
 
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsRequired();
+
+                entity.HasOne(e => e.User)
+                    .WithMany(e => e.UserPackageOrders)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
                 entity.HasOne(e => e.Organization)
                     .WithMany(e => e.UserPackageOrders)
                     .HasForeignKey(e => e.OrganizationId)
@@ -469,13 +479,23 @@ namespace DAO
                     .HasColumnType("datetime")
                     .IsRequired();
 
-                entity.Property(e => e.StopAt)
-                    .HasColumnType("datetime")
+                entity.Property(e => e.Score)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
                     .IsRequired();
 
                 entity.HasOne(d => d.Game)
                     .WithMany(p => p.PlayHistories)
                     .HasForeignKey(d => d.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PlayHistories)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.InteractiveFloor)
@@ -625,6 +645,16 @@ namespace DAO
                 entity.Property(e => e.Status)
                     .HasMaxLength(50)
                     .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.GamePackageOrders)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.InteractiveFloor)
                     .WithMany(p => p.GamePackageOrders)

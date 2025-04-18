@@ -44,7 +44,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetMembersByOrganizationId(string id)
         {
-            return Ok(await _organizationService.GetMembersOfOrganization(id));
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            return Ok(await _organizationService.GetMembersOfOrganization(id, currentUserId));
         }
 
         [HttpGet]
@@ -62,7 +63,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model)
         {
-            await _organizationService.UpdateOrganization(id, model);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _organizationService.UpdateOrganization(id, model, currentUserId);
             return Ok("Cập nhật tổ chức thành công.");
         }
 
@@ -91,7 +93,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GrantPrivilege(List<string> userIdList, string id)
         {
-            await _organizationService.GrantPrivilege(userIdList, id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _organizationService.GrantPrivilege(userIdList, id, currentUserId);
             return Ok("Cấp quyền thành công.");
         }
 
@@ -100,7 +103,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> RemovePrivilege(List<string> userIdList, string id)
         {
-            await _organizationService.RemovePrivilege(userIdList, id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _organizationService.RemovePrivilege(userIdList, id, currentUserId);
             return Ok("Xóa quyền thành công.");
         }
 
@@ -109,7 +113,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ViewDetailOfOrganization(string id)
         {
-            var response = await _organizationService.GetDetailsInfoOfOrganization(id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _organizationService.GetDetailsInfoOfOrganization(id, currentUserId);
             return Ok(response);
         }
 
@@ -127,7 +132,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> BuyUserPackageForFloor(string id, UserPackageOrderCreateRequestModel model)
         {
-            var response = await _organizationService.BuyUserPackageForOrganization(id, model);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _organizationService.BuyUserPackageForOrganization(id, model, currentUserId);
             return Ok(response);
         }
 

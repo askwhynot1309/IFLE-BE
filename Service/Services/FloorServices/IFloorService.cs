@@ -37,7 +37,7 @@ namespace Service.Services.FloorServices
 
         Task RemoveUserFromPrivateFloor(string floorId, List<string> userIdList);
 
-        Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model);
+        Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model, string currentUserId);
 
         Task UpdateGamePackageOrderStatus(string orderCode, string status, string currentUserId);
 

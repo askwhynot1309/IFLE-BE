@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(InteractiveFloorManagementContext))]
-    partial class InteractiveFloorManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250416135706_ChangePlayHistory")]
+    partial class ChangePlayHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,19 +271,11 @@ namespace DAO.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .IsUnicode(false)
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FloorId");
 
                     b.HasIndex("GamePackageId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("GamePackageOrder", (string)null);
                 });
@@ -770,12 +765,6 @@ namespace DAO.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .IsUnicode(false)
-                        .HasColumnType("char(36)");
-
                     b.Property<string>("UserPackageId")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -785,8 +774,6 @@ namespace DAO.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("UserPackageId");
 
@@ -836,17 +823,9 @@ namespace DAO.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Models.User", "User")
-                        .WithMany("GamePackageOrders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("GamePackage");
 
                     b.Navigation("InteractiveFloor");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.GamePackageRelation", b =>
@@ -1002,12 +981,6 @@ namespace DAO.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Models.User", "User")
-                        .WithMany("UserPackageOrders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BusinessObjects.Models.UserPackage", "UserPackage")
                         .WithMany("UserPackageOrders")
                         .HasForeignKey("UserPackageId")
@@ -1015,8 +988,6 @@ namespace DAO.Migrations
                         .IsRequired();
 
                     b.Navigation("Organization");
-
-                    b.Navigation("User");
 
                     b.Navigation("UserPackage");
                 });
@@ -1079,8 +1050,6 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObjects.Models.User", b =>
                 {
-                    b.Navigation("GamePackageOrders");
-
                     b.Navigation("OTP");
 
                     b.Navigation("OrganizationUsers");
@@ -1090,8 +1059,6 @@ namespace DAO.Migrations
                     b.Navigation("PrivateFloorUsers");
 
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("UserPackageOrders");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.UserPackage", b =>

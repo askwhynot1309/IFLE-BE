@@ -16,6 +16,8 @@ namespace BusinessObjects.DTOs.Organization.Response
 
         public int UserLimit { get; set; }
 
+        public string Privilege { get; set; } = null!;
+
         public DateTime CreatedAt { get; set; }
 
     }
