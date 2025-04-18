@@ -348,6 +348,7 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
             }
             newOrder.OrderCode = payment.orderCode.ToString();
+            newOrder.UserId = currentUserId;
             await _userPackageOrderRepository.Insert(newOrder);
             return payment.checkoutUrl;
         }

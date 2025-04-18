@@ -30,6 +30,10 @@ namespace BusinessObjects.Models
 
         public string GamePackageId { get; set; } = null!;
 
+        public string UserId { get; set; } = null!;
+
+        public virtual User User { get; set; } = null!;
+
         public virtual InteractiveFloor InteractiveFloor { get; set; } = null!;
 
         public virtual GamePackage GamePackage { get; set; } = null!;

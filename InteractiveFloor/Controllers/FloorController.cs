@@ -128,7 +128,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> BuyGamePackageForFloor(string id, GamePackageOrderCreateRequestModel model)
         {
-            var response = await _floorService.BuyGamePackageForFloor(id, model);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _floorService.BuyGamePackageForFloor(id, model, currentUserId);
             return Ok(response);
         }
 
