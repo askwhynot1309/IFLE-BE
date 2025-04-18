@@ -28,5 +28,12 @@ namespace Service.Services.UserServices
         Task<List<UserInfoResponeModel>> GetStaffList();
 
         Task ActivateCustomerAccount(List<string> userIdList);
+
+        Task ActivateStaffAccount(List<string> staffIdList);
+
+        Task DeactivateStaffAccount(List<string> staffIdList);
+
+        Task DeleteStaffAccount(string staffId);
+
     }
 }

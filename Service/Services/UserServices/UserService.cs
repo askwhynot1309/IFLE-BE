@@ -2,6 +2,7 @@
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Http;
 using Repository.Enums;
 using Repository.Repositories.RoleRepositories;
 using Repository.Repositories.UserRepositories;
@@ -151,6 +152,49 @@ namespace Service.Services.UserServices
             return result;
         }
 
-        
+        public async Task DeleteStaffAccount(string staffId)
+        {
+            var staff = await _userRepository.GetUserById(staffId);
+            if (staff == null)
+            {
+                throw new CustomException("Không tìm thấy tài khoản nhân viên.");
+            }
+
+            var roleId = await _roleRepository.GetRoleIdByName(RoleEnums.Staff.ToString());
+
+            if (!staff.RoleId.Equals(roleId))
+            {
+                throw new CustomException("Tài khoản này không phải là Staff.");
+            }
+
+            staff.RefreshTokens.Clear();
+            staff.OTP.Clear();
+
+            await _userRepository.Delete(staff);
+        }
+
+        public async Task ActivateStaffAccount(List<string> staffIdList)
+        {
+            var staffList = await _userRepository.GetStaffListById(staffIdList);
+
+            foreach (var staff in staffList)
+            {
+                staff.Status = AccountStatusEnums.Active.ToString();
+            }
+
+            await _userRepository.UpdateRange(staffList);
+        }
+
+        public async Task DeactivateStaffAccount(List<string> staffIdList)
+        {
+            var staffList = await _userRepository.GetStaffListById(staffIdList);
+
+            foreach (var staff in staffList)
+            {
+                staff.Status = AccountStatusEnums.Inactive.ToString();
+            }
+
+            await _userRepository.UpdateRange(staffList);
+        }
     }
 }

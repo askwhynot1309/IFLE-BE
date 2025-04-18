@@ -104,5 +104,32 @@ namespace InteractiveFloor.Controllers
             var response = await _userService.GetStaffList();
             return Ok(response);
         }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [Route("{staffId}")]
+        public async Task<IActionResult> RemoveStaffAccount(string staffId)
+        {
+            await _userService.DeleteStaffAccount(staffId);
+            return Ok("Xóa tài khoản Staff thành công.");
+        }
+
+        [HttpPatch]
+        [Authorize(Roles = "Admin")]
+        [Route("staffs/active")]
+        public async Task<IActionResult> ActivateStaffAccount(List<string> staffIdList)
+        {
+            await _userService.ActivateStaffAccount(staffIdList);
+            return Ok("Kích hoạt tài khoản Staff thành công.");
+        }
+
+        [HttpPatch]
+        [Authorize(Roles = "Admin")]
+        [Route("staffs/inactive")]
+        public async Task<IActionResult> DeactivateStaffAccount(List<string> staffIdList)
+        {
+            await _userService.DeactivateStaffAccount(staffIdList);
+            return Ok("Vô hiệu hóa tài khoản Staff thành công.");
+        }
     }
 }

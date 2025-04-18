@@ -18,7 +18,7 @@ namespace Repository.Repositories.UserRepositories
 
         public async Task<User> GetUserById(string userId)
         {
-            return await GetSingle(u => u.Id.Equals(userId), includeProperties: "Role,OrganizationUsers");
+            return await GetSingle(u => u.Id.Equals(userId), includeProperties: "Role,OrganizationUsers,RefreshTokens,OTP");
         }
 
         public async Task<User> GetUserByEmail(string email)
@@ -52,6 +52,12 @@ namespace Repository.Repositories.UserRepositories
 
             var userIdList = userList.Select(user => user.Id);
             return userIdList.ToList();
+        }
+
+        public async Task<List<User>> GetStaffListById(List<string> staffIdList)
+        {
+            var staffList = await Get(u => staffIdList.Contains(u.Id));
+            return staffList.ToList();
         }
     }
 }
