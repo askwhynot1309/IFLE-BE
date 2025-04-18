@@ -52,7 +52,9 @@ namespace Repository.Repositories.GamePackageOrderRepositories
                 g => g.FloorId == floorId &&
                      g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
                      g.EndTime.HasValue && DateOnly.FromDateTime(g.EndTime.Value) >= DateOnly.FromDateTime(date),
-                includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game"
+                includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game," +
+                "GamePackage.GamePackageRelations.Game.GameCategoryRelations,GamePackage.GamePackageRelations.Game.GameCategoryRelations.GameCategory," +
+                "GamePackage.GamePackageRelations.Game.GameVersions"
             );
 
             return list.ToList();
