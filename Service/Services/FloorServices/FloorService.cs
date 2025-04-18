@@ -265,6 +265,7 @@ namespace Service.Services.FloorServices
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserId = userId,
+                    FloorId = floorId
                 });
             }
 
@@ -314,7 +315,7 @@ namespace Service.Services.FloorServices
             await _floorUserRepository.DeleteRange(removeList);
         }
 
-        public async Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model)
+        public async Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model, string currentUserId)
         {
             var newOrder = _mapper.Map<GamePackageOrder>(model);
             newOrder.Id = Guid.NewGuid().ToString();
@@ -333,6 +334,7 @@ namespace Service.Services.FloorServices
                 throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
             }
             newOrder.OrderCode = payment.orderCode.ToString();
+            newOrder.UserId = currentUserId;
             await _gamePackageOrderRepository.Insert(newOrder);
             return payment.checkoutUrl;
         }
