@@ -27,8 +27,7 @@ namespace Service.Services.GameCategoryServices
 
         public async Task<GameCategoryResponse> GetByIdAsync(string id)
         {
-            Expression<Func<GameCategory, bool>> filter = c => c.Id == id;
-            var category = await _repository.GetSingle(filter);
+            var category = await _repository.GetByIdAsync(id);
             if (category == null)
                 return null;
 

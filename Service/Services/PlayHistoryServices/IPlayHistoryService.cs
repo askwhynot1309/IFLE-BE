@@ -13,5 +13,6 @@ namespace Service.Services.PlayHistoryServices
     {
         Task<PlayHistory> CreateAsync(PlayHistoryRequest request);
         Task<PlayHistoryResponse> GetHighScore(string userId, string gameId);
+        Task<List<PlayHistoryFloorResponse>> GetFloorPlayHistory(string floorId);
     }
 }
