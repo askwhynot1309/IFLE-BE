@@ -37,6 +37,7 @@ using Service.Services.PayosServices;
 using Repository.Repositories.UserPackageOrderRepositories;
 using Repository.Repositories.PlayHistoryRepositories;
 using Service.Services.PlayHistoryServices;
+using Service.Services.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,11 @@ builder.Services.AddDbContext<InteractiveFloorManagementContext>(options =>
 //========================================== MAPPER ===============================================
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+
+//========================================= BACKGROUND SERVICE ====================================
+
+builder.Services.AddHostedService<PackageOrderBackgroundService>();
+builder.Services.AddHostedService<GamePackageActivationBackgroundService>();
 
 //========================================== MIDDLEWARE ===========================================
 

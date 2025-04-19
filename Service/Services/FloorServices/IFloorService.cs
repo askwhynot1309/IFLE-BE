@@ -52,5 +52,9 @@ namespace Service.Services.FloorServices
         Task<string> CreateAgainPaymentUrlForPendingGamePackageOrder(string orderId);
 
         Task<GamePackageOrderDetailsResponseModel> GetGamePackageOrderDetails(string orderId);
+
+        Task AutoUpdateGamePackageOrderStatus();
+
+        Task AutoActivateGamePackageOrderOver7Days();
     }
 }
