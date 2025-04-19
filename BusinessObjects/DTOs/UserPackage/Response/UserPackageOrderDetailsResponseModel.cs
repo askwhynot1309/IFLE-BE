@@ -1,13 +1,12 @@
-﻿using BusinessObjects.DTOs.UserPackage.Response;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObjects.DTOs.UserPackageOrder.Response
+namespace BusinessObjects.DTOs.UserPackage.Response
 {
-    public class UserPackageOrderListResponseModel
+    public class UserPackageOrderDetailsResponseModel
     {
         public string Id { get; set; } = null!;
 
@@ -21,8 +20,6 @@ namespace BusinessObjects.DTOs.UserPackageOrder.Response
 
         public string Status { get; set; } = null!;
 
-        public string UserPackageId { get; set; } = null!;
-
-        public UserPackageListResponseModel? UserPackageInfo { get; set; } 
+        public UserPackageListResponseModel? UserPackageInfo { get; set; }
     }
 }

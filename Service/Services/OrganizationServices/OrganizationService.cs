@@ -96,7 +96,7 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Người dùng không thuộc tổ chức này.");
             }
 
-            var users = await _userRepository.GetCustomerListById(listUserId);
+            var users = await _userRepository.GetCustomerListByIdList(listUserId);
 
             var result = new List<OrganizationUserReponseModel>();
 
@@ -157,6 +157,13 @@ namespace Service.Services.OrganizationServices
         {
             var currentUser = await _organizationUserRepository.GetOrganizationUserByUserIdAndOrganizationId(currentId, organizationId);
 
+            var addList = await _userRepository.GetUserListByEmailList(emailList);
+
+            if (addList.All(u => u.Role.Equals(RoleEnums.Customer.ToString())))
+            {
+                throw new CustomException("Không thể thêm admin hoặc staff vào tổ chức.");
+            }
+
             if (currentUser == null)
             {
                 throw new CustomException("Không tìm thấy người dùng này.");
@@ -167,7 +174,7 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Không có quyền thực hiện hành động này.", StatusCodes.Status403Forbidden);
             }
 
-            var userIdList = await _userRepository.GetUserIdListByEmail(emailList);
+            var userIdList = await _userRepository.GetUserIdListByEmailList(emailList);
             if (userIdList.Count() == 0)
             {
                 throw new CustomException("Không có người dùng nào được chọn.");
@@ -191,7 +198,7 @@ namespace Service.Services.OrganizationServices
             }
 
             var organizationUserList = new List<OrganizationUser>();
-            var userList = await _userRepository.GetCustomerListById(userIdList);
+            var userList = await _userRepository.GetCustomerListByIdList(userIdList);
             var models = new List<AddMemberEmailModel>();
 
             foreach (var user in userList)
@@ -301,6 +308,7 @@ namespace Service.Services.OrganizationServices
             {
                 throw new CustomException("Người dùng không thuộc tổ chức này.");
             }
+
             var organization = await _organizationRepository.GetOrganizationById(organizationId);
             if (organization == null)
             {
@@ -348,6 +356,7 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
             }
             newOrder.OrderCode = payment.orderCode.ToString();
+            newOrder.UserId = currentUserId;
             await _userPackageOrderRepository.Insert(newOrder);
             return payment.checkoutUrl;
         }
@@ -355,6 +364,11 @@ namespace Service.Services.OrganizationServices
         public async Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId)
         {
             var order = await _userPackageOrderRepository.GetUserPackageOrderByOrderCode(orderCode);
+            if (order == null)
+            {
+                throw new CustomException("Không tìm thấy đơn hàng này.");
+            }
+            var firstStatus = order.Status;
             var userPackage = await _userPackageRepository.GetUserPackageById(order.UserPackageId);
             order.Status = status;
             var curUser = await _userRepository.GetUserById(currentUserId);
@@ -367,7 +381,11 @@ namespace Service.Services.OrganizationServices
                     throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
                 }
                 var organization = await _organizationRepository.GetOrganizationById(order.OrganizationId);
+
+                if (!firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
+                {
                 organization.UserLimit += userPackage.UserLimit;
+            }
             }
             await _userPackageOrderRepository.Update(order);
         }
@@ -375,7 +393,48 @@ namespace Service.Services.OrganizationServices
         public async Task<List<UserPackageOrderListResponseModel>> GetAllUserPackageOrders(string id)
         {
             var list = await _userPackageOrderRepository.GetAllUserPackageOrderOfOrganization(id);
-            var result = _mapper.Map<List<UserPackageOrderListResponseModel>>(list);
+            var result = list.Select(r => new UserPackageOrderListResponseModel
+            {
+                Id = r.Id,
+                OrderCode = r.OrderCode,
+                OrderDate = r.OrderDate,
+                PaymentMethod = r.PaymentMethod,
+                Price = r.Price,
+                Status = r.Status,
+                UserPackageId = r.UserPackageId,
+                UserPackageInfo = _mapper.Map<UserPackageListResponseModel>(r.UserPackage)
+            }).ToList();
+            return result;
+        }
+
+        public async Task<string> CreateAgainPaymentUrlForPendingUserPackageOrder(string orderId)
+        {
+            var userPackageOrder = await _userPackageOrderRepository.GetUserPackageOrderById(orderId);
+
+            if (!userPackageOrder.Status.Equals(PackageOrderStatusEnums.PENDING.ToString()))
+            {
+                throw new CustomException("Giao dịch này không ở trạng thái pending. Không thể tiếp tục thanh toán.");
+            }
+
+            var paymentInfo = await _payosService.GetPaymentInformation(userPackageOrder.OrderCode);
+            var linkId = paymentInfo.id;
+            return $"https://pay.payos.vn/web/{linkId}";
+        }
+
+        public async Task<UserPackageOrderDetailsResponseModel> GetUserPackageOrderDetails(string orderId)
+        {
+            var userPackageOrder = await _userPackageOrderRepository.GetUserPackageOrderById(orderId);
+            var result = new UserPackageOrderDetailsResponseModel
+            {
+                Id = orderId,
+                OrderCode = userPackageOrder.OrderCode,
+                OrderDate = userPackageOrder.OrderDate,
+                PaymentMethod = userPackageOrder.PaymentMethod,
+                Price = userPackageOrder.Price,
+                Status = userPackageOrder.Status,
+                UserPackageInfo = _mapper.Map<UserPackageListResponseModel>(userPackageOrder.UserPackage)
+            };
+
             return result;
         }
     }
