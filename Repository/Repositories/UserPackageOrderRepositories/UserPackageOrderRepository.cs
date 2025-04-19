@@ -18,7 +18,7 @@ namespace Repository.Repositories.UserPackageOrderRepositories
 
         public async Task<List<UserPackageOrder>> GetAllUserPackageOrderOfOrganization(string organizationId)
         {
-            return (await Get(o => o.OrganizationId.Equals(organizationId))).ToList();
+            return (await Get(o => o.OrganizationId.Equals(organizationId), includeProperties: "UserPackage")).ToList();
         }
 
         public async Task<List<UserPackageOrder>> GetAvailableOrderListByPackageId(string packageId)

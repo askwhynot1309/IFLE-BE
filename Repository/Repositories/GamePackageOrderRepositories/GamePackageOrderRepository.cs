@@ -19,7 +19,8 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         public async Task<List<GamePackageOrder>> GetAllGamePackageOrderOfFloor(string floorId)
         {
-            return (await Get(g => g.FloorId.Equals(floorId))).ToList();
+            return (await Get(g => g.FloorId.Equals(floorId), includeProperties: "GamePackage," +
+                "GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game")).ToList();
         }
 
         public async Task<List<GamePackageOrder>> GetAvailableOrderListByPackageId(string packageId)
