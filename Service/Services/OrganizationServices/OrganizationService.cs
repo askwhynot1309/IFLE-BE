@@ -384,8 +384,8 @@ namespace Service.Services.OrganizationServices
 
                 if (!firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
                 {
-                organization.UserLimit += userPackage.UserLimit;
-            }
+                    organization.UserLimit += userPackage.UserLimit;
+                }
             }
             await _userPackageOrderRepository.Update(order);
         }
@@ -436,6 +436,21 @@ namespace Service.Services.OrganizationServices
             };
 
             return result;
+        }
+
+        public async Task AutoUpdateUserPackageOrderStatus()
+        {
+            var updateList = await _userPackageOrderRepository.GetPendingAndProcessingUserPackageOrder();
+            foreach (var update in updateList)
+            {
+                var paymentInfo = await _payosService.GetPaymentInformation(update.OrderCode);
+                if (paymentInfo == null)
+                {
+                    throw new CustomException("Lỗi hệ thống.");
+                }
+                update.Status = paymentInfo.status;
+            }
+            await _userPackageOrderRepository.UpdateRange(updateList);
         }
     }
 }

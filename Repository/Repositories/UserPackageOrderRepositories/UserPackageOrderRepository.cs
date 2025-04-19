@@ -44,5 +44,18 @@ namespace Repository.Repositories.UserPackageOrderRepositories
         {
             return await GetSingle(p => p.Id.Equals(orderId), includeProperties: "UserPackage");
         }
+
+        public async Task<List<UserPackageOrder>> GetPendingAndProcessingUserPackageOrder()
+        {
+            var statusList = new List<string>
+            {
+                PackageOrderStatusEnums.PENDING.ToString(),
+                PackageOrderStatusEnums.PROCESSING.ToString(),
+            };
+            var list = await Get(l => statusList.Contains(l.Status));
+            return list.ToList();
+        }
+
+        
     }
 }

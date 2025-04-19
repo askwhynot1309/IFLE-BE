@@ -528,5 +528,41 @@ namespace Service.Services.FloorServices
                 }
             };
         }
+
+        public async Task AutoUpdateGamePackageOrderStatus()
+        {
+            var updateList = await _gamePackageOrderRepository.GetPendingAndProcessingGamePackageOrder();
+
+            foreach (var gamePackageOrder in updateList)
+            {
+                var paymentInfo = await _payosService.GetPaymentInformation(gamePackageOrder.OrderCode);
+
+                if (paymentInfo == null)
+                {
+                    throw new CustomException("Lỗi hệ thống.");
+                }
+                gamePackageOrder.Status = paymentInfo.status;
+            }
+
+            await _gamePackageOrderRepository.UpdateRange(updateList);
+
+        }
+
+        public async Task AutoActivateGamePackageOrderOver7Days()
+        {
+            var now = DateTime.Now;
+
+            var orderList = await _gamePackageOrderRepository.GetInactiveGamePackageOrderOver7Days(now);
+
+            foreach (var gamePackageOrder in orderList)
+            {
+                gamePackageOrder.IsActivated = true;
+                gamePackageOrder.StartTime = now.Date;
+                var gamePackage = await _gamePackageRepository.GetGamePackageById(gamePackageOrder.GamePackageId);
+                gamePackageOrder.EndTime = now.AddMonths(gamePackage.Duration).Date;
+            }
+
+            await _gamePackageOrderRepository.UpdateRange(orderList);
+        }
     }
 }
