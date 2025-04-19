@@ -356,6 +356,11 @@ namespace Service.Services.OrganizationServices
         public async Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId)
         {
             var order = await _userPackageOrderRepository.GetUserPackageOrderByOrderCode(orderCode);
+            if (order == null)
+            {
+                throw new CustomException("Không tìm thấy đơn hàng này.");
+            }
+            var firstStatus = order.Status;
             var userPackage = await _userPackageRepository.GetUserPackageById(order.UserPackageId);
             order.Status = status;
             var curUser = await _userRepository.GetUserById(currentUserId);
@@ -368,7 +373,11 @@ namespace Service.Services.OrganizationServices
                     throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
                 }
                 var organization = await _organizationRepository.GetOrganizationById(order.OrganizationId);
+
+                if (!firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
+                {
                 organization.UserLimit += userPackage.UserLimit;
+            }
             }
             await _userPackageOrderRepository.Update(order);
         }
