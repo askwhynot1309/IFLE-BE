@@ -56,5 +56,12 @@ namespace Repository.Repositories.OrganizationUserRepositories
         {
             return (await Get(o => o.UserId.Equals(userId))).ToList();
         }
+
+        public async Task<List<string>> GetOwnerAndCoownerIdListOfOrganization(string organizationId)
+        {
+            var privilegeList = new List<string> { PrivilegeEnums.Owner.ToString(), PrivilegeEnums.CoOwner.ToString() };
+            var list = await Get(o => o.OrganizationId.Equals(organizationId) && privilegeList.Contains(o.Privilege));
+            return list.Select(o => o.UserId).ToList();
+        }
     }
 }

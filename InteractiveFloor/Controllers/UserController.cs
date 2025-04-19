@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.UserServices;
+using System.Security.Claims;
 
 namespace InteractiveFloor.Controllers
 {
@@ -130,6 +131,15 @@ namespace InteractiveFloor.Controllers
         {
             await _userService.DeactivateStaffAccount(staffIdList);
             return Ok("Vô hiệu hóa tài khoản Staff thành công.");
+        }
+
+        [HttpGet]
+        [Route("own-transactions")]
+        public async Task<IActionResult> ViewOwnTransactions()
+        {
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _userService.ViewOwnTransactions(currentUserId);
+            return Ok(response);
         }
     }
 }

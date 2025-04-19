@@ -32,7 +32,7 @@ namespace Repository.Repositories.UserRepositories
             return users.ToList();
         }
 
-        public async Task<List<User>> GetCustomerListById(List<string> userIdList)
+        public async Task<List<User>> GetCustomerListByIdList(List<string> userIdList)
         {
             var userList = await Get(u => userIdList.Contains(u.Id), includeProperties: "OrganizationUsers");
             return userList.ToList();
@@ -44,7 +44,7 @@ namespace Repository.Repositories.UserRepositories
             return staffs.ToList();
         }
 
-        public async Task<List<string>> GetUserIdListByEmail(List<string> emailList)
+        public async Task<List<string>> GetUserIdListByEmailList(List<string> emailList)
         {
             var lowerEmailList = emailList.Select(email => email.ToLower());
 
@@ -58,6 +58,13 @@ namespace Repository.Repositories.UserRepositories
         {
             var staffList = await Get(u => staffIdList.Contains(u.Id));
             return staffList.ToList();
+        }
+
+        public async Task<List<User>> GetUserListByEmailList(List<string> emailList)
+        {
+            var lowerEmailList = emailList.Select(email => email.ToLower());
+            var userList = await Get(u => lowerEmailList.Contains(u.Email.ToLower()));
+            return userList.ToList();
         }
     }
 }

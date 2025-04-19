@@ -22,6 +22,7 @@ using Repository.Repositories.UserRepositories;
 using Service.Services.EmailServices;
 using Service.Services.PayosServices;
 using Service.Ultis;
+using static System.Net.WebRequestMethods;
 
 namespace Service.Services.FloorServices
 {
@@ -120,13 +121,20 @@ namespace Service.Services.FloorServices
             await _floorRepository.Update(floor);
         }
 
-        public async Task UpdateFloor(FloorCreateUpdateRequestModel model, string floorId)
+        public async Task UpdateFloor(FloorCreateUpdateRequestModel model, string floorId, string currentUserId)
         {
             var floor = await _floorRepository.GetFloorById(floorId);
             if (floor == null)
             {
                 throw new CustomException("Không tìm thấy sàn này.");
             }
+
+            var privilegeList = await _organizationUserRepository.GetOwnerAndCoownerIdListOfOrganization(floor.OrganizationId);
+            if (!privilegeList.Contains(currentUserId))
+            {
+                throw new CustomException("Người dùng này không có quyền cập nhật sàn tương tác", StatusCodes.Status403Forbidden);
+            }
+
             _mapper.Map(model, floor);
             await _floorRepository.Update(floor);
         }
@@ -284,7 +292,7 @@ namespace Service.Services.FloorServices
             {
                 return null;
             }
-            var userList = await _userRepository.GetCustomerListById(userIdList);
+            var userList = await _userRepository.GetCustomerListByIdList(userIdList);
             return _mapper.Map<List<UserInfoResponeModel>>(userList);
         }
 
@@ -452,6 +460,52 @@ namespace Service.Services.FloorServices
             var list = await _gamePackageOrderRepository.GetAllGamePackageOrderOfFloor(id);
             var result = _mapper.Map<List<GamePackageOrderListResponseModel>>(list);
             return result;
+        }
+
+        public async Task<string> CreateAgainPaymentUrlForPendingGamePackageOrder(string orderId)
+        {
+            var gamePackageOrder = await _gamePackageOrderRepository.GetGamePackageOrderById(orderId);
+
+            if (gamePackageOrder == null)
+            {
+                throw new CustomException("Không tìm thấy giao dịch này.");
+            }
+
+            if (!gamePackageOrder.Status.Equals(PackageOrderStatusEnums.PENDING.ToString()))
+            {
+                throw new CustomException("Giao dịch này không trong trạng thái Pending. Không thể tiếp tục thanh toán. Vui lòng tạo order mới.");
+            }
+
+            var paymentInfo = await _payosService.GetPaymentInformation(gamePackageOrder.OrderCode);
+            var id = paymentInfo.id;
+            return $"https://pay.payos.vn/web/{id}";
+        }
+
+        public async Task<GamePackageOrderDetailsResponseModel> GetGamePackageOrderDetails(string orderId)
+        {
+            var gamePackageOrder = await _gamePackageOrderRepository.GetGamePackageOrderById(orderId);
+            return new GamePackageOrderDetailsResponseModel
+            {
+                Id = gamePackageOrder.Id,
+                OrderCode = gamePackageOrder.OrderCode,
+                EndTime = gamePackageOrder.EndTime,
+                StartTime = gamePackageOrder.StartTime,
+                IsActivated = gamePackageOrder.IsActivated,
+                OrderDate = gamePackageOrder.OrderDate,
+                PaymentMethod = gamePackageOrder.PaymentMethod,
+                Price = gamePackageOrder.Price,
+                Status = gamePackageOrder.Status,
+                GamePackageInfo = new GamePackageDetailsResponseModel
+                {
+                    Id = gamePackageOrder.GamePackage.Id,
+                    Name = gamePackageOrder.GamePackage.Name,
+                    Description = gamePackageOrder.GamePackage.Description,
+                    Duration = gamePackageOrder.GamePackage.Duration,
+                    Price = gamePackageOrder.GamePackage.Price,
+                    Status = gamePackageOrder.GamePackage.Status,
+                    GameList = _mapper.Map<List<GameInfo>>(gamePackageOrder.GamePackage.GamePackageRelations.Select(g => g.Game))
+                }
+            };
         }
     }
 }

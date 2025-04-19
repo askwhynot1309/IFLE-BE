@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.User.Request;
+﻿using BusinessObjects.DTOs.Transaction.Response;
+using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
 using System;
@@ -34,6 +35,8 @@ namespace Service.Services.UserServices
         Task DeactivateStaffAccount(List<string> staffIdList);
 
         Task DeleteStaffAccount(string staffId);
+
+        Task<List<TransactionResponseModel>> ViewOwnTransactions(string currentUserId);
 
     }
 }

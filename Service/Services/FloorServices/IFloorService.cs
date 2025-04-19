@@ -19,7 +19,7 @@ namespace Service.Services.FloorServices
 
         Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId);
 
-        Task UpdateFloor(FloorCreateUpdateRequestModel model, string floorId);
+        Task UpdateFloor(FloorCreateUpdateRequestModel model, string floorId, string currentUserId);
 
         Task SoftRemoveFloor(string floorId);
 
@@ -48,5 +48,9 @@ namespace Service.Services.FloorServices
         Task ActivateGamePackageOrder(string gamePackageOrderId);
 
         Task<List<GamePackageOrderListResponseModel>> GetGamePackageOrderOfFloor(string id);
+
+        Task<string> CreateAgainPaymentUrlForPendingGamePackageOrder(string orderId);
+
+        Task<GamePackageOrderDetailsResponseModel> GetGamePackageOrderDetails(string orderId);
     }
 }
