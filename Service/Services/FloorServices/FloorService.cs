@@ -450,7 +450,28 @@ namespace Service.Services.FloorServices
         public async Task<List<GamePackageOrderListResponseModel>> GetGamePackageOrderOfFloor(string id)
         {
             var list = await _gamePackageOrderRepository.GetAllGamePackageOrderOfFloor(id);
-            var result = _mapper.Map<List<GamePackageOrderListResponseModel>>(list);
+            var result = list.Select(l => new GamePackageOrderListResponseModel
+            {
+                Id = l.Id,
+                OrderCode = l.OrderCode,
+                EndTime = l.EndTime,
+                StartTime = l.StartTime,
+                IsActivated = l.IsActivated,
+                OrderDate = l.OrderDate,
+                PaymentMethod = l.PaymentMethod,
+                Price = l.Price,
+                Status = l.Status,
+                GamePackageInfo = new GamePackageDetailsResponseModel
+                {
+                    Id = l.GamePackage.Id,
+                    Name = l.GamePackage.Name,
+                    Description = l.GamePackage.Description,
+                    Duration = l.GamePackage.Duration,
+                    Price = l.GamePackage.Price,
+                    Status = l.GamePackage.Status,
+                    GameList = _mapper.Map<List<GameInfo>>(l.GamePackage.GamePackageRelations.Select(g => g.Game))
+                }
+            }).ToList();
             return result;
         }
     }
