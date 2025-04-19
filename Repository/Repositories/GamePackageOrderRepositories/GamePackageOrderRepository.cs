@@ -73,5 +73,23 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             var ownGamePackageOrders = await Get(o => o.UserId.Equals(userId));
             return ownGamePackageOrders.ToList();
         }
+
+        public async Task<List<GamePackageOrder>> GetPendingAndProcessingGamePackageOrder()
+        {
+            var statusList = new List<string>
+            {
+                PackageOrderStatusEnums.PENDING.ToString(),
+                PackageOrderStatusEnums.PROCESSING.ToString(),
+            };
+
+            var list = await Get(l => statusList.Contains(l.Status));
+            return list.ToList();
+        }
+
+        public async Task<List<GamePackageOrder>> GetInactiveGamePackageOrderOver7Days(DateTime now)
+        {
+            var list = await Get(l => l.IsActivated == false && DateOnly.FromDateTime(now) > DateOnly.FromDateTime(l.OrderDate).AddDays(7));
+            return list.ToList();
+        }
     }
 }

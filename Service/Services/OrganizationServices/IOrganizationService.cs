@@ -46,5 +46,7 @@ namespace Service.Services.OrganizationServices
 
         Task<UserPackageOrderDetailsResponseModel> GetUserPackageOrderDetails(string orderId);
 
+        Task AutoUpdateUserPackageOrderStatus();
+
     }
 }
