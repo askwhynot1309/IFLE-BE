@@ -376,7 +376,17 @@ namespace Service.Services.OrganizationServices
         public async Task<List<UserPackageOrderListResponseModel>> GetAllUserPackageOrders(string id)
         {
             var list = await _userPackageOrderRepository.GetAllUserPackageOrderOfOrganization(id);
-            var result = _mapper.Map<List<UserPackageOrderListResponseModel>>(list);
+            var result = list.Select(r => new UserPackageOrderListResponseModel
+            {
+                Id = r.Id,
+                OrderCode = r.OrderCode,
+                OrderDate = r.OrderDate,
+                PaymentMethod = r.PaymentMethod,
+                Price = r.Price,
+                Status = r.Status,
+                UserPackageId = r.UserPackageId,
+                UserPackageInfo = _mapper.Map<UserPackageListResponseModel>(r.UserPackage)
+            }).ToList();
             return result;
         }
     }

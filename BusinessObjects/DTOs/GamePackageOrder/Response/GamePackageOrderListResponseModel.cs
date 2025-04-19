@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.DTOs.GamePackage.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +26,7 @@ namespace BusinessObjects.DTOs.GamePackageOrder.Response
         public bool? IsActivated { get; set; }
 
         public string Status { get; set; } = null!;
+
+        public GamePackageDetailsResponseModel? GamePackageInfo { get; set; }
     }
 }

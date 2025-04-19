@@ -18,12 +18,12 @@ namespace Repository.Repositories.GamePackageRepositories
 
         public async Task<List<GamePackage>> GetAllGamePackages()
         {
-            return (await Get()).ToList();
+            return (await Get(includeProperties: "GamePackageRelations,GamePackageRelations.Game")).ToList();
         }
 
         public async Task<List<GamePackage>> GetActiveGamePackages()
         {
-            return (await Get(g => g.Status.Equals(GamePackageEnums.Active.ToString()))).ToList();
+            return (await Get(g => g.Status.Equals(GamePackageEnums.Active.ToString()), includeProperties: "GamePackageRelations,GamePackageRelations.Game")).ToList();
         }
 
         public async Task<GamePackage> GetGamePackageById(string id)

@@ -19,5 +19,8 @@ namespace BusinessObjects.DTOs.GamePackage.Response
         public decimal Price { get; set; }
 
         public string Status { get; set; } = null!;
+
+        public List<GameInfo> GameList { get; set; } = new List<GameInfo>();
+
     }
 }

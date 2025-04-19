@@ -71,14 +71,32 @@ namespace Service.Services.GamePackageServices
         public async Task<List<GamePackageListResponseModel>> GetAllGamePackages()
         {
             var gamePackages = await _gamePackageRepository.GetAllGamePackages();
-            var result = _mapper.Map<List<GamePackageListResponseModel>>(gamePackages);
+            var result = gamePackages.Select(g => new GamePackageListResponseModel
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Description = g.Description,
+                Duration = g.Duration,
+                Price = g.Price,
+                Status = g.Status,
+                GameList = _mapper.Map<List<GameInfo>>(g.GamePackageRelations.Select(g => g.Game))
+            }).ToList();
             return result;
         }
 
         public async Task<List<GamePackageListResponseModel>> GetActiveGamePackages()
         {
             var gamePackages = await _gamePackageRepository.GetActiveGamePackages();
-            var result = _mapper.Map<List<GamePackageListResponseModel>>(gamePackages);
+            var result = gamePackages.Select(g => new GamePackageListResponseModel
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Description = g.Description,
+                Duration = g.Duration,
+                Price = g.Price,
+                Status = g.Status,
+                GameList = _mapper.Map<List<GameInfo>>(g.GamePackageRelations.Select(g => g.Game))
+            }).ToList();
             return result;
         }
 
