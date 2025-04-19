@@ -16,10 +16,15 @@ namespace Repository.Repositories.UserRepositories
 
         Task<List<User>> GetCustomerList();
 
-        Task<List<User>> GetCustomerListById(List<string> userIdList);
+        Task<List<User>> GetCustomerListByIdList(List<string> userIdList);
 
         Task<List<User>> GetStaffList();
 
-        Task<List<string>> GetUserIdListByEmail(List<string> emailList);
+        Task<List<string>> GetUserIdListByEmailList(List<string> emailList);
+
+        Task<List<User>> GetStaffListById(List<string> staffIdList);
+
+        Task<List<User>> GetUserListByEmailList(List<string> emailList);
     }
 }
+

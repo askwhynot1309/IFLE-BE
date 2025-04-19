@@ -37,7 +37,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateFloor(FloorCreateUpdateRequestModel model, string id)
         {
-            await _floorService.UpdateFloor(model, id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _floorService.UpdateFloor(model, id, currentUserId);
             return Ok("Cập nhật thông tin sàn thành công.");
         }
 
@@ -179,6 +180,23 @@ namespace InteractiveFloor.Controllers
         public async Task<IActionResult> GetAllGamePackageOrderOfFloor(string id)
         {
             var response = await _floorService.GetGamePackageOrderOfFloor(id);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("game-package/{orderId}/payment-link")]
+        public async Task<IActionResult> GetContinuePaymentLinkForGamePackageOrder(string orderId)
+        {
+            var response = await _floorService.CreateAgainPaymentUrlForPendingGamePackageOrder(orderId);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("game-package/{orderId}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetGamePackageOrderDetails(string orderId)
+        {
+            var response = await _floorService.GetGamePackageOrderDetails(orderId);
             return Ok(response);
         }
     }

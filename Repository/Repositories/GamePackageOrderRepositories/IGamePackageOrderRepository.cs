@@ -23,5 +23,7 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         Task<GamePackageOrder> GetGamePackageOrderById(string id);
 
+        Task<List<GamePackageOrder>> GetOwnGamePackageOrder(string userId);
+
     }
 }
