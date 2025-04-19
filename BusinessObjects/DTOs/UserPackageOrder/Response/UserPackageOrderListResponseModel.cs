@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.DTOs.UserPackage.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,7 @@ namespace BusinessObjects.DTOs.UserPackageOrder.Response
         public string Status { get; set; } = null!;
 
         public string UserPackageId { get; set; } = null!;
+
+        public UserPackageListResponseModel? UserPackageInfo { get; set; } 
     }
 }
