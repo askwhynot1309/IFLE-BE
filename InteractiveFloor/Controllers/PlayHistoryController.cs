@@ -17,6 +17,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet("history/get-high-score")]
+        [Authorize(Roles = "Customer")]
         public async Task<ActionResult<PlayHistoryResponse>> GetHighScore(string userId, string gameId)
         {
             try
@@ -34,7 +35,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPost("history/new-play-history")]
-        //[Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<ActionResult<PlayHistory>> CreateHighScore(PlayHistoryRequest request)
         {
             try
@@ -44,7 +45,22 @@ namespace InteractiveFloor.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while creating the game.", error = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while creating the score record.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("history/floor-play-history/{floorId}")]
+        [Authorize(Roles = "Staff, Customer")]
+        public async Task<ActionResult<List<PlayHistory>>> GetFloorPlayHistory(string floorId)
+        {
+            try
+            {
+                var floorPlayHistory = await _playHistoryService.GetFloorPlayHistory(floorId);
+                return Ok(floorPlayHistory);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while getting the play history for the floor.", error = ex.Message });
             }
         }
     }
