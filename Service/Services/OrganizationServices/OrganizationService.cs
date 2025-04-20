@@ -175,7 +175,7 @@ namespace Service.Services.OrganizationServices
             }
 
             var userIdList = await _userRepository.GetUserIdListByEmailList(emailList);
-            if (userIdList.Count() == 0)
+            if (userIdList.Count == 0)
             {
                 throw new CustomException("Không có người dùng nào được chọn.");
             }
