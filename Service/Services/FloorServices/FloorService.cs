@@ -40,8 +40,9 @@ namespace Service.Services.FloorServices
         private readonly IGamePackageOrderRepository _gamePackageOrderRepository;
         private readonly IPayosService _payosService;
         private readonly IEmailService _emailService;
+        private readonly IPrivateFloorUserRepository _privateFloorUserRepository;
 
-        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IGamePackageRepository gamePackageRepository, IPayosService payosService, IGamePackageOrderRepository gamePackageOrderRepository, IEmailService emailService)
+        public FloorService(IFloorRepository floorRepository, IMapper mapper, IOrganizationRepository organizationRepository, IDeviceRepository deviceRepository, IDeviceCategoryRepository deviceCategoryRepository, IPrivateFloorUserRepository floorUserRepository, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IGamePackageRepository gamePackageRepository, IPayosService payosService, IGamePackageOrderRepository gamePackageOrderRepository, IEmailService emailService, IPrivateFloorUserRepository privateFloorUserRepository)
         {
             _floorRepository = floorRepository;
             _mapper = mapper;
@@ -55,6 +56,7 @@ namespace Service.Services.FloorServices
             _payosService = payosService;
             _gamePackageOrderRepository = gamePackageOrderRepository;
             _emailService = emailService;
+            _privateFloorUserRepository = privateFloorUserRepository;
         }
 
         public async Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId)
@@ -83,12 +85,20 @@ namespace Service.Services.FloorServices
             }
         }
 
-        public async Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId)
+        public async Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId, string currentUserId)
         {
             var floor = await _floorRepository.GetFloorById(floorId);
             if (floor == null)
             {
                 throw new CustomException("Không tìm thấy sàn tương tác này");
+            }
+            if (floor.IsPublic == false)
+            {
+                var privateFloorUser = await _privateFloorUserRepository.GetByUserIdAndFloorId(currentUserId, floorId);
+                if (privateFloorUser == null)
+                {
+                    throw new CustomException("Bạn không có quyền truy cập vào sàn tương tác này.");
+                }
             }
             var result = new FloorDetailsInfoResponseModel
             {
@@ -564,5 +574,7 @@ namespace Service.Services.FloorServices
 
             await _gamePackageOrderRepository.UpdateRange(orderList);
         }
+
+
     }
 }

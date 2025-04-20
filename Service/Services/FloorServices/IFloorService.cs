@@ -17,7 +17,7 @@ namespace Service.Services.FloorServices
     {
         Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId);
 
-        Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId);
+        Task<FloorDetailsInfoResponseModel> ViewFloorDetailInfo(string floorId, string currentUserId);
 
         Task UpdateFloor(FloorCreateUpdateRequestModel model, string floorId, string currentUserId);
 
