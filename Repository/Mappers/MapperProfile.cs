@@ -13,6 +13,7 @@ using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.PlayHistory;
+using BusinessObjects.DTOs.Transaction.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserPackage.Request;
@@ -99,13 +100,27 @@ namespace Repository.Mappers
             //Game Package Order
             CreateMap<GamePackageOrderCreateRequestModel, GamePackageOrder>();
             CreateMap<GamePackageOrder, GamePackageOrderListResponseModel>();
+            CreateMap<GamePackageOrder, TransactionResponseModel>();
 
             //UserPackageOrder
             CreateMap<UserPackageOrderCreateRequestModel, UserPackageOrder>();
             CreateMap<UserPackageOrder, UserPackageOrderListResponseModel>();
+            CreateMap<UserPackageOrder, TransactionResponseModel>();
 
             //PlayHistory
             CreateMap<PlayHistory, PlayHistoryResponse>();
+            CreateMap<PlayHistory, PlayHistoryFloorResponse>()
+                .ForMember(dest => dest.GameHistory, opt => opt.MapFrom(src => new GameHistory
+                {
+                    Title = src.Game.Title,
+                    Description = src.Game.Description,
+                    PlayCount = src.Game.PlayCount
+                }))
+                .ForMember(dest => dest.UserHistory, opt => opt.MapFrom(src => new UserHistory
+                {
+                    FullName = src.User.FullName,
+                    Email = src.User.Email
+                }));
         }
     }
 }

@@ -4,6 +4,7 @@ using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +64,32 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         public async Task<GamePackageOrder> GetGamePackageOrderById(string id)
         {
-            return await GetSingle(g => g.Id.Equals(id));
+            return await GetSingle(g => g.Id.Equals(id),
+                includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game");
+        }
+
+        public async Task<List<GamePackageOrder>> GetOwnGamePackageOrder(string userId)
+        {
+            var ownGamePackageOrders = await Get(o => o.UserId.Equals(userId));
+            return ownGamePackageOrders.ToList();
+        }
+
+        public async Task<List<GamePackageOrder>> GetPendingAndProcessingGamePackageOrder()
+        {
+            var statusList = new List<string>
+            {
+                PackageOrderStatusEnums.PENDING.ToString(),
+                PackageOrderStatusEnums.PROCESSING.ToString(),
+            };
+
+            var list = await Get(l => statusList.Contains(l.Status));
+            return list.ToList();
+        }
+
+        public async Task<List<GamePackageOrder>> GetInactiveGamePackageOrderOver7Days(DateTime now)
+        {
+            var list = await Get(l => l.IsActivated == false && DateOnly.FromDateTime(now) > DateOnly.FromDateTime(l.OrderDate).AddDays(7));
+            return list.ToList();
         }
     }
 }

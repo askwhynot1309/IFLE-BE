@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
+using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.DTOs.UserPackageOrder.Request;
 using BusinessObjects.DTOs.UserPackageOrder.Response;
 using System;
@@ -40,5 +41,12 @@ namespace Service.Services.OrganizationServices
         Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId);
 
         Task<List<UserPackageOrderListResponseModel>> GetAllUserPackageOrders(string id);
+
+        Task<string> CreateAgainPaymentUrlForPendingUserPackageOrder(string orderId);
+
+        Task<UserPackageOrderDetailsResponseModel> GetUserPackageOrderDetails(string orderId);
+
+        Task AutoUpdateUserPackageOrderStatus();
+
     }
 }

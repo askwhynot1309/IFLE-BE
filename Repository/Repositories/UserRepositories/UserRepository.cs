@@ -18,7 +18,7 @@ namespace Repository.Repositories.UserRepositories
 
         public async Task<User> GetUserById(string userId)
         {
-            return await GetSingle(u => u.Id.Equals(userId), includeProperties: "Role,OrganizationUsers");
+            return await GetSingle(u => u.Id.Equals(userId), includeProperties: "Role,OrganizationUsers,RefreshTokens,OTP");
         }
 
         public async Task<User> GetUserByEmail(string email)
@@ -32,7 +32,7 @@ namespace Repository.Repositories.UserRepositories
             return users.ToList();
         }
 
-        public async Task<List<User>> GetCustomerListById(List<string> userIdList)
+        public async Task<List<User>> GetCustomerListByIdList(List<string> userIdList)
         {
             var userList = await Get(u => userIdList.Contains(u.Id), includeProperties: "OrganizationUsers");
             return userList.ToList();
@@ -44,7 +44,7 @@ namespace Repository.Repositories.UserRepositories
             return staffs.ToList();
         }
 
-        public async Task<List<string>> GetUserIdListByEmail(List<string> emailList)
+        public async Task<List<string>> GetUserIdListByEmailList(List<string> emailList)
         {
             var lowerEmailList = emailList.Select(email => email.ToLower());
 
@@ -52,6 +52,19 @@ namespace Repository.Repositories.UserRepositories
 
             var userIdList = userList.Select(user => user.Id);
             return userIdList.ToList();
+        }
+
+        public async Task<List<User>> GetStaffListById(List<string> staffIdList)
+        {
+            var staffList = await Get(u => staffIdList.Contains(u.Id));
+            return staffList.ToList();
+        }
+
+        public async Task<List<User>> GetUserListByEmailList(List<string> emailList)
+        {
+            var lowerEmailList = emailList.Select(email => email.ToLower());
+            var userList = await Get(u => lowerEmailList.Contains(u.Email.ToLower()));
+            return userList.ToList();
         }
     }
 }

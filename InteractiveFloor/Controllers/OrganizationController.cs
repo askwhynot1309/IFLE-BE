@@ -158,5 +158,22 @@ namespace InteractiveFloor.Controllers
             var response = await _organizationService.GetAllUserPackageOrders(id);
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("user-package/{orderId}/payment-link")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetContinuePaymentLinkForUserPackageOrder(string orderId)
+        {
+            var response = await _organizationService.CreateAgainPaymentUrlForPendingUserPackageOrder(orderId);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("user-package/{orderId}")]
+        public async Task<IActionResult> GetUserPackageOrderDetails(string orderId)
+        {
+            var response = await _organizationService.GetUserPackageOrderDetails(orderId);
+            return Ok(response);
+        }
     }
 }

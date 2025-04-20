@@ -26,6 +26,16 @@ namespace Repository.Repositories.PlayHistoryRepositories
             return playHistory;
         }
 
+        public async Task<List<PlayHistory>> GetFloorPlayHistory(string floorId)
+        {
+            var floorPlayHistory = await _context.PlayHistories
+                .Include(ph => ph.Game)
+                .Include(ph => ph.User)
+                .Where(ph => ph.FloorId == floorId)
+                .ToListAsync();
+            return floorPlayHistory;
+        }
+
         public async Task<PlayHistory> GetHighScore(string userId, string gameId)
         {
            var history = await _context.PlayHistories

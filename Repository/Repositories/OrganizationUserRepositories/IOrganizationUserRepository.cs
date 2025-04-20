@@ -23,5 +23,7 @@ namespace Repository.Repositories.OrganizationUserRepositories
         Task<string> GetOwnerIdOfOrganization(string organizationId);
 
         Task<List<OrganizationUser>> GetOrganizationUserListByUserId(string userId);
+
+        Task<List<string>> GetOwnerAndCoownerIdListOfOrganization(string organizationId);
     }
 }
