@@ -159,7 +159,7 @@ namespace Service.Services.OrganizationServices
 
             var addList = await _userRepository.GetUserListByEmailList(emailList);
 
-            if (addList.All(u => u.Role.Equals(RoleEnums.Customer.ToString())))
+            if (!addList.All(u => u.Role.Name.Equals(RoleEnums.Customer.ToString())))
             {
                 throw new CustomException("Không thể thêm admin hoặc staff vào tổ chức.");
             }
