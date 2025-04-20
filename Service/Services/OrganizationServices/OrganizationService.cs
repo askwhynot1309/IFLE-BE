@@ -244,14 +244,24 @@ namespace Service.Services.OrganizationServices
             }
 
             var removeList = await _organizationUserRepository.GetOrganizationUsersByUserIdList(userIdList, organizationId);
-            if (removeList.Count > 0)
-            {
-                await _organizationUserRepository.DeleteRange(removeList);
-            }
-            else
+            if (removeList.Count <= 0)
             {
                 throw new CustomException("Không tồn tại người dùng để xóa khỏi tổ chức.");
             }
+
+            var privateFloorList = await _floorRepository.GetAllPrivateFloorsOfOrganization(organizationId);
+            var privateIdList = privateFloorList.Select(p => p.Id).ToList();
+            var deleteList = new List<PrivateFloorUser>();
+            foreach (var remove in removeList)
+            {
+                var list = await _privateFloorUserRepository.GetListByUserIdAndPrivateFloorIdList(remove.UserId, privateIdList);
+                deleteList.AddRange(list);
+            }
+            if (deleteList.Count > 0)
+            {
+                await _privateFloorUserRepository.DeleteRange(deleteList);
+            }
+            await _organizationUserRepository.DeleteRange(removeList);
         }
 
         public async Task GrantPrivilege(List<string> userIdList, string organizationId, string currentUserId)
@@ -376,8 +386,8 @@ namespace Service.Services.OrganizationServices
 
                 if (!firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
                 {
-                organization.UserLimit += userPackage.UserLimit;
-            }
+                    organization.UserLimit += userPackage.UserLimit;
+                }
             }
             await _userPackageOrderRepository.Update(order);
         }
