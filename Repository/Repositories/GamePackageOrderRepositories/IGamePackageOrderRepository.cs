@@ -23,5 +23,11 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         Task<GamePackageOrder> GetGamePackageOrderById(string id);
 
+        Task<List<GamePackageOrder>> GetOwnGamePackageOrder(string userId);
+
+        Task<List<GamePackageOrder>> GetPendingAndProcessingGamePackageOrder();
+
+        Task<List<GamePackageOrder>> GetInactiveGamePackageOrderOver7Days(DateTime now);
+
     }
 }

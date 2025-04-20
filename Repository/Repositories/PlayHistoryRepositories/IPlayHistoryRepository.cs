@@ -12,5 +12,6 @@ namespace Repository.Repositories.PlayHistoryRepositories
     {
         Task<PlayHistory> CreateAsync(PlayHistory playHistory);
         Task<PlayHistory> GetHighScore(string userId, string gameId);
+        Task<List<PlayHistory>> GetFloorPlayHistory(string floorId);
     }
 }

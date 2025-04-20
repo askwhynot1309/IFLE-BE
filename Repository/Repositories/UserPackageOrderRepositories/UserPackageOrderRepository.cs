@@ -33,5 +33,29 @@ namespace Repository.Repositories.UserPackageOrderRepositories
         {
             return await GetSingle(p => p.OrderCode.Equals(orderCode));
         }
+
+        public async Task<List<UserPackageOrder>> GetOwnUserPackageOrder(string userId)
+        {
+            var ownUserPackageOrders = await Get(o => o.UserId.Equals(userId));
+            return ownUserPackageOrders.ToList();
+        }
+
+        public async Task<UserPackageOrder> GetUserPackageOrderById(string orderId)
+        {
+            return await GetSingle(p => p.Id.Equals(orderId), includeProperties: "UserPackage");
+        }
+
+        public async Task<List<UserPackageOrder>> GetPendingAndProcessingUserPackageOrder()
+        {
+            var statusList = new List<string>
+            {
+                PackageOrderStatusEnums.PENDING.ToString(),
+                PackageOrderStatusEnums.PROCESSING.ToString(),
+            };
+            var list = await Get(l => statusList.Contains(l.Status));
+            return list.ToList();
+        }
+
+        
     }
 }

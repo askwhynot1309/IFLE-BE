@@ -18,7 +18,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Staff, Customer")]
+        //[Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<List<GameResponse>>> GetAll()
         {
             try
@@ -33,7 +33,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Staff, Customer")]
+        //[Authorize(Roles = "Staff, Customer")]
         public async Task<ActionResult<GameResponse>> GetById(string id)
         {
             try
