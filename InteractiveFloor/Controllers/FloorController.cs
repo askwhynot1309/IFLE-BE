@@ -47,7 +47,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ViewFloorDetails(string id)
         {
-            var response = await _floorService.ViewFloorDetailInfo(id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _floorService.ViewFloorDetailInfo(id, currentUserId);
             return Ok(response);
         }
 

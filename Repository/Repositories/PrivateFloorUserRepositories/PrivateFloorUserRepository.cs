@@ -31,5 +31,10 @@ namespace Repository.Repositories.FloorUserRepositories
             var list = await Get(l => l.FloorId.Equals(floorId) && userIdList.Contains(l.UserId));
             return list.ToList();
         }
+
+        public async Task<PrivateFloorUser> GetByUserIdAndFloorId(string userId, string floorId)
+        {
+            return await GetSingle(l => l.UserId.Equals(userId) && l.FloorId.Equals(floorId));
+        }
     }
 }
