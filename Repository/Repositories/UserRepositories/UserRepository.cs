@@ -63,7 +63,7 @@ namespace Repository.Repositories.UserRepositories
         public async Task<List<User>> GetUserListByEmailList(List<string> emailList)
         {
             var lowerEmailList = emailList.Select(email => email.ToLower());
-            var userList = await Get(u => lowerEmailList.Contains(u.Email.ToLower()));
+            var userList = await Get(u => lowerEmailList.Contains(u.Email.ToLower()), includeProperties: "Role");
             return userList.ToList();
         }
     }
