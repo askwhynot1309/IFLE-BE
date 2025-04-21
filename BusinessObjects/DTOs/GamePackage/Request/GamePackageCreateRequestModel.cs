@@ -21,6 +21,6 @@ namespace BusinessObjects.DTOs.GamePackage.Request
         [Range(2000, double.MaxValue, ErrorMessage = "Giá gói phải lớn hơn 2000đ.")]
         public decimal Price { get; set; }
 
-        public List<string> GameIdList = new List<string>();
+        public List<string> GameIdList { get; set; } = new List<string>();
     }
 }
