@@ -20,5 +20,7 @@ namespace BusinessObjects.DTOs.GamePackage.Request
         [Required(ErrorMessage = "Vui lòng nhập giá gói game (VNĐ).")]
         [Range(2000, double.MaxValue, ErrorMessage = "Giá gói phải lớn hơn 2000đ.")]
         public decimal Price { get; set; }
+
+        public List<string> GameIdList = new List<string>();
     }
 }
