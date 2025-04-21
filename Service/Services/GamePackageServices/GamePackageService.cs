@@ -6,6 +6,7 @@ using Repository.Enums;
 using Repository.Repositories.GamePackageOrderRepositories;
 using Repository.Repositories.GamePackageRelationRepositories;
 using Repository.Repositories.GamePackageRepositories;
+using Repository.Repositories.GameRepositories;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,15 @@ namespace Service.Services.GamePackageServices
         private readonly IGamePackageRelationRepository _gamePackageRelationRepository;
         private readonly IMapper _mapper;
         private readonly IGamePackageOrderRepository _gamePackageOrderRepository;
+        private readonly IGameRepository _gameRepository;
 
-        public GamePackageService(IGamePackageRepository gamePackageRepository, IMapper mapper, IGamePackageRelationRepository gamePackageRelationRepository, IGamePackageOrderRepository gamePackageOrderRepository)
+        public GamePackageService(IGamePackageRepository gamePackageRepository, IMapper mapper, IGamePackageRelationRepository gamePackageRelationRepository, IGamePackageOrderRepository gamePackageOrderRepository, IGameRepository gameRepository)
         {
             _gamePackageRepository = gamePackageRepository;
             _mapper = mapper;
             _gamePackageRelationRepository = gamePackageRelationRepository;
             _gamePackageOrderRepository = gamePackageOrderRepository;
+            _gameRepository = gameRepository;
         }
 
         public async Task CreateGamePackage(GamePackageCreateRequestModel model)
@@ -38,6 +41,25 @@ namespace Service.Services.GamePackageServices
             newGamePackage.Status = GamePackageEnums.Active.ToString();
 
             await _gamePackageRepository.Insert(newGamePackage);
+            if (model.GameIdList.Count > 0)
+            {
+                var listGame = await _gameRepository.GetListGameByListId(model.GameIdList);
+                if (listGame.Count != model.GameIdList.Count)
+                {
+                    throw new CustomException("Không tìm thấy game bạn thêm vào. Vui lòng chọn đúng game có sẵn.");
+                }
+                var list = new List<GamePackageRelation>();
+                foreach (var gameId in model.GameIdList)
+                {
+                    list.Add(new GamePackageRelation
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        GameId = gameId,
+                        GamePackageId = newGamePackage.Id,
+                    });
+                }
+                await _gamePackageRelationRepository.InsertRange(list);
+            }
         }
 
         public async Task UpdateGamePackage(GamePackageUpdateRequestModel model, string gamePackageId)
