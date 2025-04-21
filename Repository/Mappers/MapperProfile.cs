@@ -50,6 +50,7 @@ namespace Repository.Mappers
             //Game Version 
             CreateMap<GameVersion, GameVersionResponse>();
             CreateMap<CreateGameVersionRequest, GameVersion>();
+            CreateMap<AddGameVersionRequest, GameVersion>();
 
             //Game 
             CreateMap<Game, GameResponse>()
