@@ -48,15 +48,6 @@ namespace InteractiveFloor.Controllers
             return Ok(response);
         }
 
-        [HttpPatch]
-        [Route("{id}/status")]
-        [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> UpdateDeviceCategoryStatus(string id, [FromBody] string status)
-        {
-            await _deviceCategoryService.UpdateDeviceCategoryStatus(id, status);
-            return Ok("Cập nhật trạng thái thành công.");
-        }
-
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = "Staff")]
