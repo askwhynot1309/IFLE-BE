@@ -1,5 +1,6 @@
 using BusinessObjects.DTOs.GameCategory;
 using BusinessObjects.Models;
+using Repository.Repositories.GameCategoryRelationRepositories;
 using Repository.Repositories.GameCategoryRepositories;
 using System.Linq.Expressions;
 
@@ -8,10 +9,12 @@ namespace Service.Services.GameCategoryServices
     public class GameCategoryService : IGameCategoryService
     {
         private readonly IGameCategoryRepository _repository;
+        private readonly IGameCategoryRelationRepository _gameCategoryRelationRepository;
 
-        public GameCategoryService(IGameCategoryRepository repository)
+        public GameCategoryService(IGameCategoryRepository repository, IGameCategoryRelationRepository gameCategoryRelationRepository)
         {
             _repository = repository;
+            _gameCategoryRelationRepository = gameCategoryRelationRepository;
         }
 
         public async Task<List<GameCategoryResponse>> GetAllAsync()
@@ -80,6 +83,9 @@ namespace Service.Services.GameCategoryServices
         public async Task DeleteAsync(string id)
         {
             var category = new GameCategory { Id = id };
+            var relations = await _gameCategoryRelationRepository.GetListByGameCategory(id);
+
+            await _gameCategoryRelationRepository.DeleteRange(relations);
             await _repository.Delete(category);
         }
     }

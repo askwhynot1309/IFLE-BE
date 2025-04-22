@@ -2,6 +2,7 @@
 using BusinessObjects.DTOs.DeviceCategory.Request;
 using BusinessObjects.DTOs.DeviceCategory.Response;
 using BusinessObjects.Models;
+using Repository.Enums;
 using Repository.Repositories.DeviceCategoryRepositories;
 using Service.Ultis;
 using System;
@@ -27,6 +28,7 @@ namespace Service.Services.DeviceCategoryServices
         {
             var newDeviceCategory = _mapper.Map<DeviceCategory>(model);
             newDeviceCategory.Id = Guid.NewGuid().ToString();
+            newDeviceCategory.Status = DeviceStatusEnums.Active.ToString();
 
             await _deviceCategoryRepository.Insert(newDeviceCategory);
         }
@@ -34,6 +36,12 @@ namespace Service.Services.DeviceCategoryServices
         public async Task<List<DeviceCategoryInfoResponseModel>> GetAllDeviceCategory()
         {
             var list = await _deviceCategoryRepository.GetAllDeviceCategory();
+            return _mapper.Map<List<DeviceCategoryInfoResponseModel>>(list);
+        }
+
+        public async Task<List<DeviceCategoryInfoResponseModel>> GetActiveDeviceCategory()
+        {
+            var list = await _deviceCategoryRepository.GetActiveDeviceCategories();
             return _mapper.Map<List<DeviceCategoryInfoResponseModel>>(list);
         }
 
@@ -47,7 +55,7 @@ namespace Service.Services.DeviceCategoryServices
             return _mapper.Map<DeviceCategoryInfoResponseModel>(deviceCategory);
         }
 
-        public async Task DeleteDeviceCategory(string id)
+        public async Task DeprecateDeviceCategory(string id)
         {
             var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(id);
             if (deviceCategory == null)
@@ -55,13 +63,7 @@ namespace Service.Services.DeviceCategoryServices
                 throw new CustomException("Không tìm thấy loại thiết bị này.");
             }
 
-            foreach (var device in deviceCategory.Devices)
-            {
-                device.DeviceCategoryId = null;
-                device.DeviceCategory = null;
-            }
-
-            deviceCategory.Devices.Clear();
+            deviceCategory.Status = DeviceStatusEnums.Deprecated.ToString();
             await _deviceCategoryRepository.Delete(deviceCategory);
         }
 

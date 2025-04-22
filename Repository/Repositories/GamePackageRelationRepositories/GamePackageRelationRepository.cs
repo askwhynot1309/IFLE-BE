@@ -26,5 +26,11 @@ namespace Repository.Repositories.GamePackageRelationRepositories
             var list = await Get(g => g.GamePackageId.Equals(gamePackageId), includeProperties: "Game");
             return list.ToList();
         }
+
+        public async Task<List<GamePackage>> GetListGamePackageByGameId(string gameId)
+        {
+            var list = (await Get(g => g.GameId.Equals(gameId), includeProperties: "GamePackage")).Select(g => g.GamePackage);
+            return list.ToList();
+        }
     }
 }
