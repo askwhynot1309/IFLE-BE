@@ -22,7 +22,8 @@ namespace BusinessObjects.Models
 
         public string? DeviceInfoUrl { get; set; }
 
-        public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
+        public string Status { get; set; } = null!;
 
+        public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
     }
 }

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Repository.Enums
 {
-    public enum GamePackageEnums
+    public enum DeviceStatusEnums
     {
         Active,
-        Inactive,
-        Maintainance
+        Deprecated
     }
 }

@@ -13,5 +13,7 @@ namespace Repository.Repositories.GamePackageRelationRepositories
         Task<List<string>> GetListGameIdByGamePackageId(string gamePackageId);
 
         Task<List<GamePackageRelation>> GetListByGamePackageId(string gamePackageId);
+
+        Task<List<GamePackage>> GetListGamePackageByGameId(string gameId);
     }
 }

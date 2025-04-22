@@ -60,4 +60,4 @@ namespace InteractiveFloor.Controllers
             return NoContent();
         }
     }
-} 
+}
