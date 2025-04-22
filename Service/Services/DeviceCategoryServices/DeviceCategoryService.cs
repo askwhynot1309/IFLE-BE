@@ -55,18 +55,6 @@ namespace Service.Services.DeviceCategoryServices
             return _mapper.Map<DeviceCategoryInfoResponseModel>(deviceCategory);
         }
 
-        public async Task UpdateDeviceCategoryStatus(string id, string status)
-        {
-            var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(id);
-            if (deviceCategory == null)
-            {
-                throw new CustomException("Không tìm thấy loại thiết bị này.");
-            }
-
-            deviceCategory.Status = status;
-            await _deviceCategoryRepository.Update(deviceCategory);
-        }
-
         public async Task UpdateDeviceCategory(string id, DeviceCategoryCreateUpdateRequestModel model)
         {
             var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(id);
@@ -75,6 +63,10 @@ namespace Service.Services.DeviceCategoryServices
                 throw new CustomException("Không tìm thấy loại thiết bị này.");
             }
             _mapper.Map(model, deviceCategory);
+            if (model.UpdateStatus != null)
+            {
+                deviceCategory.Status = model.UpdateStatus;
+            }
             await _deviceCategoryRepository.Update(deviceCategory);
         }
     }
