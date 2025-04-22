@@ -6,6 +6,8 @@ using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.GamePackageOrder.Response;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
+using BusinessObjects.DTOs.SetUpGuide.Request;
+using BusinessObjects.DTOs.SetUpGuide.Response;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +24,7 @@ using Repository.Repositories.UserRepositories;
 using Service.Services.EmailServices;
 using Service.Services.PayosServices;
 using Service.Ultis;
+using System;
 using static System.Net.WebRequestMethods;
 
 namespace Service.Services.FloorServices
@@ -575,6 +578,69 @@ namespace Service.Services.FloorServices
             await _gamePackageOrderRepository.UpdateRange(orderList);
         }
 
+        public async Task<SetUpGuideResponseModel> GetSetUpGuideForCustomer(SetUpGuideRequestModel model, string floorId)
+        {
+            var floor = await _floorRepository.GetFloorById(floorId);
+            if (floor.DeviceId == null)
+            {
+                throw new CustomException("Vui lòng đăng ký thiết bị cho sàn của bạn.");
+            }
 
+            if (model.CameraHeight > floor.Height)
+            {
+                throw new CustomException("Không thể đặt camera cao hơn độ cao phòng.");
+            }
+
+            var device = await _deviceRepository.GetDeviceById(floor.DeviceId);
+            if (device.DeviceCategory == null)
+            {
+                throw new CustomException("Vui lòng chọn loại thiết bị cho thiết bị đã đăng ký.");
+            }
+
+            double hFovDeg = device.DeviceCategory.HFov;
+            double vFovDeg = device.DeviceCategory.VFov;
+
+            double personHeight = 1.5f;
+            double cameraTiltDeg = 45;
+            double zNear;
+            double zFar;
+            double widthAtZNear;
+
+            double thetaRad = ToRadians(cameraTiltDeg);
+            double vfovRad = ToRadians(vFovDeg);
+            double hfovRad = ToRadians(hFovDeg);
+
+            double nearAngle = thetaRad + vfovRad / 2.0;
+            double dNear = model.CameraHeight / Math.Sin(nearAngle);
+            zNear = dNear * Math.Cos(nearAngle);
+
+            double farAngle = thetaRad - vfovRad / 2.0;
+            double hHead = model.CameraHeight - personHeight;
+            double dFar = hHead / Math.Sin(farAngle);
+            zFar = dFar * Math.Cos(farAngle);
+
+            widthAtZNear = 2.0 * dNear * Math.Tan(hfovRad / 2.0);
+            var result = new SetUpGuideResponseModel
+            {
+                DistanceToFloorFromCam = zNear,
+                TotalLengthNeeded = zFar,
+                PlayFloorLength = zFar - zNear,
+                PlayFloorWidth = widthAtZNear,
+            };
+
+            if (floor.Width < widthAtZNear)
+            {
+                result.Notice = $"Độ rộng phần sàn để chơi của bạn là {floor.Width}, bé hơn phần độ rộng cần thiết là {result.PlayFloorWidth}.";
+            }
+
+            if (floor.Length < zFar)
+            {
+                result.Notice = $"Chiều dài phần sàn để chơi của bạn là {floor.Length}, bé hơn phần độ dài cần thiết là {result.PlayFloorWidth}.";
+            }
+
+            return result;
+        }
+
+        private double ToRadians(double degrees) => degrees * Math.PI / 180.0;
     }
 }
