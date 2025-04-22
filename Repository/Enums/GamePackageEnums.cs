@@ -9,7 +9,6 @@ namespace Repository.Enums
     public enum GamePackageEnums
     {
         Active,
-        Inactive,
-        Maintainance
+        Inactive
     }
 }
