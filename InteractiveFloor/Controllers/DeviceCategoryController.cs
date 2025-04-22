@@ -49,12 +49,12 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPatch]
-        [Route("{id}/deprecated")]
+        [Route("{id}/status")]
         [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> DeprecateDeviceCategory(string id)
+        public async Task<IActionResult> UpdateDeviceCategoryStatus(string id, [FromBody] string status)
         {
-            await _deviceCategoryService.DeprecateDeviceCategory(id);
-            return Ok("Xóa loại thiết bị thành công.");
+            await _deviceCategoryService.UpdateDeviceCategoryStatus(id, status);
+            return Ok("Cập nhật trạng thái thành công.");
         }
 
         [HttpPut]

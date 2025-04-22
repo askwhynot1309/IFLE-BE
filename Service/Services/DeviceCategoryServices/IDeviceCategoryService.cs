@@ -18,7 +18,7 @@ namespace Service.Services.DeviceCategoryServices
 
         Task<DeviceCategoryInfoResponseModel> GetDeviceCategoryInfo(string id);
 
-        Task DeprecateDeviceCategory(string id);
+        Task UpdateDeviceCategoryStatus(string id, string status);
 
         Task UpdateDeviceCategory(string id, DeviceCategoryCreateUpdateRequestModel model);
 

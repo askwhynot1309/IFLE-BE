@@ -55,7 +55,7 @@ namespace Service.Services.DeviceCategoryServices
             return _mapper.Map<DeviceCategoryInfoResponseModel>(deviceCategory);
         }
 
-        public async Task DeprecateDeviceCategory(string id)
+        public async Task UpdateDeviceCategoryStatus(string id, string status)
         {
             var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(id);
             if (deviceCategory == null)
@@ -63,8 +63,8 @@ namespace Service.Services.DeviceCategoryServices
                 throw new CustomException("Không tìm thấy loại thiết bị này.");
             }
 
-            deviceCategory.Status = DeviceStatusEnums.Deprecated.ToString();
-            await _deviceCategoryRepository.Delete(deviceCategory);
+            deviceCategory.Status = status;
+            await _deviceCategoryRepository.Update(deviceCategory);
         }
 
         public async Task UpdateDeviceCategory(string id, DeviceCategoryCreateUpdateRequestModel model)
