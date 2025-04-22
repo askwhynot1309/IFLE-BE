@@ -4,6 +4,8 @@ using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.GamePackageOrder.Response;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
+using BusinessObjects.DTOs.SetUpGuide.Request;
+using BusinessObjects.DTOs.SetUpGuide.Response;
 using BusinessObjects.DTOs.User.Response;
 using System;
 using System.Collections.Generic;
@@ -56,5 +58,7 @@ namespace Service.Services.FloorServices
         Task AutoUpdateGamePackageOrderStatus();
 
         Task AutoActivateGamePackageOrderOver7Days();
+
+        Task<SetUpGuideResponseModel> GetSetUpGuideForCustomer(SetUpGuideRequestModel model, string floorId);
     }
 }
