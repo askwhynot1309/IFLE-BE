@@ -33,6 +33,14 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet]
+        [Route("active")]
+        public async Task<IActionResult> GetActiveDeviceCategory()
+        {
+            var response = await _deviceCategoryService.GetActiveDeviceCategory();
+            return Ok(response);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetDeviceCategoryInfo(string id)
         {
@@ -40,12 +48,12 @@ namespace InteractiveFloor.Controllers
             return Ok(response);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpPatch]
+        [Route("{id}/deprecated")]
         [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> DeleteDeviceCategory(string id)
+        public async Task<IActionResult> DeprecateDeviceCategory(string id)
         {
-            await _deviceCategoryService.DeleteDeviceCategory(id);
+            await _deviceCategoryService.DeprecateDeviceCategory(id);
             return Ok("Xóa loại thiết bị thành công.");
         }
 

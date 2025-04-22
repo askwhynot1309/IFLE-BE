@@ -454,6 +454,11 @@ namespace DAO
 
                 entity.Property(e => e.DeviceInfoUrl)
                     .HasMaxLength(500);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .IsRequired();
             });
 
             modelBuilder.Entity<PlayHistory>(entity =>

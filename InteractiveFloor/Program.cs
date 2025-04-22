@@ -38,6 +38,7 @@ using Repository.Repositories.UserPackageOrderRepositories;
 using Repository.Repositories.PlayHistoryRepositories;
 using Service.Services.PlayHistoryServices;
 using Service.Services.BackgroundServices;
+using Repository.Repositories.GameCategoryRelationRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -99,6 +100,7 @@ builder.Services.AddScoped<IDeviceCategoryRepository, DeviceCategoryRepository>(
 builder.Services.AddScoped<IGamePackageOrderRepository, GamePackageOrderRepository>();
 builder.Services.AddScoped<IUserPackageOrderRepository, UserPackageOrderRepository>();
 builder.Services.AddScoped<IPlayHistoryRepository, PlayHistoryRepository>();
+builder.Services.AddScoped<IGameCategoryRelationRepository, GameCategoryRelationRepository>();
 
 //=========================================== SERVICE =============================================
 

@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Models;
 using DAO;
+using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,11 @@ namespace Repository.Repositories.DeviceCategoryRepositories
         public async Task<List<DeviceCategory>> GetAllDeviceCategory()
         {
             return (await Get()).ToList();
+        }
+
+        public async Task<List<DeviceCategory>> GetActiveDeviceCategories()
+        {
+            return (await Get(d => d.Status.Equals(DeviceStatusEnums.Active.ToString()))).ToList();
         }
     }
 }

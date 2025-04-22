@@ -14,5 +14,7 @@ namespace Repository.Repositories.DeviceCategoryRepositories
 
         Task<List<DeviceCategory>> GetAllDeviceCategory();
 
+        Task<List<DeviceCategory>> GetActiveDeviceCategories();
+
     }
 }
