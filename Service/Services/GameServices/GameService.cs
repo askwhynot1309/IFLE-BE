@@ -12,15 +12,11 @@ namespace Service.Services.GameServices
     {
         private readonly IGameRepository _repository;
         private readonly IMapper _mapper;
-        private readonly IGamePackageRelationRepository _gamePackageRelationRepository;
-        private readonly IGamePackageRepository _gamePackageRepository;
 
-        public GameService(IGameRepository repository, IMapper mapper, IGamePackageRelationRepository gamePackageRelationRepository, IGamePackageRepository gamePackageRepository)
+        public GameService(IGameRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _gamePackageRelationRepository = gamePackageRelationRepository;
-            _gamePackageRepository = gamePackageRepository;
         }
 
         public async Task<List<GameResponse>> GetAllAsync()
@@ -84,13 +80,7 @@ namespace Service.Services.GameServices
             if (game == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
             game.Status = GameEnums.Inactive.ToString();
-            var gamePackageList = await _gamePackageRelationRepository.GetListGamePackageByGameId(id);
-            foreach (var gamePackage in gamePackageList)
-            {
-                gamePackage.Status = GamePackageEnums.Maintainance.ToString();
-            }
             await _repository.Update(game);
-            await _gamePackageRepository.UpdateRange(gamePackageList);
         }
 
         public async Task UpdatePlayCount(string id)
