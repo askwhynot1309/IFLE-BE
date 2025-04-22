@@ -622,20 +622,20 @@ namespace Service.Services.FloorServices
             widthAtZNear = 2.0 * dNear * Math.Tan(hfovRad / 2.0);
             var result = new SetUpGuideResponseModel
             {
-                DistanceToFloorFromCam = zNear,
-                TotalLengthNeeded = zFar,
-                PlayFloorLength = zFar - zNear,
-                PlayFloorWidth = widthAtZNear,
+                DistanceToFloorFromCam = Math.Round(zNear, 2),
+                TotalLengthNeeded = Math.Round(zFar, 2),
+                PlayFloorLength = Math.Round(zFar - zNear, 2),
+                PlayFloorWidth = Math.Round(widthAtZNear, 2),
             };
 
-            if (floor.Width < widthAtZNear)
+            if (floor.Width < Math.Round(widthAtZNear, 2))
             {
                 result.Notice = $"Độ rộng phần sàn để chơi của bạn là {floor.Width}, bé hơn phần độ rộng cần thiết là {result.PlayFloorWidth}.";
             }
 
-            if (floor.Length < zFar)
+            if (floor.Length < Math.Round(zFar, 2))
             {
-                result.Notice = $"Chiều dài phần sàn để chơi của bạn là {floor.Length}, bé hơn phần độ dài cần thiết là {result.PlayFloorWidth}.";
+                result.Notice = $"Chiều dài phần sàn để chơi của bạn là {floor.Length}, bé hơn phần độ dài cần thiết là {result.TotalLengthNeeded}.";
             }
 
             return result;
