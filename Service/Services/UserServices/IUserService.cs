@@ -38,5 +38,7 @@ namespace Service.Services.UserServices
 
         Task<List<TransactionResponseModel>> ViewOwnTransactions(string currentUserId);
 
+        Task<List<TransactionResponseModel>> GetAllOrders();
+
     }
 }

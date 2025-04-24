@@ -135,10 +135,20 @@ namespace InteractiveFloor.Controllers
 
         [HttpGet]
         [Route("own-transactions")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ViewOwnTransactions()
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
             var response = await _userService.ViewOwnTransactions(currentUserId);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("transactions")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ViewAllTransactionsOfCustomers()
+        {
+            var response = await _userService.GetAllOrders();
             return Ok(response);
         }
     }
