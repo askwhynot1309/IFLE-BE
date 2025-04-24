@@ -50,6 +50,7 @@ namespace Repository.Mappers
             //Game Version 
             CreateMap<GameVersion, GameVersionResponse>();
             CreateMap<CreateGameVersionRequest, GameVersion>();
+            CreateMap<AddGameVersionRequest, GameVersion>();
 
             //Game 
             CreateMap<Game, GameResponse>()
@@ -109,6 +110,18 @@ namespace Repository.Mappers
 
             //PlayHistory
             CreateMap<PlayHistory, PlayHistoryResponse>();
+            CreateMap<PlayHistory, PlayHistoryFloorResponse>()
+                .ForMember(dest => dest.GameHistory, opt => opt.MapFrom(src => new GameHistory
+                {
+                    Title = src.Game.Title,
+                    Description = src.Game.Description,
+                    PlayCount = src.Game.PlayCount
+                }))
+                .ForMember(dest => dest.UserHistory, opt => opt.MapFrom(src => new UserHistory
+                {
+                    FullName = src.User.FullName,
+                    Email = src.User.Email
+                }));
         }
     }
 }

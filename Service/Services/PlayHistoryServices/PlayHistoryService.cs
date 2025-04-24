@@ -37,6 +37,13 @@ namespace Service.Services.PlayHistoryServices
             return playHistory;
         }
 
+        public async Task<List<PlayHistoryFloorResponse>> GetFloorPlayHistory(string floorId)
+        {
+            var floorPlayHistory = await _repository.GetFloorPlayHistory(floorId);
+
+            return _mapper.Map<List<PlayHistoryFloorResponse>>(floorPlayHistory);
+        }
+
         public async Task<PlayHistoryResponse> GetHighScore(string userId, string gameId)
         {
             var highscore = await _repository.GetHighScore(userId, gameId);

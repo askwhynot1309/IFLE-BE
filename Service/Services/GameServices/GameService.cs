@@ -2,6 +2,8 @@ using AutoMapper;
 using BusinessObjects.DTOs.Game;
 using BusinessObjects.Models;
 using Repository.Enums;
+using Repository.Repositories.GamePackageRelationRepositories;
+using Repository.Repositories.GamePackageRepositories;
 using Repository.Repositories.GameRepositories;
 
 namespace Service.Services.GameServices

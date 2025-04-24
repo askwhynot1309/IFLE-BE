@@ -33,20 +33,19 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpGet]
+        [Route("active")]
+        public async Task<IActionResult> GetActiveDeviceCategory()
+        {
+            var response = await _deviceCategoryService.GetActiveDeviceCategory();
+            return Ok(response);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetDeviceCategoryInfo(string id)
         {
             var response = await _deviceCategoryService.GetDeviceCategoryInfo(id);
             return Ok(response);
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> DeleteDeviceCategory(string id)
-        {
-            await _deviceCategoryService.DeleteDeviceCategory(id);
-            return Ok("Xóa loại thiết bị thành công.");
         }
 
         [HttpPut]
