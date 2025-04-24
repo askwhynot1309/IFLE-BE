@@ -29,5 +29,7 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         Task<List<GamePackageOrder>> GetInactiveGamePackageOrderOver7Days(DateTime now);
 
+        Task<List<GamePackageOrder>> GetAllOrders();
+
     }
 }
