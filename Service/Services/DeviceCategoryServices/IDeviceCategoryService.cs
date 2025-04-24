@@ -14,9 +14,9 @@ namespace Service.Services.DeviceCategoryServices
 
         Task<List<DeviceCategoryInfoResponseModel>> GetAllDeviceCategory();
 
-        Task<DeviceCategoryInfoResponseModel> GetDeviceCategoryInfo(string id);
+        Task<List<DeviceCategoryInfoResponseModel>> GetActiveDeviceCategory();
 
-        Task DeleteDeviceCategory(string id);
+        Task<DeviceCategoryInfoResponseModel> GetDeviceCategoryInfo(string id);
 
         Task UpdateDeviceCategory(string id, DeviceCategoryCreateUpdateRequestModel model);
 

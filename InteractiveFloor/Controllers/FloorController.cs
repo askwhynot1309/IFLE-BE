@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.DTOs.Device.Request;
 using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
+using BusinessObjects.DTOs.SetUpGuide.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.FloorServices;
@@ -47,7 +48,8 @@ namespace InteractiveFloor.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ViewFloorDetails(string id)
         {
-            var response = await _floorService.ViewFloorDetailInfo(id);
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            var response = await _floorService.ViewFloorDetailInfo(id, currentUserId);
             return Ok(response);
         }
 
@@ -197,6 +199,15 @@ namespace InteractiveFloor.Controllers
         public async Task<IActionResult> GetGamePackageOrderDetails(string orderId)
         {
             var response = await _floorService.GetGamePackageOrderDetails(orderId);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{id}/setup-guide")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetPlayFloorSetUpGuide(string id, [FromQuery] SetUpGuideRequestModel model)
+        {
+            var response = await _floorService.GetSetUpGuideForCustomer(model, id);
             return Ok(response);
         }
     }

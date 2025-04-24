@@ -25,5 +25,7 @@ namespace BusinessObjects.DTOs.DeviceCategory.Request
         public float VFov { get; set; }
 
         public string? DeviceInfoUrl { get; set; }
+
+        public string? UpdateStatus { get; set; }
     }
 }
