@@ -7,7 +7,7 @@ using BusinessObjects.DTOs.PlayHistory;
 namespace InteractiveFloor.Controllers
 {
     [ApiController]
-    [Route("api/history")]
+    [Route("api")]
     public class PlayHistoryController: ControllerBase
     {
         private readonly IPlayHistoryService _playHistoryService;
