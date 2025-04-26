@@ -11,5 +11,7 @@ namespace Repository.Repositories.DeviceRepositories
     public interface IDeviceRepository : IGenericRepository<Device>
     {
         Task<Device> GetDeviceById(string id);
+
+        Task<Device> GetDeviceByUri(string uri);
     }
 }

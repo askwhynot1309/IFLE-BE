@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs.Email.Request;
 using BusinessObjects.DTOs.Transaction.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
@@ -10,6 +11,7 @@ using Repository.Repositories.RoleRepositories;
 using Repository.Repositories.UserPackageOrderRepositories;
 using Repository.Repositories.UserRepositories;
 using Service.Services.AuthenticationServices;
+using Service.Services.EmailServices;
 using Service.Ultis;
 using System;
 using System.Collections.Generic;
@@ -28,8 +30,9 @@ namespace Service.Services.UserServices
         private readonly IAuthenticationService _authenticationService;
         private readonly IGamePackageOrderRepository _gamePackageOrderRepository;
         private readonly IUserPackageOrderRepository _userPackageOrderRepository;
+        private readonly IEmailService _emailService;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IAuthenticationService authenticationService, IRoleRepository roleRepository, IGamePackageOrderRepository gamePackageOrderRepository, IUserPackageOrderRepository userPackageOrderRepository)
+        public UserService(IUserRepository userRepository, IMapper mapper, IAuthenticationService authenticationService, IRoleRepository roleRepository, IGamePackageOrderRepository gamePackageOrderRepository, IUserPackageOrderRepository userPackageOrderRepository, IEmailService emailService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -37,6 +40,7 @@ namespace Service.Services.UserServices
             _roleRepository = roleRepository;
             _gamePackageOrderRepository = gamePackageOrderRepository;
             _userPackageOrderRepository = userPackageOrderRepository;
+            _emailService = emailService;
         }
 
         public async Task<UserOwnInfoResponseModel> GetUserOwnInfo(string userId)
@@ -105,7 +109,7 @@ namespace Service.Services.UserServices
         public async Task<List<UserInfoResponeModel>> GetCustomerList()
         {
             var users = await _userRepository.GetCustomerList();
-            var result = _mapper.Map<List<UserInfoResponeModel>>(users);
+            var result = _mapper.Map<List<UserInfoResponeModel>>(users.OrderBy(u => u.FullName));
             return result;
         }
 
@@ -155,7 +159,7 @@ namespace Service.Services.UserServices
         public async Task<List<UserInfoResponeModel>> GetStaffList()
         {
             var staffs = await _userRepository.GetStaffList();
-            var result = _mapper.Map<List<UserInfoResponeModel>>(staffs);
+            var result = _mapper.Map<List<UserInfoResponeModel>>(staffs.OrderBy(s => s.FullName));
             return result;
         }
 
@@ -260,5 +264,14 @@ namespace Service.Services.UserServices
             return userOrder1.Concat(gameOrder2).OrderByDescending(x => x.OrderDate).ToList();
         }
 
+        public async Task SendEmailFeedback(SendFeedbackRequestModel model)
+        {
+            var htmlBody = HTMLEmailTemplate.SendingFeedback(model.Name, model.Email, model.Content);
+            bool sendEmailSuccess = await _emailService.SendEmail("interactivefloor.ifle@gmail.com", "Phản hồi từ người dùng", htmlBody);
+            if (!sendEmailSuccess)
+            {
+                throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
+            }
+        }
     }
 }

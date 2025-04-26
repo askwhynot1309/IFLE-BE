@@ -166,6 +166,13 @@ namespace Service.Services.FloorServices
             bool hasDeviceCategory = !string.IsNullOrEmpty(model.DeviceCategoryId);
             string message;
 
+            var existed = await _deviceRepository.GetDeviceByUri(model.Uri);
+            if (existed != null)
+            {
+                throw new CustomException("Thiết bị với mã định danh này đã được đăng ký cho sàn tương tác khác." +
+                    "Vui lòng đăng ký thiết bị khác cho sàn tương tác này.");
+            }
+
             if (hasDeviceCategory)
             {
                 var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(model.DeviceCategoryId);
@@ -201,6 +208,10 @@ namespace Service.Services.FloorServices
             }
 
             var device = await _deviceRepository.GetDeviceById(floor.DeviceId);
+            if (device == null)
+            {
+                throw new CustomException("Bạn chưa đăng ký thiết bị cho sàn tương tác này.");
+            }
             var result = new DeviceInfo
             {
                 Id = device.Id,
@@ -225,7 +236,19 @@ namespace Service.Services.FloorServices
                 throw new CustomException("Sàn tương tác này chưa được thêm thiết bị");
             }
 
+            var existed = await _deviceRepository.GetDeviceByUri(model.Uri);
+            if (existed != null)
+            {
+                throw new CustomException("Thiết bị với mã định danh này đã được đăng ký cho sàn tương tác khác." +
+                    "Vui lòng đăng ký thiết bị khác cho sàn tương tác này.");
+            }
+
             var device = await _deviceRepository.GetDeviceById(floor.DeviceId);
+            if (device == null)
+            {
+                throw new CustomException("Không tìm thấy thiết bị này.");
+            }
+
             _mapper.Map(model, device);
             await _deviceRepository.Update(device);
         }
@@ -243,6 +266,10 @@ namespace Service.Services.FloorServices
                 throw new CustomException("Sàn tương tác này chưa được thêm thiết bị");
             }
             var device = await _deviceRepository.GetDeviceById(floor.DeviceId);
+            if (device == null)
+            {
+                throw new CustomException("Không tìm thấy thiết bị này.");
+            }
             floor.DeviceId = null;
             floor.Device = null;
 
@@ -306,7 +333,7 @@ namespace Service.Services.FloorServices
                 return null;
             }
             var userList = await _userRepository.GetCustomerListByIdList(userIdList);
-            return _mapper.Map<List<UserInfoResponeModel>>(userList);
+            return _mapper.Map<List<UserInfoResponeModel>>(userList.OrderBy(u => u.FullName));
         }
 
         public async Task RemoveUserFromPrivateFloor(string floorId, List<string> userIdList)
@@ -390,7 +417,7 @@ namespace Service.Services.FloorServices
                     Status = a.GamePackage.Status,
                     GameList = _mapper.Map<List<GameInfo>>(a.GamePackage.GamePackageRelations.Select(g => g.Game))
                 }
-            }).ToList();
+            }).OrderByDescending(o => o.OrderDate).ToList();
             return result;
         }
 
@@ -492,7 +519,7 @@ namespace Service.Services.FloorServices
                     Status = l.GamePackage.Status,
                     GameList = _mapper.Map<List<GameInfo>>(l.GamePackage.GamePackageRelations.Select(g => g.Game))
                 }
-            }).ToList();
+            }).OrderByDescending(o => o.OrderDate).ToList();
             return result;
         }
 
@@ -581,6 +608,12 @@ namespace Service.Services.FloorServices
         public async Task<SetUpGuideResponseModel> GetSetUpGuideForCustomer(SetUpGuideRequestModel model, string floorId)
         {
             var floor = await _floorRepository.GetFloorById(floorId);
+
+            if (floor == null)
+            {
+                throw new CustomException("Không tìm thấy sàn tương tác này.");
+            }
+
             if (floor.DeviceId == null)
             {
                 throw new CustomException("Vui lòng đăng ký thiết bị cho sàn của bạn.");
@@ -600,8 +633,8 @@ namespace Service.Services.FloorServices
             double hFovDeg = device.DeviceCategory.HFov;
             double vFovDeg = device.DeviceCategory.VFov;
 
-            double personHeight = 1.5f;
-            double cameraTiltDeg = 45;
+            double personHeight = 1f;
+            double cameraTiltDeg = model.CameraTiltDeg;
             double zNear;
             double zFar;
             double widthAtZNear;
@@ -619,16 +652,17 @@ namespace Service.Services.FloorServices
             double dFar = hHead / Math.Sin(farAngle);
             zFar = dFar * Math.Cos(farAngle);
 
-            widthAtZNear = 2.0 * dNear * Math.Tan(hfovRad / 2.0);
+            widthAtZNear = dNear * Math.Tan(hfovRad / 2.0);
+            var width = 2 * widthAtZNear * (1 - personHeight / dNear);
             var result = new SetUpGuideResponseModel
             {
                 DistanceToFloorFromCam = Math.Round(zNear, 2),
                 TotalLengthNeeded = Math.Round(zFar, 2),
                 PlayFloorLength = Math.Round(zFar - zNear, 2),
-                PlayFloorWidth = Math.Round(widthAtZNear, 2),
+                PlayFloorWidth = Math.Round(width, 2),
             };
 
-            if (floor.Width < Math.Round(widthAtZNear, 2))
+            if (floor.Width < Math.Round(width, 2))
             {
                 result.Notice = $"Độ rộng phần sàn để chơi của bạn là {floor.Width}, bé hơn phần độ rộng cần thiết là {result.PlayFloorWidth}.";
             }

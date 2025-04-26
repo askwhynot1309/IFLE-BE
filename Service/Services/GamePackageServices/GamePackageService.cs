@@ -102,7 +102,7 @@ namespace Service.Services.GamePackageServices
                 Price = g.Price,
                 Status = g.Status,
                 GameList = _mapper.Map<List<GameInfo>>(g.GamePackageRelations.Select(g => g.Game))
-            }).ToList();
+            }).OrderBy(o => o.Name).ToList();
             return result;
         }
 
@@ -118,7 +118,7 @@ namespace Service.Services.GamePackageServices
                 Price = g.Price,
                 Status = g.Status,
                 GameList = _mapper.Map<List<GameInfo>>(g.GamePackageRelations.Select(g => g.Game))
-            }).ToList();
+            }).OrderBy(o => o.Name).ToList();
             return result;
         }
 

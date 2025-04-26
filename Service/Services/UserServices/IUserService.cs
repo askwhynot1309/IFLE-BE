@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.Transaction.Response;
+﻿using BusinessObjects.DTOs.Email.Request;
+using BusinessObjects.DTOs.Transaction.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
@@ -40,5 +41,6 @@ namespace Service.Services.UserServices
 
         Task<List<TransactionResponseModel>> GetAllOrders();
 
+        Task SendEmailFeedback(SendFeedbackRequestModel model);
     }
 }

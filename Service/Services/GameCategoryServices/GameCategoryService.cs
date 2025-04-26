@@ -25,7 +25,7 @@ namespace Service.Services.GameCategoryServices
                 Id = c.Id,
                 Name = c.Name,
                 Description = c.Description
-            }).ToList();
+            }).OrderBy(c => c.Name).ToList();
         }
 
         public async Task<GameCategoryResponse> GetByIdAsync(string id)
