@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.DTOs.User.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,10 @@ namespace BusinessObjects.DTOs.Transaction.Response
 
         public string Status { get; set; } = null!;
 
+        public string? PackageName { get; set; }
+
         public string PackageCategory { get; set; } = null!;
+
+        public UserInfoResponeModel? UserInfo { get; set; }
     }
 }
