@@ -236,17 +236,20 @@ namespace Service.Services.FloorServices
                 throw new CustomException("Sàn tương tác này chưa được thêm thiết bị");
             }
 
-            var existed = await _deviceRepository.GetDeviceByUri(model.Uri);
-            if (existed != null)
-            {
-                throw new CustomException("Thiết bị với mã định danh này đã được đăng ký cho sàn tương tác khác." +
-                    "Vui lòng đăng ký thiết bị khác cho sàn tương tác này.");
-            }
-
             var device = await _deviceRepository.GetDeviceById(floor.DeviceId);
             if (device == null)
             {
                 throw new CustomException("Không tìm thấy thiết bị này.");
+            }
+
+            if (model.Uri != device.Uri)
+            {
+                var existed = await _deviceRepository.GetDeviceByUri(model.Uri);
+                if (existed != null)
+                {
+                    throw new CustomException("Thiết bị với mã định danh này đã được đăng ký cho sàn tương tác khác." +
+                        "Vui lòng đăng ký thiết bị khác cho sàn tương tác này.");
+                }
             }
 
             _mapper.Map(model, device);
