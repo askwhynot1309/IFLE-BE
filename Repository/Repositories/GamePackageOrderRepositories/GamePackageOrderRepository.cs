@@ -91,5 +91,10 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             var list = await Get(l => l.IsActivated == false && DateOnly.FromDateTime(now) > DateOnly.FromDateTime(l.OrderDate).AddDays(7));
             return list.ToList();
         }
+
+        public async Task<List<GamePackageOrder>> GetAllOrders()
+        {
+            return (await Get(includeProperties: "GamePackage,User")).ToList();
+        }
     }
 }

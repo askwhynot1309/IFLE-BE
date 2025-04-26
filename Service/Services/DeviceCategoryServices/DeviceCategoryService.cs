@@ -36,13 +36,13 @@ namespace Service.Services.DeviceCategoryServices
         public async Task<List<DeviceCategoryInfoResponseModel>> GetAllDeviceCategory()
         {
             var list = await _deviceCategoryRepository.GetAllDeviceCategory();
-            return _mapper.Map<List<DeviceCategoryInfoResponseModel>>(list);
+            return _mapper.Map<List<DeviceCategoryInfoResponseModel>>(list.OrderBy(l => l.Name));
         }
 
         public async Task<List<DeviceCategoryInfoResponseModel>> GetActiveDeviceCategory()
         {
             var list = await _deviceCategoryRepository.GetActiveDeviceCategories();
-            return _mapper.Map<List<DeviceCategoryInfoResponseModel>>(list);
+            return _mapper.Map<List<DeviceCategoryInfoResponseModel>>(list.OrderBy(l => l.Name));
         }
 
         public async Task<DeviceCategoryInfoResponseModel> GetDeviceCategoryInfo(string id)

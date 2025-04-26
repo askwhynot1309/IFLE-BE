@@ -41,7 +41,7 @@ namespace Service.Services.PlayHistoryServices
         {
             var floorPlayHistory = await _repository.GetFloorPlayHistory(floorId);
 
-            return _mapper.Map<List<PlayHistoryFloorResponse>>(floorPlayHistory);
+            return _mapper.Map<List<PlayHistoryFloorResponse>>(floorPlayHistory.OrderByDescending(f => f.StartAt));
         }
 
         public async Task<PlayHistoryResponse> GetHighScore(string userId, string gameId)

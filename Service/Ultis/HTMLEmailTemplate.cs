@@ -105,5 +105,19 @@ namespace Service.Ultis
             return html;
         }
 
+        public static string SendingFeedback(string fullname, string email, string content)
+        {
+            var html = $@"<div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                     <div style='border: 1px solid #e0e0e0; padding: 20px; max-width: 600px; margin: auto;'>
+                         <p style='font-size: 16px;'>Người dùng <strong>{fullname}</strong> với email <strong>{email}</strong> đã gửi phản hồi hoặc câu hỏi như sau:</p>
+                         <hr style='border: none; border-bottom: 1px solid #ccc; margin: 20px 0;'/>
+                         <p style='font-size: 14px; white-space: pre-wrap;'>{content}</p>
+                         <hr style='border: none; border-bottom: 1px solid #ccc; margin: 20px 0;'/>
+                         <p style='font-size: 14px;'>Vui lòng phản hồi sớm nếu cần thiết.</p>
+                     </div>
+                 </div>";
+            return html;
+        }
+
     }
 }

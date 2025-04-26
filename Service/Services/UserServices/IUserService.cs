@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.Transaction.Response;
+﻿using BusinessObjects.DTOs.Email.Request;
+using BusinessObjects.DTOs.Transaction.Response;
 using BusinessObjects.DTOs.User.Request;
 using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.Models;
@@ -38,5 +39,8 @@ namespace Service.Services.UserServices
 
         Task<List<TransactionResponseModel>> ViewOwnTransactions(string currentUserId);
 
+        Task<List<TransactionDetailsResponseModel>> ViewAllTransactionsOfCustomer();
+
+        Task SendEmailFeedback(SendFeedbackRequestModel model);
     }
 }

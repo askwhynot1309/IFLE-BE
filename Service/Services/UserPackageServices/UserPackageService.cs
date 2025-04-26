@@ -57,7 +57,7 @@ namespace Service.Services.UserPackageServices
         public async Task<List<UserPackageListResponseModel>> GetAllUserPackages()
         {
             var userPackage = await _userPackageRepository.GetAllUserPackages();
-            var result = _mapper.Map<List<UserPackageListResponseModel>>(userPackage);
+            var result = _mapper.Map<List<UserPackageListResponseModel>>(userPackage.OrderBy(u => u.Name));
             return result;
         }
 

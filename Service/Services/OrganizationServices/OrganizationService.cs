@@ -83,7 +83,7 @@ namespace Service.Services.OrganizationServices
         {
             var organizations = await _organizationRepository.GetAllOrganizations();
             var result = _mapper.Map<List<OrganizationInfoResponseModel>>(organizations);
-            return result;
+            return result.OrderByDescending(r => r.CreatedAt).ToList();
         }
 
         public async Task<List<OrganizationUserReponseModel>> GetMembersOfOrganization(string organizationId, string currentId)
@@ -113,7 +113,7 @@ namespace Service.Services.OrganizationServices
                 };
                 result.Add(newOrganizationUserReponseModel);
             }
-            return result;
+            return result.OrderBy(r => r.FullName).ToList();
         }
 
         public async Task<List<OrganizationInfoResponseModel>> GetOwnOrganization(string userId)
@@ -132,7 +132,7 @@ namespace Service.Services.OrganizationServices
                     Privilege = organization.OrganizationUsers.FirstOrDefault(o => o.OrganizationId.Equals(organization.Id)).Privilege
                 });
             }
-            return result;
+            return result.OrderByDescending(r => r.CreatedAt).ToList();
         }
 
         public async Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model, string currentUserId)
@@ -344,7 +344,7 @@ namespace Service.Services.OrganizationServices
                     result = result.Concat(privateResult).ToList();
                 }
             }
-            return result;
+            return result.OrderBy(r => r.IsPublic).ToList();
         }
 
         public async Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model, string currentUserId)

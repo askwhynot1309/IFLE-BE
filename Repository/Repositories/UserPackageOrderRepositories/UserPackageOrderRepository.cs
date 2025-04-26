@@ -56,6 +56,9 @@ namespace Repository.Repositories.UserPackageOrderRepositories
             return list.ToList();
         }
 
-        
+        public async Task<List<UserPackageOrder>> GetAllOrders()
+        {
+            return (await Get(includeProperties: "User,UserPackage")).ToList();
+        }
     }
 }
