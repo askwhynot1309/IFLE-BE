@@ -19,5 +19,10 @@ namespace Repository.Repositories.DeviceRepositories
         {
             return await GetSingle(d => d.Id.Equals(id), includeProperties: "DeviceCategory");
         }
+
+        public async Task<Device> GetDeviceByUri(string uri)
+        {
+            return await GetSingle(d => d.Uri.Equals(uri));
+        }
     }
 }

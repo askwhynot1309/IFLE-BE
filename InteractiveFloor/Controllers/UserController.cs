@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTOs.OTP.Request;
+﻿using BusinessObjects.DTOs.Email.Request;
+using BusinessObjects.DTOs.OTP.Request;
 using BusinessObjects.DTOs.User.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -141,6 +142,16 @@ namespace InteractiveFloor.Controllers
             string currentUserId = HttpContext.User.FindFirstValue("userId");
             var response = await _userService.ViewOwnTransactions(currentUserId);
             return Ok(response);
+        }
+
+
+
+        [HttpPost]
+        [Route("feedbacks")]
+        public async Task<IActionResult> SendingFeedback(SendFeedbackRequestModel model)
+        {
+            await _userService.SendEmailFeedback(model);
+            return Ok("Chúng tôi đã nhận được feedback của bạn và sẽ phản hồi sớm nhất có thể.");
         }
 
         [HttpGet]

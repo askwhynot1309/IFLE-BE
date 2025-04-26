@@ -22,7 +22,7 @@ namespace Service.Services.GameServices
         public async Task<List<GameResponse>> GetAllAsync()
         {
             var games = await _repository.GetAllWithDetailsAsync();
-            return games.Select(g => _mapper.Map<GameResponse>(g)).ToList();
+            return games.Select(g => _mapper.Map<GameResponse>(g)).OrderBy(g => g.Title).ToList();
         }
 
         public async Task<GameResponse?> GetByIdAsync(string id)
