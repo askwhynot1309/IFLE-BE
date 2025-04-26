@@ -226,43 +226,42 @@ namespace Service.Services.UserServices
                 transaction.PackageCategory = "UserPackage";
             }
 
-            resultG = resultG.Concat(resultU).OrderByDescending(r => r.OrderDate).ToList();
+            resultG = resultG.Concat(resultU).ToList();
             return resultG;
         }
 
-        public async Task<List<TransactionDetailsResponseModel>> ViewAllTransactionsOfCustomer()
+        public async Task<List<TransactionResponseModel>> GetAllOrders()
         {
-            var gameOrders = await _gamePackageOrderRepository.GetAllOrders();
             var userOrders = await _userPackageOrderRepository.GetAllOrders();
-            var result = new List<TransactionDetailsResponseModel>();
-            var resultGame = gameOrders.Select(g => new TransactionDetailsResponseModel
-            {
-                Id = g.Id,
-                OrderCode = g.OrderCode,
-                OrderDate = g.OrderDate,
-                PackageCategory = "GamePackage",
-                PackageName = g.GamePackage.Name,
-                PaymentMethod = g.PaymentMethod,
-                Price = g.Price,
-                Status = g.Status,
-                User = _mapper.Map<UserInfoResponeModel>(g.User)
-            }).ToList();
+            var gameOrders = await _gamePackageOrderRepository.GetAllOrders();
 
-            var resultUser = userOrders.Select(g => new TransactionDetailsResponseModel
+            var userOrder1 = userOrders.Select(x => new TransactionResponseModel
             {
-                Id = g.Id,
-                OrderCode = g.OrderCode,
-                OrderDate = g.OrderDate,
-                PackageCategory = "GamePackage",
-                PackageName = g.UserPackage.Name,
-                PaymentMethod = g.PaymentMethod,
-                Price = g.Price,
-                Status = g.Status,
-                User = _mapper.Map<UserInfoResponeModel>(g.User)
-            }).ToList();
+                Id = x.Id,
+                Price = x.Price,
+                OrderDate = x.OrderDate,
+                OrderCode = x.OrderCode,
+                PaymentMethod = x.PaymentMethod,
+                Status = x.Status,
+                PackageName = x.UserPackage.Name,
+                PackageCategory = "User Package",
+                UserInfo = _mapper.Map<UserInfoResponeModel>(x.User)
+            });
 
-            result = resultGame.Concat(resultUser).OrderByDescending(r => r.OrderDate).ToList();
-            return result;
+            var gameOrder2 = gameOrders.Select(x => new TransactionResponseModel
+            {
+                Id = x.Id.ToString(),
+                Price = x.Price,
+                OrderDate = x.OrderDate,
+                OrderCode = x.OrderCode,
+                PackageName = x.GamePackage.Name,
+                PaymentMethod = x.PaymentMethod,
+                Status = x.Status,
+                PackageCategory = "Game Package",
+                UserInfo = _mapper.Map<UserInfoResponeModel>(x.User)
+            });
+
+            return userOrder1.Concat(gameOrder2).OrderByDescending(x => x.OrderDate).ToList();
         }
 
         public async Task SendEmailFeedback(SendFeedbackRequestModel model)

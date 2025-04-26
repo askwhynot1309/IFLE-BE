@@ -94,7 +94,8 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         public async Task<List<GamePackageOrder>> GetAllOrders()
         {
-            return (await Get(includeProperties: "GamePackage,User")).ToList();
+            return (await Get(includeProperties: "User,GamePackage")).ToList();
         }
+
     }
 }

@@ -39,7 +39,7 @@ namespace Service.Services.UserServices
 
         Task<List<TransactionResponseModel>> ViewOwnTransactions(string currentUserId);
 
-        Task<List<TransactionDetailsResponseModel>> ViewAllTransactionsOfCustomer();
+        Task<List<TransactionResponseModel>> GetAllOrders();
 
         Task SendEmailFeedback(SendFeedbackRequestModel model);
     }

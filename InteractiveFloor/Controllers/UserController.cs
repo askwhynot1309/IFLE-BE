@@ -136,6 +136,7 @@ namespace InteractiveFloor.Controllers
 
         [HttpGet]
         [Route("own-transactions")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ViewOwnTransactions()
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
@@ -143,13 +144,7 @@ namespace InteractiveFloor.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
-        [Route("transactions")]
-        public async Task<IActionResult> ViewAllTransactions()
-        {
-            var response = await _userService.ViewAllTransactionsOfCustomer();
-            return Ok(response);
-        }
+
 
         [HttpPost]
         [Route("feedbacks")]
@@ -157,6 +152,15 @@ namespace InteractiveFloor.Controllers
         {
             await _userService.SendEmailFeedback(model);
             return Ok("Chúng tôi đã nhận được feedback của bạn và sẽ phản hồi sớm nhất có thể.");
+        }
+
+        [HttpGet]
+        [Route("transactions")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ViewAllTransactionsOfCustomers()
+        {
+            var response = await _userService.GetAllOrders();
+            return Ok(response);
         }
     }
 }
