@@ -119,5 +119,26 @@ namespace Service.Ultis
             return html;
         }
 
+        public static string StaffAccountCreatedNotification(string email, string fullname, string password)
+        {
+            var html = $@"<div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                     <div style='border: 1px solid #e0e0e0; padding: 20px; max-width: 600px; margin: auto;'>
+                         <p style='font-size: 16px;'>Thân gửi <strong>{fullname}</strong>,</p>
+                         <hr style='border: none; border-bottom: 1px solid #ccc; margin: 20px 0;'/>
+                         <p style='font-size: 14px;'>
+                             Email của bạn <strong>{email}</strong> vừa được sử dụng để tạo tài khoản nhân viên (staff) trong hệ thống của chúng tôi.
+                         </p>
+                         <p style='font-size: 14px;'>
+                             Mật khẩu đăng nhập của bạn là: <strong>{password}</strong>
+                         </p>
+                         <p style='font-size: 14px;'>Vui lòng đăng nhập và đổi mật khẩu sau lần đăng nhập đầu tiên để đảm bảo an toàn.</p>
+                         <p style='font-size: 14px;'>Nếu bạn có bất kỳ thắc mắc nào, vui lòng <a href='...' style='color: #0066cc;'>liên hệ với chúng tôi</a>.</p>
+                         <p style='font-size: 14px;'>Đây là email tự động, vui lòng không trả lời email này.</p>
+                         <p style='font-size: 14px;'>Trân trọng,<br/><strong>IFLE</strong></p>
+                     </div>
+                 </div>";
+            return html;
+        }
+
     }
 }
