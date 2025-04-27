@@ -139,6 +139,11 @@ namespace Service.Services.UserServices
 
         public async Task CreateStaffAccount(StaffCreateRequestModel model)
         {
+            var existed = await _userRepository.GetUserByEmail(model.Email);
+            if (existed != null)
+            {
+                throw new CustomException("Tài khoản với email này đã tồn tại, không thể tạo thêm.");
+            }
             var newStaff = _mapper.Map<User>(model);
 
             var roleId = await _roleRepository.GetRoleIdByName(RoleEnums.Staff.ToString());
@@ -149,9 +154,18 @@ namespace Service.Services.UserServices
             newStaff.IsVerified = true;
             newStaff.CreatedAt = DateTime.Now;
 
-            var (salt, hash) = PasswordHasher.HashPassword(model.Password);
+            var randomPassword = PasswordHasher.GenerateRandomPassword();
+
+            var (salt, hash) = PasswordHasher.HashPassword(randomPassword);
             newStaff.Salt = salt;
             newStaff.Password = hash;
+
+            var htmlBody = HTMLEmailTemplate.StaffAccountCreatedNotification(model.Email, model.FullName, randomPassword);
+            bool sendEmailSuccess = await _emailService.SendEmail(model.Email, "Phản hồi từ người dùng", htmlBody);
+            if (!sendEmailSuccess)
+            {
+                throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
+            }
 
             await _userRepository.Insert(newStaff);
         }
