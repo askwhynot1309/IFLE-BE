@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Net.payOS;
 using Net.payOS.Types;
+using Service.Ultis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +30,7 @@ namespace Service.Services.PayosServices
             return payOS;
         }
 
-        public async Task<CreatePaymentResult> Create(decimal price, string returnUrl, string cancelUrl)
+        public async Task<CreatePaymentResult> CreatePayment(decimal price, string returnUrl, string cancelUrl)
         {
             try
             {
@@ -49,7 +51,7 @@ namespace Service.Services.PayosServices
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new CustomException(ex.Message, StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -64,10 +66,9 @@ namespace Service.Services.PayosServices
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new CustomException(ex.Message, StatusCodes.Status500InternalServerError);
             }
         }
 
-        //public async Task
     }
 }

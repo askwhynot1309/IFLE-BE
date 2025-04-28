@@ -15,5 +15,7 @@ namespace Repository.Repositories.FloorRepositories
         Task<List<InteractiveFloor>> GetAllPublicFloorsOfOrganization(string organizationId);
 
         Task<List<InteractiveFloor>> GetAllPrivateFloorsOfOrganization(string organizationId);
+
+        Task<bool> IsFloorNameExistInOrganization(string organizationId, string name);
     }
 }

@@ -41,7 +41,7 @@ namespace Service.Services.FloorServices
 
         Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model, string currentUserId);
 
-        Task UpdateGamePackageOrderStatus(string orderCode, string status, string currentUserId);
+        Task UpdateGamePackageOrderStatus(string orderCode, string currentUserId);
 
         Task<List<GamePackageOrderDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId);
 
