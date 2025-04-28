@@ -10,7 +10,7 @@ namespace Service.Services.PayosServices
 {
     public interface IPayosService
     {
-        Task<CreatePaymentResult> Create(decimal price, string returnUrl, string cancelUrl);
+        Task<CreatePaymentResult> CreatePayment(decimal price, string returnUrl, string cancelUrl);
 
         Task<PaymentLinkInformation> GetPaymentInformation(string orderCode);
     }

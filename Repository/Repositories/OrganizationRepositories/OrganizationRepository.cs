@@ -24,5 +24,11 @@ namespace Repository.Repositories.OrganizationRepositories
         {
             return await GetSingle(o => o.Id.Equals(id));
         }
+
+        public async Task<bool> IsOrganizationNameExist(string name)
+        {
+            var organization = await GetSingle(o => o.Name.ToLower().Equals(name.ToLower()));
+            return organization != null;
+        }
     }
 }
