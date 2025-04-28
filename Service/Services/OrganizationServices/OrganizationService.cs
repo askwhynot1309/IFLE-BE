@@ -191,7 +191,7 @@ namespace Service.Services.OrganizationServices
             var userIdList = await _userRepository.GetUserIdListByEmailList(emailList);
             if (userIdList.Count == 0)
             {
-                throw new CustomException("Không có người dùng nào được chọn.");
+                throw new CustomException("Không có người dùng nào được chọn hoặc người dùng được chọn hiện chưa đăng ký tài khoản.");
             }
 
             var organization = await _organizationRepository.GetOrganizationById(organizationId);
@@ -393,12 +393,18 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Không tìm thấy đơn hàng này.");
             }
 
+            if (order.Status.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            {
+                throw new CustomException("Đơn hàng này đã ở trạng thái PAID.");
+            }
+
             var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
 
             if (paymentInfo == null)
             {
                 throw new CustomException("Lỗi hệ thống.");
             }
+
             var newStatus = paymentInfo.status;
 
             var firstStatus = order.Status;
@@ -414,11 +420,8 @@ namespace Service.Services.OrganizationServices
                     throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
                 }
                 var organization = await _organizationRepository.GetOrganizationById(order.OrganizationId);
+                organization.UserLimit += userPackage.UserLimit;
 
-                if (!firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
-                {
-                    organization.UserLimit += userPackage.UserLimit;
-                }
             }
             await _userPackageOrderRepository.Update(order);
         }
