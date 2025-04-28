@@ -60,6 +60,11 @@ namespace Service.Services.OrganizationServices
         public async Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId)
         {
             var newOrganization = _mapper.Map<Organization>(model);
+            var nameCheck = await _organizationUserRepository.IsCreatedOrganizationNameExist(userId, model.Name);
+            if (nameCheck)
+            {
+                throw new CustomException("Tên tổ chức này đã được bạn sử dụng. Vui lòng đặt tên khác.");
+            }
 
             newOrganization.Id = Guid.NewGuid().ToString();
             newOrganization.CreatedAt = DateTime.Now;
@@ -360,7 +365,7 @@ namespace Service.Services.OrganizationServices
             newOrder.Price = userPackage.Price;
             newOrder.OrderDate = DateTime.Now;
             newOrder.Status = PackageOrderStatusEnums.PENDING.ToString();
-            var payment = await _payosService.Create(newOrder.Price, model.ReturnUrl, model.CancelUrl);
+            var payment = await _payosService.CreatePayment(newOrder.Price, model.ReturnUrl, model.CancelUrl);
             if (payment == null)
             {
                 throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
@@ -371,18 +376,27 @@ namespace Service.Services.OrganizationServices
             return payment.checkoutUrl;
         }
 
-        public async Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId)
+        public async Task UpdateUserPackageOrderStatus(string orderCode, string currentUserId)
         {
             var order = await _userPackageOrderRepository.GetUserPackageOrderByOrderCode(orderCode);
             if (order == null)
             {
                 throw new CustomException("Không tìm thấy đơn hàng này.");
             }
+
+            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
+
+            if (paymentInfo == null)
+            {
+                throw new CustomException("Lỗi hệ thống.");
+            }
+            var newStatus = paymentInfo.status;
+
             var firstStatus = order.Status;
             var userPackage = await _userPackageRepository.GetUserPackageById(order.UserPackageId);
-            order.Status = status;
+            order.Status = newStatus;
             var curUser = await _userRepository.GetUserById(currentUserId);
-            if (status.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            if (newStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
             {
                 var htmlBody = HTMLEmailTemplate.PaymentSuccessNotification(curUser.FullName, userPackage.Name, order.OrderDate);
                 bool sendEmailSuccess = await _emailService.SendEmail(curUser.Email, "Thông báo mua gói người dùng thành công", htmlBody);

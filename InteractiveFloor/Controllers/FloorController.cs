@@ -15,12 +15,10 @@ namespace InteractiveFloor.Controllers
     public class FloorController : ControllerBase
     {
         private readonly IFloorService _floorService;
-        private readonly IPayosService _payosService;
 
-        public FloorController(IFloorService floorService, IPayosService payosService)
+        public FloorController(IFloorService floorService)
         {
             _floorService = floorService;
-            _payosService = payosService;
         }
 
         [HttpPost]
@@ -142,9 +140,7 @@ namespace InteractiveFloor.Controllers
         public async Task<IActionResult> UpdateGamePackageOrderStatus(string orderCode)
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
-
-            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
-            await _floorService.UpdateGamePackageOrderStatus(orderCode, paymentInfo.status, currentUserId);
+            await _floorService.UpdateGamePackageOrderStatus(orderCode, currentUserId);
 
             return Ok("Cập nhật trạng thái thanh toán thành công.");
         }

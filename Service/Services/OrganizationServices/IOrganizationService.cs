@@ -38,7 +38,7 @@ namespace Service.Services.OrganizationServices
 
         Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model, string currentUserId);
 
-        Task UpdateUserPackageOrderStatus(string orderCode, string status, string currentUserId);
+        Task UpdateUserPackageOrderStatus(string orderCode, string currentUserId);
 
         Task<List<UserPackageOrderListResponseModel>> GetAllUserPackageOrders(string id);
 

@@ -32,5 +32,12 @@ namespace Repository.Repositories.FloorRepositories
             var list = await Get(f => f.IsPublic == false && f.OrganizationId.Equals(organizationId), includeProperties: "Device,Device.DeviceCategory");
             return list.ToList();
         }
+
+        public async Task<bool> IsFloorNameExistInOrganization(string organizationId, string name)
+        {
+            var list = await Get(f => f.OrganizationId.Equals(organizationId));
+            var names = list.Select(f => f.Name.ToLower());
+            return names.Any(n => n.Equals(name.ToLower()));
+        }
     }
 }

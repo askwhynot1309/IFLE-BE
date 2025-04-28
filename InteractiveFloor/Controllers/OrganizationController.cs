@@ -144,8 +144,7 @@ namespace InteractiveFloor.Controllers
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
 
-            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
-            await _organizationService.UpdateUserPackageOrderStatus(orderCode, paymentInfo.status, currentUserId);
+            await _organizationService.UpdateUserPackageOrderStatus(orderCode, currentUserId);
 
             return Ok("Cập nhật trạng thái thanh toán thành công.");
         }

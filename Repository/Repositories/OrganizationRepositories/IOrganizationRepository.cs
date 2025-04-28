@@ -13,5 +13,7 @@ namespace Repository.Repositories.OrganizationRepositories
         Task<List<Organization>> GetAllOrganizations();
 
         Task<Organization> GetOrganizationById(string id);
+
+        Task<bool> IsOrganizationNameExist(string name);
     }
 }

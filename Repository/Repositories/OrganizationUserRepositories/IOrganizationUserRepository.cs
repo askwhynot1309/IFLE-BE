@@ -25,5 +25,8 @@ namespace Repository.Repositories.OrganizationUserRepositories
         Task<List<OrganizationUser>> GetOrganizationUserListByUserId(string userId);
 
         Task<List<string>> GetOwnerAndCoownerIdListOfOrganization(string organizationId);
+
+        Task<bool> IsCreatedOrganizationNameExist(string userId, string name);
+
     }
 }

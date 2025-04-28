@@ -73,6 +73,12 @@ namespace Service.Services.FloorServices
             {
                 throw new CustomException("Không tìm thấy tổ chức này.");
             }
+
+            var nameCheck = await _floorRepository.IsFloorNameExistInOrganization(organizationId, model.Name);
+            if (nameCheck)
+            {
+                throw new CustomException("Tên sàn này đã được bạn dùng trong tổ chức này. Vui lòng đặt tên khác.");
+            }
             newFloor.OrganizationId = organizationId;
 
             await _floorRepository.Insert(newFloor);
@@ -379,7 +385,7 @@ namespace Service.Services.FloorServices
             newOrder.Price = gamePackage.Price;
             newOrder.OrderDate = DateTime.Now;
             newOrder.Status = PackageOrderStatusEnums.PENDING.ToString();
-            var payment = await _payosService.Create(newOrder.Price, model.ReturnUrl, model.CancelUrl);
+            var payment = await _payosService.CreatePayment(newOrder.Price, model.ReturnUrl, model.CancelUrl);
             if (payment == null)
             {
                 throw new CustomException("Có lỗi thanh toán trong hệ thống PayOS.");
@@ -459,13 +465,25 @@ namespace Service.Services.FloorServices
             return result;
         }
 
-        public async Task UpdateGamePackageOrderStatus(string orderCode, string status, string currentUserId)
+        public async Task UpdateGamePackageOrderStatus(string orderCode, string currentUserId)
         {
             var order = await _gamePackageOrderRepository.GetGamePackageOrderByOrderCode(orderCode);
+            if (order == null)
+            {
+                throw new CustomException("Không tìm thấy đơn hàng này.");
+            }
+            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
+
+            if (paymentInfo == null)
+            {
+                throw new CustomException("Lỗi hệ thống.");
+            }
+            var newStatus = paymentInfo.status;
+
             var gamePackage = await _gamePackageRepository.GetGamePackageById(order.GamePackageId);
-            order.Status = status;
+            order.Status = newStatus;
             var curUser = await _userRepository.GetUserById(currentUserId);
-            if (status.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            if (newStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
             {
                 var htmlBody = HTMLEmailTemplate.PaymentSuccessNotification(curUser.FullName, gamePackage.Name, order.OrderDate);
                 bool sendEmailSuccess = await _emailService.SendEmail(curUser.Email, "Thông báo mua gói trò chơi thành công", htmlBody);
