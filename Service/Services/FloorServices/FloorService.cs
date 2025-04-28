@@ -154,6 +154,15 @@ namespace Service.Services.FloorServices
                 throw new CustomException("Người dùng này không có quyền cập nhật sàn tương tác", StatusCodes.Status403Forbidden);
             }
 
+            if (!floor.Name.ToLower().Equals(model.Name.ToLower()))
+            {
+                var nameCheck = await _floorRepository.IsFloorNameExistInOrganization(floor.OrganizationId, model.Name);
+                if (nameCheck)
+                {
+                    throw new CustomException("Tên sàn này đã được bạn dùng trong tổ chức này. Vui lòng đặt tên khác.");
+                }
+            }
+
             _mapper.Map(model, floor);
             await _floorRepository.Update(floor);
         }
