@@ -154,6 +154,15 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Không phải là chủ sở hữu tổ chức này", StatusCodes.Status403Forbidden);
             }
 
+            if (!model.Name.ToLower().Equals(organization.Name.ToLower()))
+            {
+                var nameCheck = await _organizationUserRepository.IsCreatedOrganizationNameExist(currentUserId, model.Name);
+                if (nameCheck)
+                {
+                    throw new CustomException("Tên tổ chức này đã được bạn sử dụng. Vui lòng đặt tên khác.");
+                }
+            }
+
             _mapper.Map(model, organization);
             await _organizationRepository.Update(organization);
         }
