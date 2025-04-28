@@ -4,6 +4,7 @@ using Repository.Enums;
 using Repository.Repositories.GenericRepositories;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,6 +63,13 @@ namespace Repository.Repositories.OrganizationUserRepositories
             var privilegeList = new List<string> { PrivilegeEnums.Owner.ToString(), PrivilegeEnums.CoOwner.ToString() };
             var list = await Get(o => o.OrganizationId.Equals(organizationId) && privilegeList.Contains(o.Privilege));
             return list.Select(o => o.UserId).ToList();
+        }
+
+        public async Task<bool> IsCreatedOrganizationNameExist(string userId, string name)
+        {
+            var list = await Get(o => o.UserId.Equals(userId) && o.Privilege.Equals(PrivilegeEnums.Owner.ToString()), includeProperties: "Organization");
+            var names = list.Select(o => o.Organization.Name.ToLower()).ToList();
+            return names.Any(n => n.Equals(name.ToLower()));
         }
     }
 }

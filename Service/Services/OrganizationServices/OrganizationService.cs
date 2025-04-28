@@ -60,10 +60,10 @@ namespace Service.Services.OrganizationServices
         public async Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId)
         {
             var newOrganization = _mapper.Map<Organization>(model);
-            var nameCheck = await _organizationRepository.IsOrganizationNameExist(model.Name);
+            var nameCheck = await _organizationUserRepository.IsCreatedOrganizationNameExist(userId, model.Name);
             if (nameCheck)
             {
-                throw new CustomException("Tên tổ chức này đã tồn tại. Vui lòng đặt tên khác.");
+                throw new CustomException("Tên tổ chức này đã được bạn sử dụng. Vui lòng đặt tên khác.");
             }
 
             newOrganization.Id = Guid.NewGuid().ToString();

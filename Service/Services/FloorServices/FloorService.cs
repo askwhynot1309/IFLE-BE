@@ -73,6 +73,12 @@ namespace Service.Services.FloorServices
             {
                 throw new CustomException("Không tìm thấy tổ chức này.");
             }
+
+            var nameCheck = await _floorRepository.IsFloorNameExistInOrganization(organizationId, model.Name);
+            if (nameCheck)
+            {
+                throw new CustomException("Tên sàn này đã được bạn dùng trong tổ chức này. Vui lòng đặt tên khác.");
+            }
             newFloor.OrganizationId = organizationId;
 
             await _floorRepository.Insert(newFloor);
