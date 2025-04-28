@@ -41,25 +41,28 @@ namespace Service.Services.GamePackageServices
             newGamePackage.Status = GamePackageEnums.Active.ToString();
 
             await _gamePackageRepository.Insert(newGamePackage);
-            if (model.GameIdList.Count > 0)
+            if (model.GameIdList.Count == 0)
             {
-                var listGame = await _gameRepository.GetListGameByListId(model.GameIdList);
-                if (listGame.Count != model.GameIdList.Count)
-                {
-                    throw new CustomException("Không tìm thấy game bạn thêm vào. Vui lòng chọn đúng game có sẵn.");
-                }
-                var list = new List<GamePackageRelation>();
-                foreach (var gameId in model.GameIdList)
-                {
-                    list.Add(new GamePackageRelation
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        GameId = gameId,
-                        GamePackageId = newGamePackage.Id,
-                    });
-                }
-                await _gamePackageRelationRepository.InsertRange(list);
+                throw new CustomException("Vui lòng chọn game để thêm vào gói.");
             }
+
+            var listGame = await _gameRepository.GetListGameByListId(model.GameIdList);
+            if (listGame.Count != model.GameIdList.Count)
+            {
+                throw new CustomException("Không tìm thấy game bạn thêm vào. Vui lòng chọn đúng game có sẵn.");
+            }
+            var list = new List<GamePackageRelation>();
+            foreach (var gameId in model.GameIdList)
+            {
+                list.Add(new GamePackageRelation
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    GameId = gameId,
+                    GamePackageId = newGamePackage.Id,
+                });
+            }
+            await _gamePackageRelationRepository.InsertRange(list);
+
         }
 
         public async Task UpdateGamePackage(GamePackageUpdateRequestModel model, string gamePackageId)
