@@ -25,6 +25,7 @@ using Service.Services.EmailServices;
 using Service.Services.PayosServices;
 using Service.Ultis;
 using System;
+using System.Drawing;
 using static System.Net.WebRequestMethods;
 
 namespace Service.Services.FloorServices
@@ -60,6 +61,33 @@ namespace Service.Services.FloorServices
             _gamePackageOrderRepository = gamePackageOrderRepository;
             _emailService = emailService;
             _privateFloorUserRepository = privateFloorUserRepository;
+        }
+
+        public async Task<List<FloorDetailsInfoResponseModel>> GetAllFloors()
+        {
+            var list = await _floorRepository.GetAllFloors();
+
+            return list.Select(floor => new FloorDetailsInfoResponseModel
+            {
+                Id = floor.Id,
+                Name = floor.Name,
+                Description = floor.Description,
+                Height = floor.Height,
+                Length = floor.Length,
+                Width = floor.Width,
+                IsPublic = floor.IsPublic,
+                Status = floor.Status,
+                DeviceInfo = floor.Device != null ? new DeviceInfo
+                {
+                    Id = floor.DeviceId,
+                    Name = floor.Device.Name,
+                    Description = floor.Device.Description,
+                    Uri = floor.Device.Uri,
+                    DeviceCategory = floor.Device.DeviceCategory != null
+                        ? _mapper.Map<DeviceCategoryInfoResponseModel>(floor.Device.DeviceCategory)
+                        : null
+                } : null
+            }).ToList();
         }
 
         public async Task CreateFloor(FloorCreateUpdateRequestModel model, string organizationId, string userId)

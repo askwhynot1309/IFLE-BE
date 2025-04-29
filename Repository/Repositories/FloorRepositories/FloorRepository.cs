@@ -16,6 +16,11 @@ namespace Repository.Repositories.FloorRepositories
         {
         }
 
+        public async Task<List<InteractiveFloor>> GetAllFloors()
+        {
+            return (await Get(includeProperties: "Device,Device.DeviceCategory")).ToList();
+        }
+
         public async Task<InteractiveFloor> GetFloorById(string floorId)
         {
             return await GetSingle(f => f.Id.Equals(floorId), includeProperties: "Device,Device.DeviceCategory");

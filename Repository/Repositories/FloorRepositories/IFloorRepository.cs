@@ -10,6 +10,8 @@ namespace Repository.Repositories.FloorRepositories
 {
     public interface IFloorRepository : IGenericRepository<InteractiveFloor>
     {
+        Task<List<InteractiveFloor>> GetAllFloors();
+
         Task<InteractiveFloor> GetFloorById(string floorId);
 
         Task<List<InteractiveFloor>> GetAllPublicFloorsOfOrganization(string organizationId);
