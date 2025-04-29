@@ -136,6 +136,12 @@ namespace Service.Services.FloorServices
             {
                 throw new CustomException("Không tìm thấy sàn tương tác này");
             }
+            var now = DateTime.Now;
+            var avalableGamePackageOrderCheck = await _gamePackageOrderRepository.CheckIfAnyAvailableGamePackageInFloor(floorId, now);
+            if (avalableGamePackageOrderCheck)
+            {
+                throw new CustomException("Còn gói game đang sử dụng hoặc chưa kích hoạt trong sàn tương tác này. Không thể xóa sàn.");
+            }
             floor.Status = FloorStatusEnums.Inactive.ToString();
             await _floorRepository.Update(floor);
         }

@@ -24,6 +24,8 @@ namespace Service.Services.OrganizationServices
 
         Task UpdateOrganization(string id, OrganizationCreateUpdateRequestModel model, string currentUserId);
 
+        Task SoftRemoveOrganization(string organizationId, string currentUserId);
+
         Task AddUserToOrganization(List<string> emailList, string organizationId, string currentId);
 
         Task RemoveMemberFromOrganization(List<string> userIdList, string organizationId, string currentId);

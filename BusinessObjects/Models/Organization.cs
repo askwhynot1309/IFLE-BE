@@ -18,6 +18,8 @@ namespace BusinessObjects.Models
 
         public DateTime CreatedAt { get; set; }
 
+        public string? Status { get; set; }
+
         public virtual ICollection<OrganizationUser> OrganizationUsers { get; set; } = new List<OrganizationUser>();
 
         public virtual ICollection<UserPackageOrder> UserPackageOrders { get; set; } = new List<UserPackageOrder>();
