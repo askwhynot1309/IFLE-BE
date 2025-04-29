@@ -4,6 +4,7 @@ using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.DTOs.UserPackageOrder.Request;
 using BusinessObjects.DTOs.UserPackageOrder.Response;
+using Net.payOS.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
