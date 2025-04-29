@@ -28,7 +28,7 @@ namespace Repository.Repositories.FloorRepositories
 
         public async Task<List<InteractiveFloor>> GetAllPublicFloorsOfOrganization(string organizationId)
         {
-            var list = await Get(f => f.IsPublic == true && f.OrganizationId.Equals(organizationId) && f.Status.Equals(FloorStatusEnums.Inactive.ToString()), includeProperties: "Device,Device.DeviceCategory");
+            var list = await Get(f => f.IsPublic == true && f.OrganizationId.Equals(organizationId) && f.Status.Equals(FloorStatusEnums.Active.ToString()), includeProperties: "Device,Device.DeviceCategory");
             return list.ToList();
         }
 
