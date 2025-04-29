@@ -21,6 +21,14 @@ namespace InteractiveFloor.Controllers
             _floorService = floorService;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Staff,Admin")]
+        public async Task<IActionResult> GetAllFloors()
+        {
+            var response = await _floorService.GetAllFloors();
+            return Ok(response);
+        }
+
         [HttpPost]
         [Route("{organizationId}")]
         [Authorize(Roles = "Customer")]
