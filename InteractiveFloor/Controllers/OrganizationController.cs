@@ -68,6 +68,16 @@ namespace InteractiveFloor.Controllers
             return Ok("Cập nhật tổ chức thành công.");
         }
 
+        [HttpPatch]
+        [Route("{id}/status")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> SoftRemoveOrganization(string id)
+        {
+            string currentUserId = HttpContext.User.FindFirstValue("userId");
+            await _organizationService.SoftRemoveOrganization(id, currentUserId);
+            return Ok("Xóa tổ chức thành công.");
+        }
+
         [HttpPost]
         [Route("{id}/members")]
         [Authorize(Roles = "Customer")]

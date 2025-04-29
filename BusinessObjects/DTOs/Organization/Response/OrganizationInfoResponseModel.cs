@@ -20,5 +20,6 @@ namespace BusinessObjects.DTOs.Organization.Response
 
         public DateTime CreatedAt { get; set; }
 
+        public string? Status { get; set; }
     }
 }
