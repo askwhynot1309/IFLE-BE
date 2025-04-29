@@ -190,6 +190,11 @@ namespace DAO
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
                     .IsRequired();
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
             });
 
             modelBuilder.Entity<UserPackageOrder>(entity =>

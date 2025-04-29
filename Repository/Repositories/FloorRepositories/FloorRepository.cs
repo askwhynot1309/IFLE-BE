@@ -23,13 +23,19 @@ namespace Repository.Repositories.FloorRepositories
 
         public async Task<List<InteractiveFloor>> GetAllPublicFloorsOfOrganization(string organizationId)
         {
-            var list = await Get(f => f.IsPublic == true && f.OrganizationId.Equals(organizationId), includeProperties: "Device,Device.DeviceCategory");
+            var list = await Get(f => f.IsPublic == true && f.OrganizationId.Equals(organizationId) && f.Status.Equals(FloorStatusEnums.Inactive.ToString()), includeProperties: "Device,Device.DeviceCategory");
             return list.ToList();
         }
 
         public async Task<List<InteractiveFloor>> GetAllPrivateFloorsOfOrganization(string organizationId)
         {
             var list = await Get(f => f.IsPublic == false && f.OrganizationId.Equals(organizationId), includeProperties: "Device,Device.DeviceCategory");
+            return list.ToList();
+        }
+
+        public async Task<List<InteractiveFloor>> GetAllActiveFloorOfOrganization(string organizationId)
+        {
+            var list = await Get(f => f.OrganizationId.Equals(organizationId) && f.Status.Equals(FloorStatusEnums.Active.ToString()));
             return list.ToList();
         }
 

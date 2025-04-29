@@ -21,6 +21,10 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         Task<List<GamePackageOrder>> GetPlayableGamePackage(string floorId, DateTime date);
 
+        Task<bool> CheckIfAnyAvailableGamePackageInFloorList(List<string> floorIdList, DateTime date);
+
+        Task<bool> CheckIfAnyAvailableGamePackageInFloor(string floorId, DateTime date);
+
         Task<GamePackageOrder> GetGamePackageOrderById(string id);
 
         Task<List<GamePackageOrder>> GetOwnGamePackageOrder(string userId);

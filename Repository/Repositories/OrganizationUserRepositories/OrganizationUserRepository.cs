@@ -27,6 +27,7 @@ namespace Repository.Repositories.OrganizationUserRepositories
         public async Task<List<Organization>> GetOrganizationOfUser(string userId)
         {
             var organizationUsers = await Get(u => u.UserId.Equals(userId), includeProperties: "Organization");
+            organizationUsers = organizationUsers.Where(o => o.Organization.Status.Equals(OrganizationStatusEnums.Active.ToString()));
             var organizationList = organizationUsers.Select(u => u.Organization).ToList();
             return organizationList;
         }
@@ -68,7 +69,8 @@ namespace Repository.Repositories.OrganizationUserRepositories
         public async Task<bool> IsCreatedOrganizationNameExist(string userId, string name)
         {
             var list = await Get(o => o.UserId.Equals(userId) && o.Privilege.Equals(PrivilegeEnums.Owner.ToString()), includeProperties: "Organization");
-            var names = list.Select(o => o.Organization.Name.ToLower()).ToList();
+            var activeList = list.Where(l => l.Organization.Status.Equals(OrganizationStatusEnums.Active.ToString()));
+            var names = activeList.Select(o => o.Organization.Name.ToLower()).ToList();
             return names.Any(n => n.Equals(name.ToLower()));
         }
     }

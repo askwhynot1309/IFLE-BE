@@ -62,6 +62,26 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             return list.ToList();
         }
 
+        public async Task<bool> CheckIfAnyAvailableGamePackageInFloorList(List<string> floorIdList, DateTime date)
+        {
+            var list = await Get(
+                g => floorIdList.Contains(g.FloorId) &&
+                     g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
+                     ((g.EndTime.HasValue && DateOnly.FromDateTime(g.EndTime.Value) >= DateOnly.FromDateTime(date)) ||
+                     g.IsActivated == false));
+            return list.Count() > 0;
+        }
+
+        public async Task<bool> CheckIfAnyAvailableGamePackageInFloor(string floorId, DateTime date)
+        {
+            var list = await Get(
+                g => g.FloorId.Equals(floorId) &&
+                     g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
+                     ((g.EndTime.HasValue && DateOnly.FromDateTime(g.EndTime.Value) >= DateOnly.FromDateTime(date)) ||
+                     g.IsActivated == false));
+            return list.Count() > 0;
+        }
+
         public async Task<GamePackageOrder> GetGamePackageOrderById(string id)
         {
             return await GetSingle(g => g.Id.Equals(id),

@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Repository.Enums;
 using Repository.Repositories.FloorRepositories;
 using Repository.Repositories.FloorUserRepositories;
+using Repository.Repositories.GamePackageOrderRepositories;
 using Repository.Repositories.OrganizationRepositories;
 using Repository.Repositories.OrganizationUserRepositories;
 using Repository.Repositories.UserPackageOrderRepositories;
@@ -42,8 +43,9 @@ namespace Service.Services.OrganizationServices
         private readonly IUserPackageRepository _userPackageRepository;
         private readonly IPayosService _payosService;
         private readonly IUserPackageOrderRepository _userPackageOrderRepository;
+        private readonly IGamePackageOrderRepository _gamePackageOrderRepository;
 
-        public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IEmailService emailService, IFloorRepository floorRepository, IPrivateFloorUserRepository privateFloorUserRepository, IUserPackageRepository userPackageRepository, IUserPackageOrderRepository userPackageOrderRepository, IPayosService payosService)
+        public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository, IEmailService emailService, IFloorRepository floorRepository, IPrivateFloorUserRepository privateFloorUserRepository, IUserPackageRepository userPackageRepository, IUserPackageOrderRepository userPackageOrderRepository, IPayosService payosService, IGamePackageOrderRepository gamePackageOrderRepository)
         {
             _organizationRepository = organizationRepository;
             _organizationUserRepository = organizationUserRepository;
@@ -55,6 +57,7 @@ namespace Service.Services.OrganizationServices
             _userPackageRepository = userPackageRepository;
             _userPackageOrderRepository = userPackageOrderRepository;
             _payosService = payosService;
+            _gamePackageOrderRepository = gamePackageOrderRepository;
         }
 
         public async Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId)
@@ -69,6 +72,7 @@ namespace Service.Services.OrganizationServices
             newOrganization.Id = Guid.NewGuid().ToString();
             newOrganization.CreatedAt = DateTime.Now;
             newOrganization.UserLimit = 2;
+            newOrganization.Status = OrganizationStatusEnums.Active.ToString();
 
             await _organizationRepository.Insert(newOrganization);
 
@@ -134,6 +138,7 @@ namespace Service.Services.OrganizationServices
                     Description = organization.Description,
                     UserLimit = organization.UserLimit,
                     CreatedAt = organization.CreatedAt,
+                    Status = organization.Status,
                     Privilege = organization.OrganizationUsers.FirstOrDefault(o => o.OrganizationId.Equals(organization.Id)).Privilege
                 });
             }
@@ -145,7 +150,7 @@ namespace Service.Services.OrganizationServices
             var organization = await _organizationRepository.GetOrganizationById(id);
             if (organization == null)
             {
-                throw new CustomException("Không tồn tại tổ chức nào.");
+                throw new CustomException("Không tồn tại tổ chức này.");
             }
 
             var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(organization.Id);
@@ -164,6 +169,34 @@ namespace Service.Services.OrganizationServices
             }
 
             _mapper.Map(model, organization);
+            await _organizationRepository.Update(organization);
+        }
+
+        public async Task SoftRemoveOrganization(string organizationId, string currentUserId)
+        {
+            var organization = await _organizationRepository.GetOrganizationById(organizationId);
+            if (organization == null)
+            {
+                throw new CustomException("Không tồn tại tổ chức này.");
+            }
+
+            var ownerId = await _organizationUserRepository.GetOwnerIdOfOrganization(organizationId);
+            if (!ownerId.Equals(currentUserId))
+            {
+                throw new CustomException("Bạn không phải là chủ sở hữu tổ chức này", StatusCodes.Status403Forbidden);
+            }
+
+            var floorList = await _floorRepository.GetAllActiveFloorOfOrganization(organizationId);
+            var floorIdList = floorList.Select(x => x.Id).ToList();
+
+            var now = DateTime.Now;
+            var check = await _gamePackageOrderRepository.CheckIfAnyAvailableGamePackageInFloorList(floorIdList, now);
+            if (check)
+            {
+                throw new CustomException("Còn các gói game còn hạn hoặc chưa được kích hoạt trong tổ chức này. Không thể xóa.");
+            }
+
+            organization.Status = OrganizationStatusEnums.Inactive.ToString();
             await _organizationRepository.Update(organization);
         }
 
@@ -348,6 +381,7 @@ namespace Service.Services.OrganizationServices
             result = _mapper.Map<List<FloorDetailsInfoResponseModel>>(publicFloors);
 
             var privateFloors = await _floorRepository.GetAllPrivateFloorsOfOrganization(organizationId);
+            privateFloors = privateFloors.Where(p => p.Status.Equals(FloorStatusEnums.Active.ToString())).ToList();
             if (privateFloors.Count() > 0)
             {
                 var listId = privateFloors.Select(x => x.Id).ToList();
