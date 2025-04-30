@@ -26,7 +26,7 @@ namespace InteractiveFloor.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Authenticate(UserLoginRequestModel request)
+        public async Task<IActionResult> Login(UserLoginRequestModel request)
         {
             var response = await _authenticationService.LoginAuthenticate(request);
             return Ok(response);

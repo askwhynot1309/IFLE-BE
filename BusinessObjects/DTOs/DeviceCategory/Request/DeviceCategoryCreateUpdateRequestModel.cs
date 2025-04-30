@@ -13,15 +13,19 @@ namespace BusinessObjects.DTOs.DeviceCategory.Request
         public string Name { get; set; } = null!;
 
         [Required(ErrorMessage = "Vui lòng nhập khoảng cách đọc chiều sâu tối thiểu của thiết bị.")]
+        [Range(0.1, 20, ErrorMessage = "Giá trị phải nằm trong khoảng 0.1-20.")]
         public float MinDetectionRange { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập khoảng cách đọc chiều sâu tối đa của thiết bị.")]
+        [Range(0.1, 20, ErrorMessage = "Giá trị phải nằm trong khoảng 0.1-20.")]
         public float MaxDetectionRange { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập góc quét ngang của thiết bị.")]
+        [Range(30, 80, ErrorMessage = "Giá trị phải nằm trong khoảng 30-80.")]
         public float HFov { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập góc quét dọc của thiết bị.")]
+        [Range(0.1, 80, ErrorMessage = "Giá trị phải nằm trong khoảng 30-80.")]
         public float VFov { get; set; }
 
         public string? DeviceInfoUrl { get; set; }
