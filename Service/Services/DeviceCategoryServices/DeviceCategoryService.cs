@@ -26,6 +26,10 @@ namespace Service.Services.DeviceCategoryServices
 
         public async Task CreateDeviceCategory(DeviceCategoryCreateUpdateRequestModel model)
         {
+            if (model.MinDetectionRange >= model.MaxDetectionRange)
+            {
+                throw new CustomException("Không thể nhập giá trị min lớn hơn hoặc bằng max.");
+            }
             var newDeviceCategory = _mapper.Map<DeviceCategory>(model);
             newDeviceCategory.Id = Guid.NewGuid().ToString();
             newDeviceCategory.Status = DeviceStatusEnums.Active.ToString();

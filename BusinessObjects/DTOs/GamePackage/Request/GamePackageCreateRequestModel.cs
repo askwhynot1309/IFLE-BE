@@ -15,10 +15,11 @@ namespace BusinessObjects.DTOs.GamePackage.Request
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập thời hạn gói game (tháng).")]
+        [Range(1, 12, ErrorMessage = "Chỉ được nhập 1-12 tháng.")]
         public int Duration { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập giá gói game (VNĐ).")]
-        [Range(2000, double.MaxValue, ErrorMessage = "Giá gói phải lớn hơn 2000đ.")]
+        [Range(100000, 1000000, ErrorMessage = "Giá gói phải lớn hơn 100.000đ và bé hơn 1.000.000đ.")]
         public decimal Price { get; set; }
 
         public List<string> GameIdList { get; set; } = new List<string>();

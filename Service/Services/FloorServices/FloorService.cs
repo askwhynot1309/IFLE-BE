@@ -218,8 +218,7 @@ namespace Service.Services.FloorServices
             var existed = await _deviceRepository.GetDeviceByUri(model.Uri);
             if (existed != null)
             {
-                throw new CustomException("Thiết bị với mã định danh này đã được đăng ký cho sàn tương tác khác." +
-                    "Vui lòng đăng ký thiết bị khác cho sàn tương tác này.");
+                throw new CustomException("Thiết bị với mã định danh này đã được đăng ký cho sàn tương tác khác. Vui lòng đăng ký thiết bị khác cho sàn tương tác này.");
             }
 
             if (hasDeviceCategory)
@@ -227,7 +226,7 @@ namespace Service.Services.FloorServices
                 var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(model.DeviceCategoryId);
                 if (deviceCategory == null)
                 {
-                    throw new CustomException("Không tìm thấy loại thiết bị này");
+                    throw new CustomException("Không tìm thấy loại thiết bị này.");
                 }
                 message = "Thêm thiết bị thành công.";
             }
@@ -417,6 +416,11 @@ namespace Service.Services.FloorServices
 
         public async Task<string> BuyGamePackageForFloor(string floorId, GamePackageOrderCreateRequestModel model, string currentUserId)
         {
+            var floor = await _floorRepository.GetFloorById(floorId);
+            if (floor == null)
+            {
+                throw new CustomException("Không tìm thấy sàn tương tác này.");
+            }
             var newOrder = _mapper.Map<GamePackageOrder>(model);
             newOrder.Id = Guid.NewGuid().ToString();
             newOrder.FloorId = floorId;
@@ -544,11 +548,11 @@ namespace Service.Services.FloorServices
             var order = await _gamePackageOrderRepository.GetGamePackageOrderById(gamePackageOrderId);
             if (order == null)
             {
-                throw new CustomException("Không tìm thấy gói game bạn đã mua.");
+                throw new CustomException("Không tìm thấy đơn mua gói game bạn đã thanh toán.");
             }
             if (order.IsActivated.HasValue && order.IsActivated == true)
             {
-                throw new CustomException("Gói game này đã được kích hoạt trước đó rồi.");
+                throw new CustomException("Đơn mua hàng này đã được kích hoạt trước đó rồi.");
             }
             order.IsActivated = true;
             order.StartTime = DateTime.Now.Date;

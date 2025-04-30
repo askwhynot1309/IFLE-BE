@@ -52,7 +52,7 @@ namespace InteractiveFloor.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Staff")]
-        public async Task<ActionResult<GameResponse>> Create(CreateGameRequest request)
+        public async Task<ActionResult<GameResponse>> CreateGame(CreateGameRequest request)
         {
             try
             {

@@ -33,7 +33,7 @@ namespace InteractiveFloor.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GameCategoryResponse>> Create(CreateGameCategoryRequest request)
+        public async Task<ActionResult<GameCategoryResponse>> CreateGameCategory(CreateGameCategoryRequest request)
         {
             var gameCategory = await _gameCategoryService.CreateAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = gameCategory.Id }, gameCategory);

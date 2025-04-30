@@ -145,12 +145,12 @@ namespace Service.Services.AuthenticationServices
 
                 if (!user.IsVerified)
                 {
-                    throw new CustomException("Tài khoản của bạn chưa được xác thực email!", StatusCodes.Status403Forbidden);
+                    throw new CustomException("Tài khoản của bạn chưa được xác thực email!");
                 }
 
                 if (user.Status.Equals(AccountStatusEnums.Inactive.ToString()))
                 {
-                    throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống hoặc chưa trải qua xác thực từ chúng tôi.");
+                    throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống của chúng tôi.", StatusCodes.Status403Forbidden);
                 }
 
                 var (accessToken, refreshToken) = await GenerateJWT(user.Id);
