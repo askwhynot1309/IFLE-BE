@@ -140,7 +140,7 @@ namespace InteractiveFloor.Controllers
         [HttpPost]
         [Route("{id}/user-package")]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> BuyUserPackageForFloor(string id, UserPackageOrderCreateRequestModel model)
+        public async Task<IActionResult> BuyUserPackageForOrganization(string id, UserPackageOrderCreateRequestModel model)
         {
             string currentUserId = HttpContext.User.FindFirstValue("userId");
             var response = await _organizationService.BuyUserPackageForOrganization(id, model, currentUserId);

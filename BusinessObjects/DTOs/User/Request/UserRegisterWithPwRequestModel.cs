@@ -14,7 +14,7 @@ namespace BusinessObjects.DTOs.User.Request
         public string Fullname { get; set; } = null!;
 
         [Required(ErrorMessage = "Hãy nhập email của bạn.")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Vui lòng nhập đúng định dạng email.")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Hãy nhập mật khẩu của bạn.")]

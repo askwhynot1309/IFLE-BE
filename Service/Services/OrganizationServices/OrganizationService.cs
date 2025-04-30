@@ -229,6 +229,10 @@ namespace Service.Services.OrganizationServices
             }
 
             var organization = await _organizationRepository.GetOrganizationById(organizationId);
+            if (organization == null)
+            {
+                throw new CustomException("Không tìm thấy tổ chức này.");
+            }
 
             var organizationUsers = await _organizationUserRepository.GetOrganizationUserByOrganizationId(organizationId);
 
@@ -398,13 +402,18 @@ namespace Service.Services.OrganizationServices
 
         public async Task<string> BuyUserPackageForOrganization(string organizationId, UserPackageOrderCreateRequestModel model, string currentUserId)
         {
+            var organization = await _organizationRepository.GetOrganizationById(organizationId);
+            if (organization == null)
+            {
+                throw new CustomException("Không tìm thấy tổ chức này.");
+            }
             var newOrder = _mapper.Map<UserPackageOrder>(model);
             newOrder.Id = Guid.NewGuid().ToString();
             newOrder.OrganizationId = organizationId;
             var userPackage = await _userPackageRepository.GetUserPackageById(model.UserPackageId);
             if (userPackage == null)
             {
-                throw new CustomException("Không tìm thấy gói này.");
+                throw new CustomException("Không tìm thấy gói nâng cấp thành viên này.");
             }
             newOrder.Price = userPackage.Price;
             newOrder.OrderDate = DateTime.Now;
