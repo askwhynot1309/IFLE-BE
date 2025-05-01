@@ -25,7 +25,7 @@ namespace BusinessObjects.DTOs.DeviceCategory.Request
         public float HFov { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập góc quét dọc của thiết bị.")]
-        [Range(0.1, 80, ErrorMessage = "Giá trị phải nằm trong khoảng 30-80.")]
+        [Range(30, 80, ErrorMessage = "Giá trị phải nằm trong khoảng 30-80.")]
         public float VFov { get; set; }
 
         public string? DeviceInfoUrl { get; set; }
