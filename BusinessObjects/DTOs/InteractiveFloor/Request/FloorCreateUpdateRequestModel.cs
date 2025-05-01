@@ -14,15 +14,15 @@ namespace BusinessObjects.DTOs.InteractiveFloor.Request
 
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập chiều cao của phòng (m).")]
+        [Required(ErrorMessage = "Vui lòng nhập chiều cao chỗ chứa sàn (m).")]
         [Range(2, 10, ErrorMessage = "Kích thước phần đất chứa sàn phải lớn hơn 2 và bé hơn 10.")]
         public float Height { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập độ rộng của sàn (m).")]
+        [Required(ErrorMessage = "Vui lòng nhập độ rộng chỗ chứa sàn (m).")]
         [Range(2, 10, ErrorMessage = "Kích thước phần đất chứa sàn phải lớn hơn 2 và bé hơn 10.")]
         public float Width { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập độ dài của sàn (m).")]
+        [Required(ErrorMessage = "Vui lòng nhập độ dài chỗ chứa sàn (m).")]
         [Range(2, 10, ErrorMessage = "Kích thước phần đất chứa sàn phải lớn hơn 2 và bé hơn 10.")]
         public float Length { get; set; }
 
