@@ -452,6 +452,10 @@ namespace Service.Services.OrganizationServices
             var newStatus = paymentInfo.status;
 
             var firstStatus = order.Status;
+            if (firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            {
+                return;
+            }
             var userPackage = await _userPackageRepository.GetUserPackageById(order.UserPackageId);
             order.Status = newStatus;
             var curUser = await _userRepository.GetUserById(currentUserId);
