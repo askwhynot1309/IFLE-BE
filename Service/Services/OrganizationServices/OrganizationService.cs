@@ -437,25 +437,13 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Không tìm thấy đơn hàng này.");
             }
 
-            if (order.Status.Equals(PackageOrderStatusEnums.PAID.ToString()))
-            {
-                throw new CustomException("Đơn hàng này đã ở trạng thái PAID.");
-            }
-
             var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
 
             if (paymentInfo == null)
             {
                 throw new CustomException("Lỗi hệ thống.");
             }
-
             var newStatus = paymentInfo.status;
-
-            var firstStatus = order.Status;
-            if (firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
-            {
-                return;
-            }
             var userPackage = await _userPackageRepository.GetUserPackageById(order.UserPackageId);
             order.Status = newStatus;
             var curUser = await _userRepository.GetUserById(currentUserId);
