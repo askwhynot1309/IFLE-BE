@@ -80,20 +80,16 @@ namespace Service.Services.GameCategoryServices
                 }
             }
 
-            var category = new GameCategory
-            {
-                Id = id,
-                Name = request.Name,
-                Description = request.Description
-            };
+            updateCategory.Name = request.Name;
+            updateCategory.Description = request.Description;
 
-            await _repository.Update(category);
+            await _repository.Update(updateCategory);
 
             return new GameCategoryResponse
             {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description
+                Id = updateCategory.Id,
+                Name = updateCategory.Name,
+                Description = updateCategory.Description
             };
         }
 
