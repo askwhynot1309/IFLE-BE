@@ -59,6 +59,10 @@ namespace InteractiveFloor.Controllers
                 var game = await _gameService.CreateAsync(request);
                 return CreatedAtAction(nameof(GetById), new { id = game.Id }, game);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while creating the game.", error = ex.Message });
