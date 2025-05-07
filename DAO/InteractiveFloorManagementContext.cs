@@ -760,6 +760,44 @@ namespace DAO
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<GameLog>(entity =>
+            {
+                entity.ToTable("GameLog");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.UpdateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.StaffId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.GameId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.UpdateStatus)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .IsRequired();
+
+                entity.HasOne(d => d.Staff).WithMany(p => p.GameLogs)
+                    .HasForeignKey(d => d.StaffId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.Game).WithMany(p => p.GameLogs)
+                    .HasForeignKey(d => d.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
