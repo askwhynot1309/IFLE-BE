@@ -31,5 +31,7 @@ namespace BusinessObjects.Models
         public virtual ICollection<GameCategoryRelation> GameCategoryRelations { get; set; } = new List<GameCategoryRelation>();
 
         public virtual ICollection<GameVersion> GameVersions { get; set; } = new List<GameVersion>();
+
+        public virtual ICollection<GameLog> GameLogs { get; set; } = new List<GameLog>();
     }
 }
