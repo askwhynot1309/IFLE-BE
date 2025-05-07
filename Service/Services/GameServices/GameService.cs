@@ -1,10 +1,11 @@
-using AutoMapper;
+﻿using AutoMapper;
 using BusinessObjects.DTOs.Game;
 using BusinessObjects.Models;
 using Repository.Enums;
 using Repository.Repositories.GamePackageRelationRepositories;
 using Repository.Repositories.GamePackageRepositories;
 using Repository.Repositories.GameRepositories;
+using Service.Ultis;
 
 namespace Service.Services.GameServices
 {
@@ -36,6 +37,12 @@ namespace Service.Services.GameServices
 
         public async Task<GameResponse> CreateAsync(CreateGameRequest request)
         {
+            var check = await _repository.IsNameExisted(request.Title);
+
+            if (check)
+            {
+                throw new CustomException("Tên trò chơi này đã tồn tại.");
+            }
             var game = _mapper.Map<Game>(request);
             game.Status = GameEnums.Active.ToString();
             game.PlayCount = 0;
@@ -62,6 +69,15 @@ namespace Service.Services.GameServices
             if (existingGame == null)
                 throw new KeyNotFoundException($"Game with ID {id} not found.");
 
+            if (!existingGame.Title.ToLower().Equals(request.Title.ToLower()))
+            {
+                var check = await _repository.IsNameExisted(request.Title);
+
+                if (check)
+                {
+                    throw new CustomException("Tên trò chơi này đã tồn tại.");
+                }
+            }
             // Update basic properties
             _mapper.Map(request, existingGame);
             await _repository.Update(existingGame);

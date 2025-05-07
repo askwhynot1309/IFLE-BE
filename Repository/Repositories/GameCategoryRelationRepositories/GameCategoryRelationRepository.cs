@@ -19,5 +19,6 @@ namespace Repository.Repositories.GameCategoryRelationRepositories
         {
             return (await Get(g => g.GameCategoryId.Equals(gameCategoryId))).ToList();
         }
+
     }
 }

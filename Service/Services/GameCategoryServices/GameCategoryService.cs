@@ -1,7 +1,8 @@
-using BusinessObjects.DTOs.GameCategory;
+﻿using BusinessObjects.DTOs.GameCategory;
 using BusinessObjects.Models;
 using Repository.Repositories.GameCategoryRelationRepositories;
 using Repository.Repositories.GameCategoryRepositories;
+using Service.Ultis;
 using System.Linq.Expressions;
 
 namespace Service.Services.GameCategoryServices
@@ -44,6 +45,11 @@ namespace Service.Services.GameCategoryServices
 
         public async Task<GameCategoryResponse> CreateAsync(CreateGameCategoryRequest request)
         {
+            var check = await _repository.IsNameExisted(request.Name);
+            if (check)
+            {
+                throw new CustomException("Thể loại trò chơi này đã tồn tại.");
+            }
             var category = new GameCategory
             {
                 Id = Guid.NewGuid().ToString(),
@@ -63,6 +69,17 @@ namespace Service.Services.GameCategoryServices
 
         public async Task<GameCategoryResponse> UpdateAsync(string id, UpdateGameCategoryRequest request)
         {
+            var updateCategory = await _repository.GetByIdAsync(id);
+            if (updateCategory != null && !updateCategory.Name.ToLower().Equals(request.Name.ToLower()))
+            {
+                var check = await _repository.IsNameExisted(request.Name);
+
+                if (check)
+                {
+                    throw new CustomException("Thể loại trò chơi này đã tồn tại.");
+                }
+            }
+
             var category = new GameCategory
             {
                 Id = id,

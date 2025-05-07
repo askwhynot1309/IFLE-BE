@@ -35,6 +35,12 @@ namespace Service.Services.GamePackageServices
 
         public async Task CreateGamePackage(GamePackageCreateRequestModel model)
         {
+            var check = await _gamePackageRepository.IsNameExisted(model.Name);
+
+            if (check)
+            {
+                throw new CustomException("Tên gói trò chơi này đã tồn tại.");
+            }
             var newGamePackage = _mapper.Map<GamePackage>(model);
 
             newGamePackage.Id = Guid.NewGuid().ToString();
@@ -74,6 +80,15 @@ namespace Service.Services.GamePackageServices
             }
 
             var gamePackage = await _gamePackageRepository.GetGamePackageById(gamePackageId);
+            if (gamePackage != null && !gamePackage.Name.ToLower().Equals(model.Name.ToLower()))
+            {
+                var check = await _gamePackageRepository.IsNameExisted(model.Name);
+
+                if (check)
+                {
+                    throw new CustomException("Tên gói trò chơi này đã tồn tại.");
+                }
+            }
             _mapper.Map(model, gamePackage);
 
             if (model.GameIdList.Count > 0)

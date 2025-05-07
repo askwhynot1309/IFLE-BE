@@ -10,5 +10,6 @@ namespace Repository.Repositories.GameCategoryRepositories
         Task<GameCategory> CreateAsync(GameCategory gameCategory);
         Task<GameCategory> UpdateAsync(GameCategory gameCategory);
         Task DeleteAsync(string id);
+        Task<bool> IsNameExisted(string name);
     }
 }

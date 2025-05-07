@@ -15,5 +15,7 @@ namespace Repository.Repositories.UserPackageRepositories
         Task<List<UserPackage>> GetActiveUserPackages();
 
         Task<UserPackage> GetUserPackageById(string id);
+
+        Task<bool> IsNameExisted(string name);
     }
 }

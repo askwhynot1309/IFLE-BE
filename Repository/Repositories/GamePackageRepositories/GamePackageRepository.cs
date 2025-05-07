@@ -30,5 +30,10 @@ namespace Repository.Repositories.GamePackageRepositories
         {
             return await GetSingle(g => g.Id.Equals(id), includeProperties: "GamePackageRelations");
         }
+
+        public async Task<bool> IsNameExisted(string name)
+        {
+            return (await GetSingle(g => g.Name.ToLower().Equals(name.ToLower()))) != null;
+        }
     }
 }

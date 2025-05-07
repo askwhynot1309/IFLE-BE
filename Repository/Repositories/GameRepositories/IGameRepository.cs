@@ -11,5 +11,6 @@ namespace Repository.Repositories.GameRepositories
         Task AddGameVersionAsync(Game game, GameVersion version);
         Task<IEnumerable<Game>> GetPurchasedGamesByUserIdAsync(string userId);
         Task<List<Game>> GetListGameByListId(List<string> gameIdList);
+        Task<bool> IsNameExisted(string name);
     }
 }

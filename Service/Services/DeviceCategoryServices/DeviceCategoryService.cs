@@ -30,6 +30,13 @@ namespace Service.Services.DeviceCategoryServices
             {
                 throw new CustomException("Không thể nhập giá trị min lớn hơn hoặc bằng max.");
             }
+
+            var check = await _deviceCategoryRepository.IsNameExisted(model.Name);
+            if (check)
+            {
+                throw new CustomException("Tên danh mục thiết bị này đã tồn tại.");
+            }
+
             var newDeviceCategory = _mapper.Map<DeviceCategory>(model);
             newDeviceCategory.Id = Guid.NewGuid().ToString();
             newDeviceCategory.Status = DeviceStatusEnums.Active.ToString();
@@ -61,10 +68,19 @@ namespace Service.Services.DeviceCategoryServices
 
         public async Task UpdateDeviceCategory(string id, DeviceCategoryCreateUpdateRequestModel model)
         {
+
             var deviceCategory = await _deviceCategoryRepository.GetDeviceCategoryById(id);
             if (deviceCategory == null)
             {
                 throw new CustomException("Không tìm thấy loại thiết bị này.");
+            }
+            if (!deviceCategory.Name.ToLower().Equals(model.Name.ToLower()))
+            {
+                var check = await _deviceCategoryRepository.IsNameExisted(model.Name);
+                if (check)
+                {
+                    throw new CustomException("Tên danh mục thiết bị này đã tồn tại.");
+                }
             }
             _mapper.Map(model, deviceCategory);
             if (model.UpdateStatus != null)
