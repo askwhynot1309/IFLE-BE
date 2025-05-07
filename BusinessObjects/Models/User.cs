@@ -44,5 +44,8 @@ namespace BusinessObjects.Models
         public virtual ICollection<GamePackageOrder> GamePackageOrders { get; set; } = new List<GamePackageOrder>();
 
         public virtual ICollection<UserPackageOrder> UserPackageOrders { get; set; } = new List<UserPackageOrder>();
+
+        public virtual ICollection<GameLog> GameLogs { get; set; } = new List<GameLog>();
+
     }
 }
