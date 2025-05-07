@@ -513,6 +513,7 @@ namespace Service.Services.OrganizationServices
         public async Task AutoUpdateUserPackageOrderStatus()
         {
             var updateList = await _userPackageOrderRepository.GetPendingAndProcessingUserPackageOrder();
+            var organizationUpdateList = new List<Organization>();
             foreach (var update in updateList)
             {
                 var paymentInfo = await _payosService.GetPaymentInformation(update.OrderCode);
@@ -520,9 +521,18 @@ namespace Service.Services.OrganizationServices
                 {
                     throw new CustomException("Lỗi hệ thống.");
                 }
+                var organization = await _organizationRepository.GetOrganizationById(update.OrganizationId);
+                var newStatus = paymentInfo.status;
+                if (newStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
+                {
+                    var userPackage = await _userPackageRepository.GetUserPackageById(update.UserPackageId);
+                    organization.UserLimit += userPackage.UserLimit;
+                    organizationUpdateList.Add(organization);
+                }
                 update.Status = paymentInfo.status;
             }
             await _userPackageOrderRepository.UpdateRange(updateList);
+            await _organizationRepository.UpdateRange(organizationUpdateList);
         }
     }
 }
