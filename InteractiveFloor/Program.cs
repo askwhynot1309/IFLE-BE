@@ -39,6 +39,9 @@ using Repository.Repositories.PlayHistoryRepositories;
 using Service.Services.PlayHistoryServices;
 using Service.Services.BackgroundServices;
 using Repository.Repositories.GameCategoryRelationRepositories;
+using Service.Services;
+using Repository.Repositories.GameLogRepositories;
+using Service.Services.GameLogServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,6 +104,7 @@ builder.Services.AddScoped<IGamePackageOrderRepository, GamePackageOrderReposito
 builder.Services.AddScoped<IUserPackageOrderRepository, UserPackageOrderRepository>();
 builder.Services.AddScoped<IPlayHistoryRepository, PlayHistoryRepository>();
 builder.Services.AddScoped<IGameCategoryRelationRepository, GameCategoryRelationRepository>();
+builder.Services.AddScoped<IGameLogRepository, GameLogRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -117,6 +121,7 @@ builder.Services.AddScoped<IFloorService, FloorService>();
 builder.Services.AddScoped<IDeviceCategoryService, DeviceCategoryService>();
 builder.Services.AddScoped<IPayosService, PayosService>();
 builder.Services.AddScoped<IPlayHistoryService, PlayHistoryService>();
+builder.Services.AddScoped<IGameLogService, GameLogService>();
 
 //========================================== AUTHENTICATION =======================================
 

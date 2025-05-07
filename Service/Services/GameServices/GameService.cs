@@ -74,6 +74,7 @@ namespace Service.Services.GameServices
             if (request.Version != null)
             {
                 var version = _mapper.Map<GameVersion>(request.Version);
+                version.ReleaseDate = DateTime.Now;
                 await _repository.AddGameVersionAsync(game, version);
             }
 
@@ -144,6 +145,7 @@ namespace Service.Services.GameServices
 
             // Create new version
             var version = _mapper.Map<GameVersion>(request);
+            version.ReleaseDate = DateTime.Now;
             await _repository.AddGameVersionAsync(game, version);
 
             // Update game's download URL
