@@ -17,7 +17,7 @@ namespace Repository.Repositories.OrganizationRepositories
 
         public async Task<List<Organization>> GetAllOrganizations()
         {
-            return (await Get()).ToList();
+            return (await Get(includeProperties: "OrganizationUsers,OrganizationUsers.User")).ToList();
         }
 
         public async Task<Organization> GetOrganizationById(string id)

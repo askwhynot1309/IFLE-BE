@@ -6,6 +6,7 @@ using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.GamePackageOrder.Response;
 using BusinessObjects.DTOs.InteractiveFloor.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
+using BusinessObjects.DTOs.Organization.Response;
 using BusinessObjects.DTOs.SetUpGuide.Request;
 using BusinessObjects.DTOs.SetUpGuide.Response;
 using BusinessObjects.DTOs.User.Response;
@@ -63,11 +64,11 @@ namespace Service.Services.FloorServices
             _privateFloorUserRepository = privateFloorUserRepository;
         }
 
-        public async Task<List<FloorDetailsInfoResponseModel>> GetAllFloors()
+        public async Task<List<FloorAllInfoResponseModel>> GetAllFloors()
         {
             var list = await _floorRepository.GetAllFloors();
 
-            return list.Select(floor => new FloorDetailsInfoResponseModel
+            return list.Select(floor => new FloorAllInfoResponseModel
             {
                 Id = floor.Id,
                 Name = floor.Name,
@@ -77,16 +78,16 @@ namespace Service.Services.FloorServices
                 Width = floor.Width,
                 IsPublic = floor.IsPublic,
                 Status = floor.Status,
-                DeviceInfo = floor.Device != null ? new DeviceInfo
+                OrganizationInfo = new OrganizationAllInfoResponseModel
                 {
-                    Id = floor.DeviceId,
-                    Name = floor.Device.Name,
-                    Description = floor.Device.Description,
-                    Uri = floor.Device.Uri,
-                    DeviceCategory = floor.Device.DeviceCategory != null
-                        ? _mapper.Map<DeviceCategoryInfoResponseModel>(floor.Device.DeviceCategory)
-                        : null
-                } : null
+                    Id = floor.Organization.Id,
+                    Name = floor.Organization.Name,
+                    Description = floor.Organization.Description,
+                    CreatedAt = floor.Organization.CreatedAt,
+                    UserLimit = floor.Organization.UserLimit,
+                    Status = floor.Organization.Status,
+                    OwnerInfo = _mapper.Map<UserInfoResponeModel>(floor.Organization.OrganizationUsers.FirstOrDefault(o => o.Privilege.Equals(PrivilegeEnums.Owner.ToString())).User)
+                }
             }).ToList();
         }
 
