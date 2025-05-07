@@ -519,8 +519,14 @@ namespace Service.Services.FloorServices
             {
                 throw new CustomException("Không tìm thấy đơn hàng này.");
             }
-            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
 
+            var firstStatus = order.Status;
+            if (firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            {
+                return;
+            }
+
+            var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
             if (paymentInfo == null)
             {
                 throw new CustomException("Lỗi hệ thống.");
