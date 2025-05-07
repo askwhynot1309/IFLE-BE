@@ -2,6 +2,7 @@
 using BusinessObjects.DTOs.Game;
 using BusinessObjects.Models;
 using Repository.Enums;
+using Repository.Repositories.GameCategoryRepositories;
 using Repository.Repositories.GamePackageRelationRepositories;
 using Repository.Repositories.GamePackageRepositories;
 using Repository.Repositories.GameRepositories;
@@ -12,12 +13,14 @@ namespace Service.Services.GameServices
     public class GameService : IGameService
     {
         private readonly IGameRepository _repository;
+        private readonly IGameCategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public GameService(IGameRepository repository, IMapper mapper)
+        public GameService(IGameRepository repository, IMapper mapper, IGameCategoryRepository gameCategoryRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _categoryRepository = gameCategoryRepository;
         }
 
         public async Task<List<GameResponse>> GetAllAsync()
@@ -43,6 +46,22 @@ namespace Service.Services.GameServices
             {
                 throw new CustomException("Tên trò chơi này đã tồn tại.");
             }
+            // Check for invalid category IDs
+            var invalidCategoryIds = new List<string>();
+            foreach (var categoryId in request.CategoryIds)
+            {
+                var category = await _categoryRepository.GetByIdAsync(categoryId);
+                if (category == null)
+                {
+                    invalidCategoryIds.Add(categoryId);
+                }
+            }
+
+            if (invalidCategoryIds.Any())
+            {
+                throw new KeyNotFoundException($"The following category are not valid or not exist in the system: {string.Join(", ", invalidCategoryIds)}");
+            }
+
             var game = _mapper.Map<Game>(request);
             game.Status = GameEnums.Active.ToString();
             game.PlayCount = 0;
