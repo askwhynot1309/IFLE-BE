@@ -111,5 +111,9 @@ namespace Repository.Repositories.GameRepositories
             return (await Get(g => gameIdList.Contains(g.Id))).ToList();
         }
 
+        public async Task<bool> IsNameExisted(string name)
+        {
+            return (await GetSingle(g => g.Title.ToLower().Equals(name.ToLower()))) != null;
+        }
     }
 }

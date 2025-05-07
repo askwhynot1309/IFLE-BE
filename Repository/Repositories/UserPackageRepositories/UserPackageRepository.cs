@@ -31,5 +31,10 @@ namespace Repository.Repositories.UserPackageRepositories
         {
             return await GetSingle(u => u.Id.Equals(id));
         }
+
+        public async Task<bool> IsNameExisted(string name)
+        {
+            return (await GetSingle(g => g.Name.ToLower().Equals(name.ToLower()))) != null;
+        }
     }
 }

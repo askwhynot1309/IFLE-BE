@@ -30,6 +30,12 @@ namespace Service.Services.UserPackageServices
 
         public async Task AddUserPackage(UserPackageCreateUpdateRequestModel model)
         {
+            var check = await _userPackageRepository.IsNameExisted(model.Name);
+
+            if (check)
+            {
+                throw new CustomException("Tên gói người dùng này đã tồn tại.");
+            }
             var newUserPackage = _mapper.Map<UserPackage>(model);
 
             newUserPackage.Status = UserPackageEnums.Active.ToString();
@@ -45,6 +51,17 @@ namespace Service.Services.UserPackageServices
             {
                 throw new CustomException("Không tìm thấy gói người dùng này.");
             }
+
+            if (!userPackage.Name.ToLower().Equals(model.Name.ToLower()))
+            {
+                var check = await _userPackageRepository.IsNameExisted(model.Name);
+
+                if (check)
+                {
+                    throw new CustomException("Tên gói người dùng này đã tồn tại.");
+                }
+            }
+
             var availableOrder = await _userPackageOrderRepository.GetAvailableOrderListByPackageId(id);
             if (availableOrder.Count > 0)
             {
@@ -96,6 +113,6 @@ namespace Service.Services.UserPackageServices
             await _userPackageRepository.Update(userPackage);
         }
 
-        
+
     }
 }

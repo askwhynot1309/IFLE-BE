@@ -47,5 +47,10 @@ namespace Repository.Repositories.GameCategoryRepositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> IsNameExisted(string name)
+        {
+            return (await GetSingle(g => g.Name.ToLower().Equals(name.ToLower()))) != null;
+        }
     }
 }
