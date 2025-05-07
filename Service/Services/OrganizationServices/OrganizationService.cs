@@ -3,6 +3,7 @@ using BusinessObjects.DTOs.GamePackageOrder.Request;
 using BusinessObjects.DTOs.InteractiveFloor.Response;
 using BusinessObjects.DTOs.Organization.Request;
 using BusinessObjects.DTOs.Organization.Response;
+using BusinessObjects.DTOs.User.Response;
 using BusinessObjects.DTOs.UserPackage.Response;
 using BusinessObjects.DTOs.UserPackageOrder.Request;
 using BusinessObjects.DTOs.UserPackageOrder.Response;
@@ -89,10 +90,19 @@ namespace Service.Services.OrganizationServices
             await _organizationUserRepository.Insert(newOrganizationUser);
         }
 
-        public async Task<List<OrganizationInfoResponseModel>> ViewAllOrganizations()
+        public async Task<List<OrganizationAllInfoResponseModel>> ViewAllOrganizations()
         {
             var organizations = await _organizationRepository.GetAllOrganizations();
-            var result = _mapper.Map<List<OrganizationInfoResponseModel>>(organizations);
+            var result = organizations.Select(o => new OrganizationAllInfoResponseModel
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Description = o.Description,
+                CreatedAt = o.CreatedAt,
+                UserLimit = o.UserLimit,
+                Status = o.Status,
+                OwnerInfo = _mapper.Map<UserInfoResponeModel>(o.OrganizationUsers.FirstOrDefault(o => o.Privilege.Equals(PrivilegeEnums.Owner.ToString())).User)
+            }).ToList();
             return result.OrderByDescending(r => r.CreatedAt).ToList();
         }
 

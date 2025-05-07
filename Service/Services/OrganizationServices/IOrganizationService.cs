@@ -17,7 +17,7 @@ namespace Service.Services.OrganizationServices
     {
         Task CreateOrganization(OrganizationCreateUpdateRequestModel model, string userId);
 
-        Task<List<OrganizationInfoResponseModel>> ViewAllOrganizations();
+        Task<List<OrganizationAllInfoResponseModel>> ViewAllOrganizations();
 
         Task<List<OrganizationUserReponseModel>> GetMembersOfOrganization(string organizationId, string currentId);
 
