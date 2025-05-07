@@ -30,5 +30,10 @@ namespace Repository.Repositories.DeviceCategoryRepositories
         {
             return (await Get(d => d.Status.Equals(DeviceStatusEnums.Active.ToString()))).ToList();
         }
+
+        public async Task<bool> IsNameExisted(string name)
+        {
+            return (await GetSingle(d => d.Name.ToLower().Equals(name.ToLower()))) != null;
+        }
     }
 }

@@ -15,5 +15,7 @@ namespace Repository.Repositories.GamePackageRepositories
         Task<List<GamePackage>> GetActiveGamePackages();
 
         Task<GamePackage> GetGamePackageById(string id);
+
+        Task<bool> IsNameExisted(string name);
     }
 }

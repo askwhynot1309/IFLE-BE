@@ -16,5 +16,6 @@ namespace Repository.Repositories.DeviceCategoryRepositories
 
         Task<List<DeviceCategory>> GetActiveDeviceCategories();
 
+        Task<bool> IsNameExisted(string name);
     }
 }
