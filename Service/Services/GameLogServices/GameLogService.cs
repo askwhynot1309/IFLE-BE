@@ -29,16 +29,12 @@ namespace Service.Services.GameLogServices
             var gameLog = new GameLog
             {
                 Id = Guid.NewGuid().ToString(),
-                UpdateTime = createGameLog.UpdateTime,
                 Description = createGameLog.Description,
-                UpdateStatus = createGameLog.UpdateStatus,
                 StaffId = createGameLog.StaffId,
-                GameId = createGameLog.GameId
+                GameId = createGameLog.GameId,
+                UpdateStatus = game.Status,
+                UpdateTime = DateTime.Now,
             };
-
-            // Update game status
-            game.Status = createGameLog.UpdateStatus;
-            await _gameRepository.Update(game);
 
             await _gameLogRepository.Insert(gameLog);
 
@@ -48,7 +44,6 @@ namespace Service.Services.GameLogServices
                 Id = gameLog.Id,
                 UpdateTime = gameLog.UpdateTime,
                 Description = gameLog.Description,
-                UpdateStatus = gameLog.UpdateStatus,
                 StaffId = gameLog.StaffId,
                 GameId = gameLog.GameId,
                 StaffName = staff?.Staff?.FullName ?? "Unknown",
@@ -64,7 +59,6 @@ namespace Service.Services.GameLogServices
                 Id = g.Id,
                 UpdateTime = g.UpdateTime,
                 Description = g.Description,
-                UpdateStatus = g.UpdateStatus,
                 StaffId = g.StaffId,
                 GameId = g.GameId,
                 StaffName = g.Staff?.FullName ?? "Unknown",
@@ -83,7 +77,6 @@ namespace Service.Services.GameLogServices
                 Id = g.Id,
                 UpdateTime = g.UpdateTime,
                 Description = g.Description,
-                UpdateStatus = g.UpdateStatus,
                 StaffId = g.StaffId,
                 GameId = g.GameId,
                 StaffName = g.Staff?.FullName ?? "Unknown",

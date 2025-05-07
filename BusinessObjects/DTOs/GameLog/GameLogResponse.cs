@@ -7,7 +7,6 @@ namespace BusinessObjects.DTOs.GameLog
         public string Id { get; set; } = null!;
         public DateTime UpdateTime { get; set; }
         public string Description { get; set; } = null!;
-        public string UpdateStatus { get; set; } = null!;
         public string StaffId { get; set; } = null!;
         public string GameId { get; set; } = null!;
         public string StaffName { get; set; } = null!;
