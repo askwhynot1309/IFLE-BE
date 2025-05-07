@@ -52,6 +52,8 @@ namespace DAO
 
         public virtual DbSet<UserPackageOrder> UserPackageOrders { get; set; }
 
+        public virtual DbSet<GameLog> GameLogs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>
