@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Enums;
+using Repository.Repositories.ActiveUserRepositories;
 using Repository.Repositories.OTPRepositories;
 using Repository.Repositories.RefreshTokenRepositories;
 using Repository.Repositories.RoleRepositories;
 using Repository.Repositories.UserRepositories;
+using Service.Services.ActiveUserServices;
 using Service.Services.EmailServices;
 using Service.Ultis;
 using System;
@@ -32,8 +34,9 @@ namespace Service.Services.AuthenticationServices
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IOTPRepository _oTPRepository;
+        private readonly IActiveUserService _activeUserService;
 
-        public AuthenticationService(IUserRepository userRepository, IConfiguration configuration, IMapper mapper, IEmailService emailService, IOTPRepository oTPRepository, IRoleRepository roleRepository, IRefreshTokenRepository refreshTokenRepository)
+        public AuthenticationService(IUserRepository userRepository, IConfiguration configuration, IMapper mapper, IEmailService emailService, IOTPRepository oTPRepository, IRoleRepository roleRepository, IRefreshTokenRepository refreshTokenRepository, IActiveUserService activeUserService)
         {
             _userRepository = userRepository;
             _config = configuration;
@@ -43,6 +46,7 @@ namespace Service.Services.AuthenticationServices
             _oTPRepository = oTPRepository;
             _roleRepository = roleRepository;
             _refreshTokenRepository = refreshTokenRepository;
+            _activeUserService = activeUserService;
         }
 
         public async Task<(string accessToken, string refreshToken)> GenerateJWT(string userId)
@@ -151,6 +155,16 @@ namespace Service.Services.AuthenticationServices
                 if (user.Status.Equals(AccountStatusEnums.Inactive.ToString()))
                 {
                     throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống của chúng tôi.", StatusCodes.Status403Forbidden);
+                }
+
+                bool isUserActive = await _activeUserService.IsUserActive(user.Id);
+                if (isUserActive)
+                {
+                    await _activeUserService.TrackUserLogin(user.Id);
+                }
+                else
+                {
+                    await _activeUserService.TrackUserLogin(user.Id);
                 }
 
                 var (accessToken, refreshToken) = await GenerateJWT(user.Id);
