@@ -33,7 +33,7 @@ namespace Service.Services.ActiveUserServices
                 Id = Guid.NewGuid().ToString(),
                 UserId = userId,
                 LoginTime = DateTime.Now,
-                IsActive = true
+                IsActive = false,
             };
 
             await _activeUserRepository.Insert(newActivity);
