@@ -12,9 +12,11 @@ namespace BusinessObjects.Models
 
         public string Token { get; set; } = null!;
 
-        public DateTime ExpiredAt {  get; set; }
+        public DateTime ExpiredAt { get; set; }
 
         public string UserId { get; set; } = null!;
+
+        public string DeviceId { get; set; } = null!;
 
         public User User { get; set; } = null!;
     }

@@ -36,6 +36,15 @@ namespace Service.Services.UserPackageServices
             {
                 throw new CustomException("Tên gói người dùng này đã tồn tại.");
             }
+            var allPackages = await _userPackageRepository.GetAllUserPackages();
+            foreach (var package in allPackages)
+            {
+                if (package.Price == model.Price && package.UserLimit == model.UserLimit)
+                {
+                    throw new CustomException($"Đã tồn tại gói {package.Name} có cùng giá và số lượng người tăng lên.");
+                }
+            }
+
             var newUserPackage = _mapper.Map<UserPackage>(model);
 
             newUserPackage.Status = UserPackageEnums.Active.ToString();
@@ -66,6 +75,16 @@ namespace Service.Services.UserPackageServices
             if (availableOrder.Count > 0)
             {
                 throw new CustomException("Gói này đang được sử dụng hoặc trong quá trình giao dịch với người dùng. Không thể cập nhật.");
+            }
+
+            var allPackages = await _userPackageRepository.GetAllUserPackages();
+            allPackages.Remove(userPackage);
+            foreach (var package in allPackages)
+            {
+                if (package.Price == model.Price && package.UserLimit == model.UserLimit)
+                {
+                    throw new CustomException($"Đã tồn tại gói {package.Name} có cùng giá và số lượng người tăng lên.");
+                }
             }
             _mapper.Map(model, userPackage);
             await _userPackageRepository.Update(userPackage);
