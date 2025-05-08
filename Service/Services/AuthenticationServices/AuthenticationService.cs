@@ -157,12 +157,6 @@ namespace Service.Services.AuthenticationServices
                     throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống của chúng tôi.", StatusCodes.Status403Forbidden);
                 }
 
-                var activeUser = await _activeUserService.GetActiveUserById(user.Id);
-                if (activeUser == null)
-                {
-                    await _activeUserService.TrackUserLogin(user.Id);
-                }
-
                 var (accessToken, refreshToken) = await GenerateJWT(user.Id);
 
                 var existRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
@@ -259,5 +253,65 @@ namespace Service.Services.AuthenticationServices
             };
         }
 
+        public async Task<UserAuthResponseModel> LoginAuthenticateDesktopApp(UserLoginRequestModel request)
+        {
+            var user = await _userRepository.GetUserByEmail(request.Email);
+            if (user != null)
+            {
+                if (!PasswordHasher.VerifyPassword(request.Password, user.Salt, user.Password))
+                {
+                    throw new CustomException("Mật khẩu bạn vừa nhập chưa chính xác.");
+                }
+
+                if (!user.IsVerified)
+                {
+                    throw new CustomException("Tài khoản của bạn chưa được xác thực email!");
+                }
+
+                if (user.Status.Equals(AccountStatusEnums.Inactive.ToString()))
+                {
+                    throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống của chúng tôi.", StatusCodes.Status403Forbidden);
+                }
+
+                var activeUser = await _activeUserService.GetActiveUserById(user.Id);
+                if (activeUser == null)
+                {
+                    await _activeUserService.TrackUserLogin(user.Id);
+                }
+
+                var (accessToken, refreshToken) = await GenerateJWT(user.Id);
+
+                var existRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
+                if (existRefreshToken != null)
+                {
+                    existRefreshToken.Token = refreshToken;
+                    existRefreshToken.ExpiredAt = DateTime.Now.AddDays(7);
+
+                    await _refreshTokenRepository.Update(existRefreshToken);
+                }
+                else
+                {
+                    var newRefreshToken = new RefreshToken()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Token = refreshToken,
+                        ExpiredAt = DateTime.Now.AddDays(7),
+                        UserId = user.Id
+                    };
+
+                    await _refreshTokenRepository.Insert(newRefreshToken);
+                }
+
+                return new UserAuthResponseModel()
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                };
+            }
+            else
+            {
+                throw new CustomException("Email bạn nhập không kết nối với tài khoản nào.");
+            }
+        }
     }
 }
