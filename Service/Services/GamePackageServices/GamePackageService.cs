@@ -36,17 +36,11 @@ namespace Service.Services.GamePackageServices
         public async Task CreateGamePackage(GamePackageCreateRequestModel model)
         {
             var check = await _gamePackageRepository.IsNameExisted(model.Name);
-
             if (check)
             {
                 throw new CustomException("Tên gói trò chơi này đã tồn tại.");
             }
-            var newGamePackage = _mapper.Map<GamePackage>(model);
 
-            newGamePackage.Id = Guid.NewGuid().ToString();
-            newGamePackage.Status = GamePackageEnums.Active.ToString();
-
-            await _gamePackageRepository.Insert(newGamePackage);
             if (model.GameIdList.Count == 0)
             {
                 throw new CustomException("Vui lòng chọn game để thêm vào gói.");
@@ -57,6 +51,27 @@ namespace Service.Services.GamePackageServices
             {
                 throw new CustomException("Không tìm thấy game bạn thêm vào. Vui lòng chọn đúng game có sẵn.");
             }
+
+            var allPackages = await _gamePackageRepository.GetAllGamePackages();
+            foreach (var package in allPackages)
+            {
+                if (package.Price == model.Price && package.Duration == model.Duration)
+                {
+                    var relatedGames = await _gamePackageRelationRepository.GetListGameIdByGamePackageId(package.Id);
+                    if (relatedGames.Count == model.GameIdList.Count &&
+                        !relatedGames.Except(model.GameIdList).Any())
+                    {
+                        throw new CustomException($"Đã tồn tại gói {package.Name} có cùng giá, thời hạn và danh sách game.");
+                    }
+                }
+            }
+
+            var newGamePackage = _mapper.Map<GamePackage>(model);
+            newGamePackage.Id = Guid.NewGuid().ToString();
+            newGamePackage.Status = GamePackageEnums.Active.ToString();
+
+            await _gamePackageRepository.Insert(newGamePackage);
+
             var list = new List<GamePackageRelation>();
             foreach (var gameId in model.GameIdList)
             {
@@ -67,9 +82,10 @@ namespace Service.Services.GamePackageServices
                     GamePackageId = newGamePackage.Id,
                 });
             }
-            await _gamePackageRelationRepository.InsertRange(list);
 
+            await _gamePackageRelationRepository.InsertRange(list);
         }
+
 
         public async Task UpdateGamePackage(GamePackageUpdateRequestModel model, string gamePackageId)
         {
@@ -87,6 +103,20 @@ namespace Service.Services.GamePackageServices
                 if (check)
                 {
                     throw new CustomException("Tên gói trò chơi này đã tồn tại.");
+                }
+            }
+            var allPackages = await _gamePackageRepository.GetAllGamePackages();
+            allPackages.Remove(gamePackage);
+            foreach (var package in allPackages)
+            {
+                if (package.Price == model.Price && package.Duration == model.Duration)
+                {
+                    var relatedGames = await _gamePackageRelationRepository.GetListGameIdByGamePackageId(package.Id);
+                    if (relatedGames.Count == model.GameIdList.Count &&
+                        !relatedGames.Except(model.GameIdList).Any())
+                    {
+                        throw new CustomException($"Đã tồn tại gói {package.Name} có cùng giá, thời hạn và danh sách game.");
+                    }
                 }
             }
             _mapper.Map(model, gamePackage);
