@@ -48,10 +48,24 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             return list.ToList();
         }
 
+        public async Task<List<GamePackageOrder>> GetPlayableGamePackageOrderOfGamePackage(string floorId, DateTime date, string gamePackageId)
+        {
+            var list = await Get(
+                g => g.FloorId == floorId &&
+                     g.GamePackageId.Equals(gamePackageId) &&
+                     g.IsActivated == true &&
+                     g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
+                     g.EndTime.HasValue && DateOnly.FromDateTime(g.EndTime.Value) >= DateOnly.FromDateTime(date),
+                includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game"
+            );
+            return list.OrderByDescending(o => o.EndTime).ToList();
+        }
+
         public async Task<List<GamePackageOrder>> GetPlayableGamePackage(string floorId, DateTime date)
         {
             var list = await Get(
                 g => g.FloorId == floorId &&
+                     g.IsActivated == true &&
                      g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
                      g.EndTime.HasValue && DateOnly.FromDateTime(g.EndTime.Value) >= DateOnly.FromDateTime(date),
                 includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game," +
@@ -94,7 +108,7 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             return ownGamePackageOrders.ToList();
         }
 
-        public async Task<List<GamePackageOrder>> GetPendingAndProcessingGamePackageOrder()
+        public async Task<List<GamePackageOrder>> GetPendingAndProcessingGamePackageOrder(DateTime now)
         {
             var statusList = new List<string>
             {
@@ -102,7 +116,12 @@ namespace Repository.Repositories.GamePackageOrderRepositories
                 PackageOrderStatusEnums.PROCESSING.ToString(),
             };
 
-            var list = await Get(l => statusList.Contains(l.Status));
+            var thresholdTime = now.AddMinutes(-5);
+
+            var list = await Get(l =>
+                statusList.Contains(l.Status) &&
+                l.OrderDate < thresholdTime
+            );
             return list.ToList();
         }
 

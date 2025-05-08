@@ -45,16 +45,24 @@ namespace Repository.Repositories.UserPackageOrderRepositories
             return await GetSingle(p => p.Id.Equals(orderId), includeProperties: "UserPackage");
         }
 
-        public async Task<List<UserPackageOrder>> GetPendingAndProcessingUserPackageOrder()
+        public async Task<List<UserPackageOrder>> GetPendingAndProcessingUserPackageOrder(DateTime now)
         {
             var statusList = new List<string>
             {
                 PackageOrderStatusEnums.PENDING.ToString(),
                 PackageOrderStatusEnums.PROCESSING.ToString(),
             };
-            var list = await Get(l => statusList.Contains(l.Status));
+
+            var thresholdTime = now.AddMinutes(-16);
+
+            var list = await Get(l =>
+                statusList.Contains(l.Status) &&
+                l.OrderDate < thresholdTime
+            );
+
             return list.ToList();
         }
+
 
         public async Task<List<UserPackageOrder>> GetAllOrders()
         {
