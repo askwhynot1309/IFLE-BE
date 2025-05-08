@@ -54,6 +54,8 @@ namespace DAO
 
         public virtual DbSet<GameLog> GameLogs { get; set; }
 
+        public virtual DbSet<ActiveUser> ActiveUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>
@@ -797,6 +799,34 @@ namespace DAO
 
                 entity.HasOne(d => d.Game).WithMany(p => p.GameLogs)
                     .HasForeignKey(d => d.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ActiveUser>(entity =>
+            {
+                entity.ToTable("ActiveUser");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .IsRequired();
+
+                entity.Property(e => e.LoginTime)
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.IsActive)
+                    .HasColumnType("bit")
+                    .IsRequired();
+
+                entity.HasOne(d => d.User)
+                    .WithMany()
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

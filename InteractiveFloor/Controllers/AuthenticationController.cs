@@ -39,5 +39,13 @@ namespace InteractiveFloor.Controllers
             var response = await _authenticationService.CheckRefreshToken(refreshToken);
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("login-desktop-app")]
+        public async Task<IActionResult> LoginDesktopApp(UserLoginRequestModel request)
+        {
+            var response = await _authenticationService.LoginAuthenticateDesktopApp(request);
+            return Ok(response);
+        }
     }
 }
