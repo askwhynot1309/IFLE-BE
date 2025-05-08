@@ -34,7 +34,6 @@ namespace InteractiveFloor.Controllers
         {
 
             await _activeUserService.TrackUserLogin(userId);
-          
             return Ok();
         } 
 
