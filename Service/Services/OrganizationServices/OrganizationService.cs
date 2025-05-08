@@ -447,6 +447,10 @@ namespace Service.Services.OrganizationServices
                 throw new CustomException("Không tìm thấy đơn hàng này.");
             }
 
+            if (order.Status.Equals(PackageOrderStatusEnums.PAID.ToString()))
+            {
+                return;
+            }
             var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
 
             if (paymentInfo == null)
@@ -467,7 +471,6 @@ namespace Service.Services.OrganizationServices
                 }
                 var organization = await _organizationRepository.GetOrganizationById(order.OrganizationId);
                 organization.UserLimit += userPackage.UserLimit;
-
             }
             await _userPackageOrderRepository.Update(order);
         }
@@ -522,8 +525,8 @@ namespace Service.Services.OrganizationServices
 
         public async Task AutoUpdateUserPackageOrderStatus()
         {
-            var updateList = await _userPackageOrderRepository.GetPendingAndProcessingUserPackageOrder();
-            var organizationUpdateList = new List<Organization>();
+            var now = DateTime.Now;
+            var updateList = await _userPackageOrderRepository.GetPendingAndProcessingUserPackageOrder(now);
             foreach (var update in updateList)
             {
                 var paymentInfo = await _payosService.GetPaymentInformation(update.OrderCode);
@@ -531,18 +534,10 @@ namespace Service.Services.OrganizationServices
                 {
                     throw new CustomException("Lỗi hệ thống.");
                 }
-                var organization = await _organizationRepository.GetOrganizationById(update.OrganizationId);
                 var newStatus = paymentInfo.status;
-                if (newStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
-                {
-                    var userPackage = await _userPackageRepository.GetUserPackageById(update.UserPackageId);
-                    organization.UserLimit += userPackage.UserLimit;
-                    organizationUpdateList.Add(organization);
-                }
-                update.Status = paymentInfo.status;
+                update.Status = newStatus;
             }
             await _userPackageOrderRepository.UpdateRange(updateList);
-            await _organizationRepository.UpdateRange(organizationUpdateList);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Repository.Repositories.UserPackageOrderRepositories
 
         Task<UserPackageOrder> GetUserPackageOrderById(string orderId);
 
-        Task<List<UserPackageOrder>> GetPendingAndProcessingUserPackageOrder();
+        Task<List<UserPackageOrder>> GetPendingAndProcessingUserPackageOrder(DateTime now);
 
         Task<List<UserPackageOrder>> GetAllOrders();
     }

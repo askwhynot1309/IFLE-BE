@@ -214,5 +214,14 @@ namespace InteractiveFloor.Controllers
             var response = await _floorService.GetSetUpGuideForCustomer(model, id);
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("{id}/buyable-game-package")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetBuyableGamePackage(string id)
+        {
+            var response = await _floorService.GetBuyableGamePackageForFloor(id);
+            return Ok(response);
+        }
     }
 }

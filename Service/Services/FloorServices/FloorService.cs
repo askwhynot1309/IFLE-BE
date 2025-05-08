@@ -27,6 +27,7 @@ using Service.Services.PayosServices;
 using Service.Ultis;
 using System;
 using System.Drawing;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.WebRequestMethods;
 
 namespace Service.Services.FloorServices
@@ -444,39 +445,79 @@ namespace Service.Services.FloorServices
             return payment.checkoutUrl;
         }
 
-        public async Task<List<GamePackageOrderDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId)
+        public async Task<List<GamePackageWithAllOrderResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId)
         {
             var floor = await _floorRepository.GetFloorById(floorId);
             if (floor == null)
             {
                 throw new CustomException("Sàn tương tác này không tồn tại.");
             }
+
             var now = DateTime.Now;
-            var availableGamePackageOrder = (await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now));
-            var result = availableGamePackageOrder.Select(a => new GamePackageOrderDetailsResponseModel
-            {
-                Id = a.Id,
-                Price = a.Price,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-                OrderDate = a.OrderDate,
-                OrderCode = a.OrderCode,
-                IsActivated = a.IsActivated,
-                PaymentMethod = a.PaymentMethod,
-                Status = a.Status,
-                GamePackageInfo = new GamePackageDetailsResponseModel
+            var availableGamePackageOrders = await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now);
+
+            var grouped = availableGamePackageOrders
+                .GroupBy(order => order.GamePackage.Id)
+                .Select(group => new GamePackageWithAllOrderResponseModel
                 {
-                    Id = a.GamePackage.Id,
-                    Name = a.GamePackage.Name,
-                    Description = a.GamePackage.Description,
-                    Duration = a.GamePackage.Duration,
-                    Price = a.GamePackage.Price,
-                    Status = a.GamePackage.Status,
-                    GameList = _mapper.Map<List<GameInfo>>(a.GamePackage.GamePackageRelations.Select(g => g.Game))
-                }
-            }).OrderByDescending(o => o.OrderDate).ToList();
-            return result;
+                    GamePackageInfo = new GamePackageDetailsResponseModel
+                    {
+                        Id = group.First().GamePackage.Id,
+                        Name = group.First().GamePackage.Name,
+                        Description = group.First().GamePackage.Description,
+                        Duration = group.First().GamePackage.Duration,
+                        Price = group.First().GamePackage.Price,
+                        Status = group.First().GamePackage.Status,
+                        GameList = _mapper.Map<List<GameInfo>>(group.First().GamePackage.GamePackageRelations.Select(g => g.Game))
+                    },
+                    OrderList = group.Select(order => new OrderDetailsInfo
+                    {
+                        Id = order.Id,
+                        Price = order.Price,
+                        OrderDate = order.OrderDate,
+                        StartTime = order.StartTime,
+                        EndTime = order.EndTime,
+                        OrderCode = order.OrderCode,
+                        PaymentMethod = order.PaymentMethod,
+                        IsActivated = order.IsActivated,
+                        Status = order.Status
+                    }).OrderByDescending(o => o.OrderDate).ToList()
+                }).ToList();
+
+            return grouped;
         }
+
+        public async Task<List<GamePackageBuyableForFloorResponseModel>> GetBuyableGamePackageForFloor(string floorId)
+        {
+            var now = DateTime.Now;
+            var availableGamePackageOrders = await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now);
+            var usingGamePackageOrders = await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now);
+
+            var exceptList = availableGamePackageOrders
+                .GroupBy(order => order.GamePackage.Id)
+                .SelectMany(group => group.Select(g => g.GamePackageId))
+                .Distinct()
+                .ToList();
+            var extendList = usingGamePackageOrders
+                .GroupBy(order => order.GamePackage.Id)
+                .SelectMany(group => group.Select(g => g.GamePackageId))
+                .Distinct()
+                .ToList();
+            var allActiveGamePackage = await _gamePackageRepository.GetActiveGamePackages();
+            allActiveGamePackage = allActiveGamePackage.Where(g => !exceptList.Contains(g.Id)).ToList();
+            return allActiveGamePackage.Select(o => new GamePackageBuyableForFloorResponseModel
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Description = o.Description,
+                Duration = o.Duration,
+                Price = o.Price,
+                Status = o.Status,
+                Note = extendList.Contains(o.Id) ? "Đang sử dụng" : "",
+                GameList = _mapper.Map<List<GameInfo>>(o.GamePackageRelations.Select(g => g.Game))
+            }).ToList();
+        }
+
 
         public async Task<List<GamePackageOrderDetailsResponseModel>> GetPlayableGamePackageOfFloor(string floorId)
         {
@@ -522,17 +563,20 @@ namespace Service.Services.FloorServices
             }
 
             var firstStatus = order.Status;
+
             if (firstStatus.Equals(PackageOrderStatusEnums.PAID.ToString()))
             {
                 return;
             }
-
+            var now = DateTime.Now;
+            var availableList = await _gamePackageOrderRepository.GetPlayableGamePackageOrderOfGamePackage(order.FloorId, now, order.GamePackageId);
             var paymentInfo = await _payosService.GetPaymentInformation(orderCode);
             if (paymentInfo == null)
             {
                 throw new CustomException("Lỗi hệ thống.");
             }
             var newStatus = paymentInfo.status;
+
 
             var gamePackage = await _gamePackageRepository.GetGamePackageById(order.GamePackageId);
             order.Status = newStatus;
@@ -544,6 +588,16 @@ namespace Service.Services.FloorServices
                 if (!sendEmailSuccess)
                 {
                     throw new CustomException("Đã xảy ra lỗi trong quá trình gửi email.");
+                }
+
+                if (availableList.Count > 0)
+                {
+                    order.IsActivated = true;
+                    var newStartDate = availableList.FirstOrDefault().EndTime.Value.AddDays(1);
+                    order.StartTime = newStartDate;
+                    order.EndTime = newStartDate.AddMonths(gamePackage.Duration).Date;
+                    await _gamePackageOrderRepository.Update(order);
+                    return;
                 }
             }
             order.IsActivated = false;
@@ -646,7 +700,8 @@ namespace Service.Services.FloorServices
 
         public async Task AutoUpdateGamePackageOrderStatus()
         {
-            var updateList = await _gamePackageOrderRepository.GetPendingAndProcessingGamePackageOrder();
+            var now = DateTime.Now;
+            var updateList = await _gamePackageOrderRepository.GetPendingAndProcessingGamePackageOrder(now);
 
             foreach (var gamePackageOrder in updateList)
             {
@@ -656,11 +711,11 @@ namespace Service.Services.FloorServices
                 {
                     throw new CustomException("Lỗi hệ thống.");
                 }
-                gamePackageOrder.Status = paymentInfo.status;
+                var newStatus = paymentInfo.status;
+                gamePackageOrder.Status = newStatus;
             }
 
             await _gamePackageOrderRepository.UpdateRange(updateList);
-
         }
 
         public async Task AutoActivateGamePackageOrderOver7Days()

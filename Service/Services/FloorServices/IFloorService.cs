@@ -45,7 +45,7 @@ namespace Service.Services.FloorServices
 
         Task UpdateGamePackageOrderStatus(string orderCode, string currentUserId);
 
-        Task<List<GamePackageOrderDetailsResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId);
+        Task<List<GamePackageWithAllOrderResponseModel>> GetAllAvailableGamePackageOfFloor(string floorId);
 
         Task<List<GamePackageOrderDetailsResponseModel>> GetPlayableGamePackageOfFloor(string floorId);
 
@@ -62,5 +62,7 @@ namespace Service.Services.FloorServices
         Task AutoActivateGamePackageOrderOver7Days();
 
         Task<SetUpGuideResponseModel> GetSetUpGuideForCustomer(SetUpGuideRequestModel model, string floorId);
+
+        Task<List<GamePackageBuyableForFloorResponseModel>> GetBuyableGamePackageForFloor(string floorId);
     }
 }
