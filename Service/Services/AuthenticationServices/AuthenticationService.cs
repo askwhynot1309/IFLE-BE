@@ -157,12 +157,8 @@ namespace Service.Services.AuthenticationServices
                     throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống của chúng tôi.", StatusCodes.Status403Forbidden);
                 }
 
-                bool isUserActive = await _activeUserService.IsUserActive(user.Id);
-                if (isUserActive)
-                {
-                    await _activeUserService.TrackUserLogin(user.Id);
-                }
-                else
+                var activeUser = await _activeUserService.GetActiveUserById(user.Id);
+                if (activeUser == null)
                 {
                     await _activeUserService.TrackUserLogin(user.Id);
                 }

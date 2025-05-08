@@ -1,3 +1,4 @@
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services.ActiveUserServices;
 using System.Threading.Tasks;
@@ -5,7 +6,7 @@ using System.Threading.Tasks;
 namespace InteractiveFloor.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/active-user")]
     public class ActiveUserController : ControllerBase
     {
         private readonly IActiveUserService _activeUserService;
@@ -27,5 +28,23 @@ namespace InteractiveFloor.Controllers
             
             return Ok(new { isActive = activeUser.IsActive, message = activeUser.IsActive ? "User is active" : "User is not active" });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> InsertActiveUser(string userId)
+        {
+
+            await _activeUserService.TrackUserLogin(userId);
+          
+            return Ok();
+        } 
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> InactiveUser(string userId)
+        {
+            await _activeUserService.UpdateUserActiveStatus(userId, false);
+            return Ok();
+        }
+
     }
 } 
