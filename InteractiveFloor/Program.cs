@@ -42,6 +42,8 @@ using Repository.Repositories.GameCategoryRelationRepositories;
 using Service.Services;
 using Repository.Repositories.GameLogRepositories;
 using Service.Services.GameLogServices;
+using Repository.Repositories.ActiveUserRepositories;
+using Service.Services.ActiveUserServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +66,7 @@ builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 
 builder.Services.AddHostedService<PackageOrderBackgroundService>();
 builder.Services.AddHostedService<GamePackageActivationBackgroundService>();
+builder.Services.AddHostedService<ActiveUserBackgroundService>();
 
 //========================================== MIDDLEWARE ===========================================
 
@@ -105,6 +108,7 @@ builder.Services.AddScoped<IUserPackageOrderRepository, UserPackageOrderReposito
 builder.Services.AddScoped<IPlayHistoryRepository, PlayHistoryRepository>();
 builder.Services.AddScoped<IGameCategoryRelationRepository, GameCategoryRelationRepository>();
 builder.Services.AddScoped<IGameLogRepository, GameLogRepository>();
+builder.Services.AddScoped<IActiveUserRepository, ActiveUserRepository>();
 
 //=========================================== SERVICE =============================================
 
@@ -122,6 +126,7 @@ builder.Services.AddScoped<IDeviceCategoryService, DeviceCategoryService>();
 builder.Services.AddScoped<IPayosService, PayosService>();
 builder.Services.AddScoped<IPlayHistoryService, PlayHistoryService>();
 builder.Services.AddScoped<IGameLogService, GameLogService>();
+builder.Services.AddScoped<IActiveUserService, ActiveUserService>();
 
 //========================================== AUTHENTICATION =======================================
 

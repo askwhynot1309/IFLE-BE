@@ -15,7 +15,7 @@ namespace Service.Services.AuthenticationServices
         Task RegisterWithPassword(UserRegisterWithPwRequestModel request);
 
         Task<UserAuthResponseModel> LoginAuthenticate(UserLoginRequestModel request);
-
+        Task<UserAuthResponseModel> LoginAuthenticateDesktopApp(UserLoginRequestModel request);
         Task<UserAuthResponseModel> CheckRefreshToken(string refreshToken);
     }
 }

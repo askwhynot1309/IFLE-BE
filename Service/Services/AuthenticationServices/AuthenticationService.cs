@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Enums;
+using Repository.Repositories.ActiveUserRepositories;
 using Repository.Repositories.OTPRepositories;
 using Repository.Repositories.RefreshTokenRepositories;
 using Repository.Repositories.RoleRepositories;
 using Repository.Repositories.UserRepositories;
+using Service.Services.ActiveUserServices;
 using Service.Services.EmailServices;
 using Service.Ultis;
 using System;
@@ -32,8 +34,9 @@ namespace Service.Services.AuthenticationServices
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IOTPRepository _oTPRepository;
+        private readonly IActiveUserService _activeUserService;
 
-        public AuthenticationService(IUserRepository userRepository, IConfiguration configuration, IMapper mapper, IEmailService emailService, IOTPRepository oTPRepository, IRoleRepository roleRepository, IRefreshTokenRepository refreshTokenRepository)
+        public AuthenticationService(IUserRepository userRepository, IConfiguration configuration, IMapper mapper, IEmailService emailService, IOTPRepository oTPRepository, IRoleRepository roleRepository, IRefreshTokenRepository refreshTokenRepository, IActiveUserService activeUserService)
         {
             _userRepository = userRepository;
             _config = configuration;
@@ -43,6 +46,7 @@ namespace Service.Services.AuthenticationServices
             _oTPRepository = oTPRepository;
             _roleRepository = roleRepository;
             _refreshTokenRepository = refreshTokenRepository;
+            _activeUserService = activeUserService;
         }
 
         public async Task<(string accessToken, string refreshToken)> GenerateJWT(string userId)
@@ -249,5 +253,65 @@ namespace Service.Services.AuthenticationServices
             };
         }
 
+        public async Task<UserAuthResponseModel> LoginAuthenticateDesktopApp(UserLoginRequestModel request)
+        {
+            var user = await _userRepository.GetUserByEmail(request.Email);
+            if (user != null)
+            {
+                if (!PasswordHasher.VerifyPassword(request.Password, user.Salt, user.Password))
+                {
+                    throw new CustomException("Mật khẩu bạn vừa nhập chưa chính xác.");
+                }
+
+                if (!user.IsVerified)
+                {
+                    throw new CustomException("Tài khoản của bạn chưa được xác thực email!");
+                }
+
+                if (user.Status.Equals(AccountStatusEnums.Inactive.ToString()))
+                {
+                    throw new CustomException("Tài khoản của bạn đã vi phạm và bị cấm khỏi hệ thống của chúng tôi.", StatusCodes.Status403Forbidden);
+                }
+
+                var activeUser = await _activeUserService.GetActiveUserById(user.Id);
+                if (activeUser == null)
+                {
+                    await _activeUserService.TrackUserLogin(user.Id);
+                }
+
+                var (accessToken, refreshToken) = await GenerateJWT(user.Id);
+
+                var existRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
+                if (existRefreshToken != null)
+                {
+                    existRefreshToken.Token = refreshToken;
+                    existRefreshToken.ExpiredAt = DateTime.Now.AddDays(7);
+
+                    await _refreshTokenRepository.Update(existRefreshToken);
+                }
+                else
+                {
+                    var newRefreshToken = new RefreshToken()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Token = refreshToken,
+                        ExpiredAt = DateTime.Now.AddDays(7),
+                        UserId = user.Id
+                    };
+
+                    await _refreshTokenRepository.Insert(newRefreshToken);
+                }
+
+                return new UserAuthResponseModel()
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                };
+            }
+            else
+            {
+                throw new CustomException("Email bạn nhập không kết nối với tài khoản nào.");
+            }
+        }
     }
 }
