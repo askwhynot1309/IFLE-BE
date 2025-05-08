@@ -16,8 +16,6 @@ namespace BusinessObjects.Models
 
         public string UserId { get; set; } = null!;
 
-        public string DeviceId { get; set; } = null!;
-
         public User User { get; set; } = null!;
     }
 }

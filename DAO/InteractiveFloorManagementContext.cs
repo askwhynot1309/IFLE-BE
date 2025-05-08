@@ -758,11 +758,6 @@ namespace DAO
                     .IsUnicode(false)
                     .IsRequired();
 
-                entity.Property(e => e.DeviceId)
-                    .HasMaxLength(36)
-                    .IsUnicode(false)
-                    .IsRequired();
-
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.RefreshTokens)
                     .HasForeignKey(d => d.UserId)
