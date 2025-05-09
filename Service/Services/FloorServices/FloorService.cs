@@ -491,7 +491,7 @@ namespace Service.Services.FloorServices
         {
             var now = DateTime.Now;
             var availableGamePackageOrders = await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now);
-            var usingGamePackageOrders = await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now);
+            var usingGamePackageOrders = await _gamePackageOrderRepository.GetPlayableGamePackage(floorId, now);
 
             var exceptList = availableGamePackageOrders
                 .GroupBy(order => order.GamePackage.Id)
