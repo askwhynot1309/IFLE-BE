@@ -36,6 +36,17 @@ namespace Repository.Repositories.GamePackageOrderRepositories
             return await GetSingle(p => p.OrderCode.Equals(orderCode));
         }
 
+        public async Task<List<GamePackageOrder>> GetUnactivatedGamePackage(string floorId, DateTime date)
+        {
+            var list = await Get(
+                g => g.FloorId == floorId &&
+                     g.Status.Equals(PackageOrderStatusEnums.PAID.ToString()) &&
+                     g.IsActivated == false,
+                includeProperties: "GamePackage,GamePackage.GamePackageRelations,GamePackage.GamePackageRelations.Game"
+            );
+            return list.ToList();
+        }
+
         public async Task<List<GamePackageOrder>> GetAvailableGamePackage(string floorId, DateTime date)
         {
             var list = await Get(
