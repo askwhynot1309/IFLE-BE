@@ -490,7 +490,7 @@ namespace Service.Services.FloorServices
         public async Task<List<GamePackageBuyableForFloorResponseModel>> GetBuyableGamePackageForFloor(string floorId)
         {
             var now = DateTime.Now;
-            var availableGamePackageOrders = await _gamePackageOrderRepository.GetAvailableGamePackage(floorId, now);
+            var availableGamePackageOrders = await _gamePackageOrderRepository.GetUnactivatedGamePackage(floorId, now);
             var usingGamePackageOrders = await _gamePackageOrderRepository.GetPlayableGamePackage(floorId, now);
 
             var exceptList = availableGamePackageOrders

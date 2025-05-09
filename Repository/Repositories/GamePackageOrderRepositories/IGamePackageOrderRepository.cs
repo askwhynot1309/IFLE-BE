@@ -19,6 +19,8 @@ namespace Repository.Repositories.GamePackageOrderRepositories
 
         Task<List<GamePackageOrder>> GetAvailableGamePackage(string floorId, DateTime date);
 
+        Task<List<GamePackageOrder>> GetUnactivatedGamePackage(string floorId, DateTime date);
+
         Task<List<GamePackageOrder>> GetPlayableGamePackageOrderOfGamePackage(string floorId, DateTime date, string gamePackageId);
 
         Task<List<GamePackageOrder>> GetPlayableGamePackage(string floorId, DateTime date);
